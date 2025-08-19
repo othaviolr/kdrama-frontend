@@ -67,8 +67,8 @@ export function DiscoverSection() {
 
   return (
     <div className="mb-16">
-      {/* Card principal com bordas roxas */}
-      <div className="bg-white rounded-3xl shadow-lg border-2 border-purple-200 hover:border-purple-300 p-8 transition-all duration-300 relative overflow-hidden">
+      {/* Card principal sem borda externa */}
+      <div className="bg-white rounded-3xl shadow-lg p-8 transition-all duration-300 relative overflow-hidden">
         {/* Efeitos 3D roxos */}
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-purple-500/5 via-transparent to-purple-600/5 hover:from-purple-500/10 hover:to-purple-600/10 transition-all duration-300"></div>
         <div className="absolute inset-0 rounded-3xl shadow-[inset_0_1px_0_0_rgba(147,51,234,0.15)] transition-all duration-300"></div>
