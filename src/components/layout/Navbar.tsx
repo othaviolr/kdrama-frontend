@@ -2,7 +2,16 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Menu, ChevronDown, Tv2, X } from 'lucide-react';
+import {
+  Search,
+  Menu,
+  ChevronDown,
+  Tv2,
+  X,
+  User,
+  Settings,
+  LogOut,
+} from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface NavbarProps {
@@ -15,12 +24,14 @@ interface NavbarProps {
 
 export function Navbar({ user }: NavbarProps = {}) {
   const [isSocialMenuOpen, setIsSocialMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const socialMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Fechar menu social quando clicar fora
+  // Fechar menus quando clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -29,6 +40,12 @@ export function Navbar({ user }: NavbarProps = {}) {
       ) {
         setIsSocialMenuOpen(false);
       }
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -36,67 +53,72 @@ export function Navbar({ user }: NavbarProps = {}) {
   }, []);
 
   return (
-    <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50">
+    <nav className="bg-white/90 backdrop-blur-lg border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo - Agora clicável */}
+          {/* Logo roxo por padrão */}
           <div className="flex items-center gap-8">
-            <Link
-              href="/"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
-            >
-              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold group-hover:scale-105 transition-transform">
-                <Tv2 className="w-5 h-5" />
-              </div>
-              <span className="text-xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+            <Link href="/" className="group transition-all duration-300">
+              <span className="text-xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors duration-300 tracking-tight">
                 KDramaSystem
               </span>
             </Link>
 
-            {/* Navigation Desktop */}
-            <nav className="hidden md:flex items-center gap-8">
+            {/* Navigation compacta */}
+            <nav className="hidden md:flex items-center gap-1">
               <Link
                 href="/catalog"
-                className="text-gray-600 hover:text-purple-600 font-medium transition-colors px-3 py-2 rounded-lg hover:bg-purple-50"
+                className="relative text-gray-700 hover:text-purple-600 font-medium transition-all duration-300 px-4 py-2 rounded-xl hover:bg-purple-50/80 group"
               >
                 Catálogo
+                <div className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-purple-600 group-hover:w-6 group-hover:left-1/2 group-hover:-translate-x-1/2 transition-all duration-300"></div>
               </Link>
 
-              {/* Dropdown Social - Funcionando */}
+              {/* Dropdown Social compacto */}
               <div className="relative" ref={socialMenuRef}>
                 <button
-                  className="text-gray-600 hover:text-purple-600 font-medium transition-colors flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-purple-50"
+                  className="relative text-gray-700 hover:text-purple-600 font-medium transition-all duration-300 flex items-center gap-1 px-4 py-2 rounded-xl hover:bg-purple-50/80 group"
                   onClick={() => setIsSocialMenuOpen(!isSocialMenuOpen)}
                 >
                   Social
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${isSocialMenuOpen ? 'rotate-180' : ''}`}
+                    className={`w-4 h-4 transition-all duration-300 ${isSocialMenuOpen ? 'rotate-180 text-purple-600' : 'group-hover:text-purple-600'}`}
                   />
+                  <div className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-purple-600 group-hover:w-6 group-hover:left-1/2 group-hover:-translate-x-1/2 transition-all duration-300"></div>
                 </button>
 
                 {isSocialMenuOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-white/95 backdrop-blur-lg rounded-xl shadow-xl border border-gray-200/50 z-50 overflow-hidden">
                     <div className="py-2">
                       <Link
                         href="/friends"
-                        className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
                         onClick={() => setIsSocialMenuOpen(false)}
                       >
-                        👥 Amigos
+                        <span className="text-base group-hover:scale-110 transition-transform">
+                          👥
+                        </span>
+                        <span className="font-medium">Amigos</span>
                       </Link>
                       <Link
                         href="/activities"
-                        className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
                         onClick={() => setIsSocialMenuOpen(false)}
                       >
-                        📱 Atividades
+                        <span className="text-base group-hover:scale-110 transition-transform">
+                          📱
+                        </span>
+                        <span className="font-medium">Atividades</span>
                       </Link>
                       <Link
                         href="/reviews"
-                        className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
                         onClick={() => setIsSocialMenuOpen(false)}
                       >
-                        ⭐ Reviews
+                        <span className="text-base group-hover:scale-110 transition-transform">
+                          ⭐
+                        </span>
+                        <span className="font-medium">Reviews</span>
                       </Link>
                     </div>
                   </div>
@@ -105,25 +127,25 @@ export function Navbar({ user }: NavbarProps = {}) {
             </nav>
           </div>
 
-          {/* Search */}
-          <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          {/* Search compacta */}
+          <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
+            <div className="relative w-full group">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-purple-500 transition-colors duration-300" />
               <input
                 type="text"
                 placeholder="Buscar doramas, atores, listas..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all text-sm outline-none"
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200/60 rounded-xl bg-gray-50/50 focus:bg-white focus:border-purple-400 focus:ring-2 focus:ring-purple-500/10 transition-all duration-300 text-sm outline-none font-medium placeholder:text-gray-500"
               />
             </div>
           </div>
 
           {/* User Actions */}
           <div className="flex items-center gap-3">
-            {/* Mobile buttons */}
+            {/* Mobile buttons modernos */}
             <button
-              className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+              className="md:hidden p-2 rounded-xl text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-all duration-300"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
@@ -133,51 +155,101 @@ export function Navbar({ user }: NavbarProps = {}) {
               )}
             </button>
 
-            <button className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors">
+            <button className="md:hidden p-2 rounded-xl text-gray-600 hover:bg-purple-50 hover:text-purple-600 transition-all duration-300">
               <Search className="w-5 h-5" />
             </button>
 
-            {/* Só mostra login/cadastrar se NÃO estiver logado */}
-            {!user && (
+            {!user ? (
+              /* Botões ultra sofisticados */
               <div className="hidden md:flex items-center gap-3">
                 <Link href="/login">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="hover:bg-purple-50 hover:text-purple-600"
-                  >
-                    Login
-                  </Button>
+                  <button className="relative group px-6 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-500 hover:text-purple-600 overflow-hidden rounded-xl border border-gray-200 hover:border-purple-300">
+                    <span className="relative z-10 transition-colors duration-300">
+                      Login
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-purple-100 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                    <div className="absolute inset-0 bg-purple-50/50 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-bottom"></div>
+                  </button>
                 </Link>
                 <Link href="/register">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="bg-purple-600 hover:bg-purple-700"
-                  >
-                    Cadastrar
-                  </Button>
+                  <button className="relative group px-6 py-2.5 text-sm font-semibold text-white bg-purple-600 rounded-xl transition-all duration-500 hover:bg-purple-700 hover:shadow-xl hover:scale-105 overflow-hidden">
+                    <span className="relative z-10">Cadastrar</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-700 via-purple-800 to-purple-900 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl blur opacity-30 group-hover:opacity-70 transition-opacity duration-500"></div>
+                  </button>
                 </Link>
               </div>
-            )}
-
-            {/* Se logado, mostra avatar/nome do usuário */}
-            {user && (
-              <div className="hidden md:flex items-center gap-2">
-                <span className="text-sm text-gray-600">
-                  Olá, {user.username}
-                </span>
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.username}
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-purple-100"
+            ) : (
+              /* Menu do usuário compacto */
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-purple-50/80 transition-all duration-300 group"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                >
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.username}
+                      className="w-8 h-8 rounded-full object-cover ring-2 ring-gray-200 group-hover:ring-purple-300 transition-all duration-300"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-purple-300 transition-all duration-300">
+                      <span className="text-white text-sm font-medium">
+                        {user.username.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <span className="hidden sm:block text-sm font-medium text-gray-700 group-hover:text-purple-600 transition-colors duration-300">
+                    {user.username}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-400 group-hover:text-purple-600 transition-all duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`}
                   />
-                ) : (
-                  <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">
-                      {user.username.charAt(0).toUpperCase()}
-                    </span>
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-56 bg-white/95 backdrop-blur-lg rounded-xl shadow-xl border border-gray-200/50 z-50 overflow-hidden">
+                    <div className="py-2">
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900">
+                          {user.username}
+                        </p>
+                        <p className="text-xs text-purple-600 font-medium">
+                          Membro desde 2024
+                        </p>
+                      </div>
+
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 font-medium"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Meu Perfil</span>
+                      </Link>
+
+                      <Link
+                        href="/settings"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 font-medium"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <Settings className="w-4 h-4" />
+                        <span>Configurações</span>
+                      </Link>
+
+                      <hr className="my-2" />
+
+                      <button
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50/80 transition-all duration-300 w-full text-left font-medium"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          // Lógica de logout aqui
+                        }}
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sair</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -186,10 +258,10 @@ export function Navbar({ user }: NavbarProps = {}) {
         </div>
       </div>
 
-      {/* Menu Mobile */}
+      {/* Menu Mobile modernizado */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100">
-          <div className="px-4 py-3 space-y-1">
+        <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-purple-100">
+          <div className="px-4 py-4 space-y-2">
             {/* Search mobile */}
             <div className="relative mb-4">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -198,13 +270,13 @@ export function Navbar({ user }: NavbarProps = {}) {
                 placeholder="Buscar doramas..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:border-purple-500 transition-colors text-sm outline-none"
+                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-purple-500 transition-all text-sm outline-none"
               />
             </div>
 
             <Link
               href="/catalog"
-              className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+              className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Catálogo
@@ -212,41 +284,43 @@ export function Navbar({ user }: NavbarProps = {}) {
 
             <Link
               href="/friends"
-              className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              👥 Amigos
+              <span className="text-lg">👥</span>
+              Amigos
             </Link>
 
             <Link
               href="/activities"
-              className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              📱 Atividades
+              <span className="text-lg">📱</span>
+              Atividades
             </Link>
 
             <Link
               href="/reviews"
-              className="block px-3 py-2 rounded-lg text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              ⭐ Reviews
+              <span className="text-lg">⭐</span>
+              Reviews
             </Link>
 
-            {/* Mobile Login/Cadastrar só se não estiver logado */}
             {!user && (
-              <div className="pt-4 space-y-2">
+              <div className="pt-4 space-y-3">
                 <Link
                   href="/login"
-                  className="block w-full text-center py-2 px-4 border border-purple-600 rounded-lg text-purple-600 hover:bg-purple-50 transition-colors"
+                  className="block w-full text-center py-3 px-4 border-2 border-purple-600 rounded-xl text-purple-600 hover:bg-purple-50 transition-all font-semibold"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="block w-full text-center py-2 px-4 bg-purple-600 rounded-lg text-white hover:bg-purple-700 transition-colors"
+                  className="block w-full text-center py-3 px-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white hover:from-purple-700 hover:to-purple-800 transition-all font-semibold shadow-lg"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Cadastrar
@@ -254,10 +328,9 @@ export function Navbar({ user }: NavbarProps = {}) {
               </div>
             )}
 
-            {/* Mobile user info se logado */}
             {user && (
-              <div className="pt-4 flex items-center gap-2 px-3 py-2">
-                <span className="text-sm text-gray-600">
+              <div className="pt-4 flex items-center gap-3 px-4 py-3 bg-purple-50 rounded-xl">
+                <span className="text-sm font-semibold text-gray-700">
                   Olá, {user.username}
                 </span>
                 {user.avatar ? (
@@ -267,8 +340,8 @@ export function Navbar({ user }: NavbarProps = {}) {
                     className="w-6 h-6 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-medium">
+                  <div className="w-6 h-6 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-semibold">
                       {user.username.charAt(0).toUpperCase()}
                     </span>
                   </div>
