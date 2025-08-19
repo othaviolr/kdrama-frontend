@@ -48,11 +48,11 @@ export function HeroWatchingSection() {
               </span>
             </div>
 
-            <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+            <h1 className="text-3xl lg:text-5xl font-bold text-white mb-4 leading-tight">
               {currentShow.title}
             </h1>
 
-            <p className="text-xl text-purple-100 mb-8 opacity-90">
+            <p className="text-lg text-purple-100 mb-8 opacity-90">
               {currentShow.episode} • {currentShow.season}
             </p>
 
@@ -79,18 +79,18 @@ export function HeroWatchingSection() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
                 variant="secondary"
-                size="xl"
-                className="bg-white text-purple-700 hover:bg-white hover:text-purple-800 hover:shadow-2xl hover:-translate-y-1 border-0 shadow-xl transition-all duration-300"
+                size="lg"
+                className="bg-white text-purple-700 hover:bg-white hover:text-purple-800 hover:shadow-2xl hover:-translate-y-1 border-0 shadow-xl transition-all duration-300 rounded-2xl"
               >
-                <Edit className="w-5 h-5 mr-3" />
+                <Edit className="w-4 h-4 mr-2" />
                 Atualizar Status
               </Button>
               <Button
                 variant="outline"
-                size="xl"
-                className="text-white border-2 border-white/40 hover:bg-white/15 hover:border-white hover:shadow-xl hover:-translate-y-1 backdrop-blur-sm transition-all duration-300"
+                size="lg"
+                className="text-white border-2 border-white/40 hover:bg-white/15 hover:border-white hover:shadow-xl hover:-translate-y-1 backdrop-blur-sm transition-all duration-300 rounded-2xl"
               >
-                <Info className="w-5 h-5 mr-3" />
+                <Info className="w-4 h-4 mr-2" />
                 Ver Detalhes
               </Button>
             </div>
