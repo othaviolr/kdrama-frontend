@@ -1,76 +1,71 @@
-import { Book, Clock, Star, Award } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/Card';
-import { UserStats } from '@/domain/entities/User';
+import { Clock, Eye, Star, Award } from 'lucide-react';
 
-interface StatsSectionProps {
-  stats: UserStats;
+interface StatCardProps {
+  title: string;
+  value: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  color: string;
 }
 
-export const StatsSection = ({ stats }: StatsSectionProps) => {
-  const formatWatchTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    return `${hours}h`;
-  };
+function StatCard({ title, value, subtitle, icon, color }: StatCardProps) {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between mb-4">
+        <div
+          className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-white`}
+        >
+          {icon}
+        </div>
+        <div className="text-right">
+          <div className="text-3xl font-bold text-gray-900">{value}</div>
+          <div className="text-sm text-gray-500">{subtitle}</div>
+        </div>
+      </div>
+      <h3 className="font-medium text-gray-700">{title}</h3>
+    </div>
+  );
+}
 
-  const statCards = [
+export function StatsSection() {
+  const stats = [
     {
-      icon: Book,
-      label: 'Assistidos este mês',
-      value: stats.currentMonth.watched,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      title: 'Assistidos',
+      value: '12',
+      subtitle: 'este mês',
+      icon: <Eye className="w-6 h-6" />,
+      color: 'bg-blue-500',
     },
     {
-      icon: Clock,
-      label: 'Tempo total assistindo',
-      value: formatWatchTime(stats.totalWatchTime),
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      title: 'Tempo total',
+      value: '48h',
+      subtitle: 'assistindo',
+      icon: <Clock className="w-6 h-6" />,
+      color: 'bg-purple-500',
     },
     {
-      icon: Star,
-      label: 'Avaliados',
-      value: stats.dramasRated,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50',
+      title: 'Avaliados',
+      value: '8',
+      subtitle: 'reviews',
+      icon: <Star className="w-6 h-6" />,
+      color: 'bg-yellow-500',
     },
     {
-      icon: Award,
-      label: 'Conquistas',
-      value: stats.achievements,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      title: 'Conquistas',
+      value: '3',
+      subtitle: 'badges',
+      icon: <Award className="w-6 h-6" />,
+      color: 'bg-green-500',
     },
   ];
 
   return (
-    <section className="mb-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Estatísticas</h2>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {statCards.map((stat, index) => {
-          const IconComponent = stat.icon;
-
-          return (
-            <Card
-              key={index}
-              className="text-center hover:shadow-lg transition-shadow"
-            >
-              <CardContent className="p-6">
-                <div
-                  className={`inline-flex items-center justify-center w-12 h-12 rounded-lg ${stat.bgColor} mb-4`}
-                >
-                  <IconComponent className={`h-6 w-6 ${stat.color}`} />
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
-              </CardContent>
-            </Card>
-          );
-        })}
+    <div className="mb-12">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat, index) => (
+          <StatCard key={index} {...stat} />
+        ))}
       </div>
-    </section>
+    </div>
   );
-};
+}
