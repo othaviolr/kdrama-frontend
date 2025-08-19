@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Clock, Info, Play } from 'lucide-react';
+import { Edit, Clock, Info } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface WatchingData {
@@ -78,18 +78,19 @@ export function HeroWatchingSection() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
-                size="lg"
-                className="flex items-center gap-3 bg-white text-purple-700 hover:bg-purple-50 border-0 px-8 py-4 rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+                variant="secondary"
+                size="xl"
+                className="bg-white text-purple-700 hover:bg-white hover:text-purple-800 hover:shadow-2xl hover:-translate-y-1 border-0 shadow-xl transition-all duration-300"
               >
-                <Edit className="w-5 h-5" />
+                <Edit className="w-5 h-5 mr-3" />
                 Atualizar Status
               </Button>
               <Button
-                variant="ghost"
-                size="lg"
-                className="flex items-center gap-3 text-white border-2 border-white/30 hover:bg-white/10 px-8 py-4 rounded-xl font-semibold text-lg backdrop-blur-sm transition-all hover:scale-105"
+                variant="outline"
+                size="xl"
+                className="text-white border-2 border-white/40 hover:bg-white/15 hover:border-white hover:shadow-xl hover:-translate-y-1 backdrop-blur-sm transition-all duration-300"
               >
-                <Info className="w-5 h-5" />
+                <Info className="w-5 h-5 mr-3" />
                 Ver Detalhes
               </Button>
             </div>
@@ -110,9 +111,9 @@ export function HeroWatchingSection() {
                     </div>
                   </div>
 
-                  {/* Decorative elements */}
-                  <div className="absolute top-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <Play className="w-6 h-6 text-white" />
+                  {/* Status indicator */}
+                  <div className="absolute top-4 right-4 w-12 h-12 bg-green-500/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                   </div>
                 </div>
               </div>
