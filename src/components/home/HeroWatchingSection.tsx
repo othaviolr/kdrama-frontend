@@ -17,11 +17,12 @@ interface WatchingData {
 export function HeroWatchingSection() {
   const [currentShow] = useState<WatchingData>({
     id: '1',
-    title: "Hometown's Embrace",
-    episode: 'Episódio 12 de 16',
-    season: 'Temporada 1',
-    progress: 75,
-    poster: '/api/placeholder/400/600',
+    title: 'Bloodhounds',
+    episode: 'Episódio 6 de 8',
+    season: 'Temporada 2',
+    progress: 80,
+    poster:
+      'https://i.pinimg.com/736x/73/a6/4c/73a64cc413461d6f00b8e7f0df150895.jpg',
     color: 'bg-purple-600',
   });
 
@@ -99,17 +100,16 @@ export function HeroWatchingSection() {
           {/* Poster Section */}
           <div className="flex justify-center lg:justify-end">
             <div className="relative group">
-              <div className="w-48 h-64 lg:w-72 lg:h-96 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-lg rounded-3xl p-1 shadow-2xl">
-                <div className="w-full h-full bg-gradient-to-br from-purple-400/20 to-indigo-600/20 rounded-2xl flex items-center justify-center relative overflow-hidden">
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-transparent to-blue-500/20 animate-pulse"></div>
+              <div className="w-48 h-64 lg:w-72 lg:h-96 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-lg rounded-3xl p-1 shadow-2xl overflow-hidden">
+                <div
+                  className="w-full h-full bg-cover bg-center rounded-2xl relative overflow-hidden transform scale-100 group-hover:scale-105 transition-transform duration-700"
+                  style={{ backgroundImage: `url(${currentShow.poster})` }}
+                >
+                  {/* Overlay escuro para melhor contraste */}
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-500"></div>
 
-                  {/* Drama masks */}
-                  <div className="relative z-10 flex items-center justify-center">
-                    <div className="text-6xl lg:text-8xl transform group-hover:scale-110 transition-transform duration-300">
-                      🎭
-                    </div>
-                  </div>
+                  {/* Efeito de brilho sutil */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/0 to-white/0 group-hover:via-white/5 group-hover:to-white/2 transition-all duration-600"></div>
 
                   {/* Status indicator */}
                   <div className="absolute top-4 right-4 w-12 h-12 bg-green-500/20 backdrop-blur-sm rounded-full flex items-center justify-center">
