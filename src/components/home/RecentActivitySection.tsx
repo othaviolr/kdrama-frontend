@@ -17,27 +17,28 @@ export function RecentActivitySection() {
   const activities: ActivityItem[] = [
     {
       id: '1',
-      user: 'MariaClara',
+      user: 'Kaneki',
       action: 'avaliou',
       content:
-        "Hometown's Embrace - 'Que drama incrível! A química entre os protagonistas é perfeita...'",
+        "Hierarchy - 'Que dorama horrivel! O pior que já vi até hoje...'",
       time: 'há 2 horas',
-      avatar: 'MC',
+      avatar:
+        'https://i.pinimg.com/1200x/b8/d9/23/b8d9231142611798d869a2f5d367bd04.jpg',
       type: 'review',
-      likes: 23,
-      comments: 5,
+      likes: 1,
+      comments: 17,
     },
     {
       id: '2',
-      user: 'JoãoSilva',
+      user: 'JungKook',
       action: 'criou a lista',
-      content:
-        '"Dramas de Comédia 2024" - Compilei os melhores doramas de comédia do ano. Que acham?',
+      content: '"Doramas de Comédia 2025" - Adicionei os melhores somente!',
       time: 'há 4 horas',
-      avatar: 'JS',
+      avatar:
+        'https://i.pinimg.com/736x/85/1e/63/851e63df409c6d81ced044ebc3d1c311.jpg',
       type: 'list',
-      likes: 18,
-      comments: 7,
+      likes: 2,
+      comments: 1,
     },
   ];
 
@@ -74,9 +75,15 @@ export function RecentActivitySection() {
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-purple-600/0 group-hover:from-purple-500/5 group-hover:to-purple-600/5 transition-all duration-300 rounded-2xl"></div>
 
                 <div className="relative z-10 flex gap-4">
-                  {/* Avatar melhorado */}
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center font-semibold text-purple-700 text-sm border-2 border-purple-200 group-hover:scale-105 transition-transform duration-300">
-                    {activity.avatar}
+                  {/* Avatar com imagem */}
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-200 group-hover:scale-105 transition-transform duration-300">
+                      <img
+                        src={activity.avatar}
+                        alt={activity.user}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
 
                   <div className="flex-1">
