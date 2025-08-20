@@ -39,13 +39,14 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState<UserProfile>({
     id: '1',
-    username: 'João Silva',
-    email: 'joao@email.com',
-    bio: 'Apaixonado por K-Dramas 🎭 | Especialista em romances coreanos | Sempre em busca do próximo drama para maratonar! ✨',
-    avatar: '',
-    followers: 234,
-    following: 189,
-    joinDate: '2024-01-15',
+    username: 'othaviolr',
+    email: 'othavio@gmail.com',
+    bio: '아름다운 메이사, 마음에 드셨으면 좋겠어요 ✨',
+    avatar:
+      'https://i.pinimg.com/1200x/5f/8e/7e/5f8e7e59b524dcd3bcfd3f4bf2fbb855.jpg',
+    followers: 1,
+    following: 1,
+    joinDate: '2025-07-01',
     stats: {
       watched: 47,
       reviews: 23,
@@ -68,21 +69,21 @@ export default function ProfilePage() {
       content:
         'Avaliou "Hometown\'s Embrace" com 5 estrelas - "Drama perfeito! A química entre os protagonistas é incrível..."',
       time: '2 horas atrás',
-      likes: 15,
-      comments: 3,
+      likes: 1,
+      comments: 1,
     },
     {
       id: '2',
       type: 'list',
       content: 'Criou a lista "Melhores K-Dramas de 2024"',
       time: '1 dia atrás',
-      likes: 8,
-      comments: 2,
+      likes: 1,
+      comments: 1,
     },
     {
       id: '3',
       type: 'follow',
-      content: 'Começou a seguir Maria Clara',
+      content: 'Começou a seguir May',
       time: '3 dias atrás',
     },
     {

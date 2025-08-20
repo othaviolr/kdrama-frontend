@@ -9,45 +9,49 @@ interface WatchingShow {
   title: string;
   episode: string;
   progress: number;
-  color: string;
+  imageUrl: string;
 }
 
 export function ContinueWatchingList() {
   const continueWatching: WatchingShow[] = [
     {
       id: '1',
-      title: 'Queen of Tears',
-      episode: 'Ep 8/16',
-      progress: 50,
-      color: 'bg-pink-500',
+      title: 'Weak Hero Class 1',
+      episode: 'Ep 6/8',
+      progress: 80,
+      imageUrl: 'https://i.mydramalist.com/pq2lr_4f.jpg',
     },
     {
       id: '2',
-      title: 'Business Proposal',
+      title: "The King's Affection",
       episode: 'Ep 4/12',
       progress: 33,
-      color: 'bg-blue-500',
+      imageUrl:
+        'https://upload.wikimedia.org/wikipedia/pt/d/d5/The_King%27s_Affection_poster.jpg',
     },
     {
       id: '3',
-      title: 'Romance is Bonus',
+      title: 'Crash Landing on You',
       episode: 'Ep 6/16',
       progress: 37,
-      color: 'bg-green-500',
+      imageUrl:
+        'https://momentokdrama.com.br/wp-content/uploads/2021/07/XrN2df.jpg',
     },
     {
       id: '4',
-      title: 'Strong Girl',
+      title: 'A Killer Paradox',
       episode: 'Ep 2/16',
       progress: 12,
-      color: 'bg-orange-500',
+      imageUrl:
+        'https://br.web.img2.acsta.net/pictures/24/01/23/17/33/5863169.jpg',
     },
     {
       id: '5',
-      title: 'My Demon',
+      title: 'Tomorrow',
       episode: 'Ep 1/16',
       progress: 6,
-      color: 'bg-purple-500',
+      imageUrl:
+        'https://momentokdrama.com.br/wp-content/uploads/2022/04/tomorrow.jpg',
     },
   ];
 
@@ -71,22 +75,14 @@ export function ContinueWatchingList() {
             {continueWatching.map((show) => (
               <div key={show.id} className="group cursor-pointer">
                 <div className="aspect-[3/4] mb-4 relative overflow-hidden rounded-2xl bg-gray-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
-                  {/* Background com zoom controlado */}
+                  {/* Imagem de fundo com zoom controlado */}
                   <div
-                    className={`absolute inset-0 w-[120%] h-[120%] -top-[10%] -left-[10%] ${show.color} opacity-10 group-hover:opacity-25 transition-all duration-700 ease-out transform scale-100 group-hover:scale-110`}
+                    className="absolute inset-0 w-full h-full bg-cover bg-center transform scale-100 group-hover:scale-110 transition-transform duration-700 ease-out"
+                    style={{ backgroundImage: `url(${show.imageUrl})` }}
                   />
 
                   {/* Overlay que escurece suavemente */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500"></div>
-
-                  {/* Máscara de drama */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-white/30 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-white/40 transition-all duration-400 ease-out">
-                      <span className="text-3xl transform group-hover:scale-105 transition-transform duration-300">
-                        🎭
-                      </span>
-                    </div>
-                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500"></div>
 
                   {/* Botão de editar */}
                   <div className="absolute top-3 right-3 transform group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform duration-300">
