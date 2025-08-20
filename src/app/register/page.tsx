@@ -2,24 +2,43 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function RegisterPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!acceptTerms) {
+      alert('Você deve aceitar os termos de uso');
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      alert('As senhas não coincidem');
+      return;
+    }
+
     setIsLoading(true);
 
-    // Simular login
+    // Simular registro
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     setIsLoading(false);
-    // Aqui você faria a lógica de login real
+    // Aqui você faria a lógica de registro real
   };
 
   return (
@@ -33,7 +52,7 @@ export default function LoginPage() {
 
       {/* Container principal */}
       <div className="relative z-10 w-full max-w-md">
-        {/* Card de login */}
+        {/* Card de registro */}
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 relative overflow-hidden">
           {/* Efeito glassmorphism */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/20 to-transparent"></div>
@@ -45,13 +64,35 @@ export default function LoginPage() {
                 <span className="text-2xl font-bold text-white">K</span>
               </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Bem-vindo de volta!
+                Crie sua conta
               </h1>
-              <p className="text-gray-600">Entre na sua conta para continuar</p>
+              <p className="text-gray-600">Junte-se à comunidade KDrama</p>
             </div>
 
             {/* Formulário */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Nome */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="name"
+                  className="text-sm font-semibold text-gray-700"
+                >
+                  Nome completo
+                </label>
+                <div className="relative group">
+                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-purple-500 transition-colors" />
+                  <input
+                    id="name"
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    placeholder="Seu nome completo"
+                    required
+                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl bg-gray-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300 text-sm outline-none font-medium placeholder:text-gray-500"
+                  />
+                </div>
+              </div>
+
               {/* Email */}
               <div className="space-y-2">
                 <label
@@ -65,8 +106,8 @@ export default function LoginPage() {
                   <input
                     id="email"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder="seu@email.com"
                     required
                     className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl bg-gray-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300 text-sm outline-none font-medium placeholder:text-gray-500"
@@ -87,10 +128,13 @@ export default function LoginPage() {
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formData.password}
+                    onChange={(e) =>
+                      handleInputChange('password', e.target.value)
+                    }
                     placeholder="••••••••"
                     required
+                    minLength={6}
                     className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl bg-gray-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300 text-sm outline-none font-medium placeholder:text-gray-500"
                   />
                   <button
@@ -107,40 +151,86 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Lembrar e Esqueci senha */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 text-purple-600 border-2 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">
-                    Lembrar de mim
-                  </span>
-                </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors"
+              {/* Confirmar Senha */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="confirmPassword"
+                  className="text-sm font-semibold text-gray-700"
                 >
-                  Esqueci minha senha
-                </Link>
+                  Confirmar senha
+                </label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-purple-500 transition-colors" />
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      handleInputChange('confirmPassword', e.target.value)
+                    }
+                    placeholder="••••••••"
+                    required
+                    className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl bg-gray-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300 text-sm outline-none font-medium placeholder:text-gray-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-colors"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
               </div>
 
-              {/* Botão de login */}
+              {/* Aceitar termos */}
+              <div className="flex items-start gap-3">
+                <input
+                  id="terms"
+                  type="checkbox"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  className="w-4 h-4 mt-1 text-purple-600 border-2 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-gray-600 leading-relaxed"
+                >
+                  Aceito os{' '}
+                  <Link
+                    href="/terms"
+                    className="text-purple-600 hover:text-purple-700 font-medium"
+                  >
+                    Termos de Uso
+                  </Link>{' '}
+                  e{' '}
+                  <Link
+                    href="/privacy"
+                    className="text-purple-600 hover:text-purple-700 font-medium"
+                  >
+                    Política de Privacidade
+                  </Link>
+                </label>
+              </div>
+
+              {/* Botão de registro */}
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !acceptTerms}
                 className="w-full relative group py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-2xl transition-all duration-500 hover:from-purple-700 hover:to-purple-800 hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {isLoading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Entrando...
+                      Criando conta...
                     </>
                   ) : (
                     <>
-                      Entrar
+                      Criar conta
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
@@ -160,7 +250,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Login social - só Google */}
+              {/* Login com Google */}
               <button
                 type="button"
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 border-2 border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 font-medium text-gray-700"
@@ -190,12 +280,12 @@ export default function LoginPage() {
             {/* Footer */}
             <div className="mt-8 text-center">
               <p className="text-sm text-gray-600">
-                Não tem uma conta?{' '}
+                Já tem uma conta?{' '}
                 <Link
-                  href="/register"
+                  href="/login"
                   className="text-purple-600 hover:text-purple-700 font-semibold transition-colors"
                 >
-                  Cadastre-se gratuitamente
+                  Faça login
                 </Link>
               </p>
             </div>
