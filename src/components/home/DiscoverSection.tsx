@@ -10,7 +10,7 @@ interface Show {
   rating: number;
   recommendation: string;
   badge: string;
-  color: string;
+  imageUrl: string;
 }
 
 export function DiscoverSection() {
@@ -19,43 +19,46 @@ export function DiscoverSection() {
   const shows: Show[] = [
     {
       id: '1',
-      title: 'Secret Garden',
+      title: 'Trigger',
       rating: 4.9,
-      recommendation: 'Ana recomendou',
+      recommendation: 'May recomendou',
       badge: '',
-      color: 'bg-green-500',
+      imageUrl:
+        'https://m.media-amazon.com/images/M/MV5BMTM3MWRiYWMtZmVkMi00OWE0LWI1M2ItMzE2ODc3YWM3YTU4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
     },
     {
       id: '2',
-      title: 'Crash Landing',
+      title: 'My Demon',
       rating: 4.8,
       recommendation: 'Em alta',
       badge: 'trending',
-      color: 'bg-blue-500',
+      imageUrl: 'https://photos.hancinema.net/photos/fullsizephoto1730021.jpg',
     },
     {
       id: '3',
-      title: 'Goblin',
+      title: 'Weak Hero Class 2',
       rating: 4.9,
       recommendation: 'Similar aos seus',
       badge: 'similar',
-      color: 'bg-orange-500',
+      imageUrl:
+        'https://m.media-amazon.com/images/M/MV5BYjJmZjU5MDYtMTljMy00YmRkLWJlMWMtZDQ2NjYxNzIyYzYzXkEyXkFqcGc@._V1_.jpg',
     },
     {
       id: '4',
-      title: 'Reply 1988',
+      title: 'Vincenzo',
       rating: 4.7,
-      recommendation: 'João recomendou',
+      recommendation: 'Você recomendou',
       badge: '',
-      color: 'bg-purple-500',
+      imageUrl:
+        'https://br.web.img3.acsta.net/pictures/21/12/03/15/42/0565547.jpg',
     },
     {
       id: '5',
-      title: 'Hospital Playlist',
+      title: 'The Glory',
       rating: 4.8,
-      recommendation: 'Em alta',
-      badge: 'trending',
-      color: 'bg-pink-500',
+      recommendation: 'Similar aos seus',
+      badge: '',
+      imageUrl: 'https://bancodeseries.tv.br/images/posters/26376.jpg',
     },
   ];
 
@@ -109,22 +112,14 @@ export function DiscoverSection() {
             {shows.map((show) => (
               <div key={show.id} className="group cursor-pointer">
                 <div className="aspect-[3/4] mb-4 relative overflow-hidden rounded-2xl bg-gray-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
-                  {/* Background com zoom sofisticado */}
+                  {/* Imagem de fundo com zoom sofisticado */}
                   <div
-                    className={`absolute inset-0 w-[120%] h-[120%] -top-[10%] -left-[10%] ${show.color} opacity-10 group-hover:opacity-25 transition-all duration-700 ease-out transform scale-100 group-hover:scale-110`}
+                    className="absolute inset-0 w-full h-full bg-cover bg-center transform scale-100 group-hover:scale-110 transition-transform duration-700 ease-out"
+                    style={{ backgroundImage: `url(${show.imageUrl})` }}
                   />
 
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-500"></div>
-
-                  {/* Máscara de drama */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-14 h-14 bg-white/30 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-white/40 transition-all duration-400 ease-out">
-                      <span className="text-2xl transform group-hover:scale-105 transition-transform duration-300">
-                        🎭
-                      </span>
-                    </div>
-                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500"></div>
 
                   {/* Badge */}
                   {show.badge && (
