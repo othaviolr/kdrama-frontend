@@ -34,7 +34,7 @@ interface Temporada {
   ordem: number;
   doramaId: string;
   dataEstreia: string;
-  dataFim: string | null;
+  numeroEpisodios: number;
 }
 
 interface DoramaCompleto {
