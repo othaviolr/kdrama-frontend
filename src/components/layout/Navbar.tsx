@@ -13,20 +13,17 @@ import {
   LogOut,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { useAuth } from '@/src/context/AuthContext'; // 👈 NOVO!
 
-interface NavbarProps {
-  user?: {
-    id: string;
-    username: string;
-    avatar?: string;
-  };
-}
-
-export function Navbar({ user }: NavbarProps = {}) {
+export function Navbar() {
+  // 👈 Removeu props, vai usar contexto
   const [isSocialMenuOpen, setIsSocialMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // 👈 USANDO O CONTEXTO!
+  const { usuario, isAuthenticated, logout, isLoading } = useAuth();
 
   const socialMenuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -51,6 +48,28 @@ export function Navbar({ user }: NavbarProps = {}) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // 👈 FUNÇÃO DE LOGOUT
+  const handleLogout = () => {
+    setIsUserMenuOpen(false);
+    logout();
+  };
+
+  // Mostrar loading enquanto verifica token
+  if (isLoading) {
+    return (
+      <nav className="bg-white/90 backdrop-blur-lg border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <span className="text-xl font-bold text-purple-600">
+              KDramaSystem
+            </span>
+            <div className="animate-pulse">Carregando...</div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="bg-white/90 backdrop-blur-lg border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
@@ -159,7 +178,7 @@ export function Navbar({ user }: NavbarProps = {}) {
               <Search className="w-5 h-5" />
             </button>
 
-            {!user ? (
+            {!isAuthenticated ? ( // 👈 MUDOU AQUI
               /* Botões ultra sofisticados */
               <div className="hidden md:flex items-center gap-3">
                 <Link href="/login">
@@ -186,21 +205,14 @@ export function Navbar({ user }: NavbarProps = {}) {
                   className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-purple-50/80 transition-all duration-300 group"
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 >
-                  {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user.username}
-                      className="w-8 h-8 rounded-full object-cover ring-2 ring-gray-200 group-hover:ring-purple-300 transition-all duration-300"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-purple-300 transition-all duration-300">
-                      <span className="text-white text-sm font-medium">
-                        {user.username.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
+                  {/* 👈 MUDOU AQUI - usando dados do contexto */}
+                  <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-purple-300 transition-all duration-300">
+                    <span className="text-white text-sm font-medium">
+                      {usuario?.nome?.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
                   <span className="hidden sm:block text-sm font-medium text-gray-700 group-hover:text-purple-600 transition-colors duration-300">
-                    {user.username}
+                    {usuario?.nome}
                   </span>
                   <ChevronDown
                     className={`w-4 h-4 text-gray-400 group-hover:text-purple-600 transition-all duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`}
@@ -212,10 +224,10 @@ export function Navbar({ user }: NavbarProps = {}) {
                     <div className="py-2">
                       <div className="px-4 py-3 border-b border-gray-100">
                         <p className="text-sm font-medium text-gray-900">
-                          {user.username}
+                          {usuario?.nome}
                         </p>
                         <p className="text-xs text-purple-600 font-medium">
-                          Membro desde 2024
+                          @{usuario?.nomeUsuario}
                         </p>
                       </div>
 
@@ -241,10 +253,7 @@ export function Navbar({ user }: NavbarProps = {}) {
 
                       <button
                         className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50/80 transition-all duration-300 w-full text-left font-medium"
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          // Lógica de logout aqui
-                        }}
+                        onClick={handleLogout} // 👈 MUDOU AQUI
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sair</span>
@@ -309,7 +318,7 @@ export function Navbar({ user }: NavbarProps = {}) {
               Reviews
             </Link>
 
-            {!user && (
+            {!isAuthenticated && ( // 👈 MUDOU AQUI
               <div className="pt-4 space-y-3">
                 <Link
                   href="/login"
@@ -328,24 +337,16 @@ export function Navbar({ user }: NavbarProps = {}) {
               </div>
             )}
 
-            {user && (
+            {isAuthenticated && ( // 👈 MUDOU AQUI
               <div className="pt-4 flex items-center gap-3 px-4 py-3 bg-purple-50 rounded-xl">
                 <span className="text-sm font-semibold text-gray-700">
-                  Olá, {user.username}
+                  Olá, {usuario?.nome}
                 </span>
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.username}
-                    className="w-6 h-6 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-6 h-6 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-semibold">
-                      {user.username.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
+                <div className="w-6 h-6 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-semibold">
+                    {usuario?.nome?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
               </div>
             )}
           </div>

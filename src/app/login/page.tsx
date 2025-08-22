@@ -1,24 +1,39 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
+import { useAuth } from 'src/context/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
-    // Simular login
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // 👈 LOGIN DE VERDADE!
+      await login(email, password);
 
-    setIsLoading(false);
-    // Aqui você faria a lógica de login real
+      // Sucesso! Redireciona para home
+      router.push('/');
+    } catch (error: any) {
+      // 👈 TRATAMENTO DE ERRO
+      console.error('Erro no login:', error);
+      setError('Email ou senha incorretos. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,6 +63,13 @@ export default function LoginPage() {
               </h1>
               <p className="text-gray-600">Entre na sua conta para continuar</p>
             </div>
+
+            {/* 👈 MENSAGEM DE ERRO */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-red-600 text-sm font-medium">{error}</p>
+              </div>
+            )}
 
             {/* Formulário */}
             <form onSubmit={handleSubmit} className="space-y-6">

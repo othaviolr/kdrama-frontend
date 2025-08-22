@@ -1,22 +1,17 @@
-"use client";
+'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { AuthProvider } from '../context/AuthContext';
+import { DoramaProvider } from '../context/DoramaContext';
+import { ReactNode } from 'react';
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60 * 1000, // 1 minuto
-            gcTime: 10 * 60 * 1000, // 10 minutos
-          },
-        },
-      }),
-  );
+interface ProvidersProps {
+  children: ReactNode;
+}
 
+export function Providers({ children }: ProvidersProps) {
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <AuthProvider>
+      <DoramaProvider>{children}</DoramaProvider>
+    </AuthProvider>
   );
 }
