@@ -13,22 +13,19 @@ import {
   LogOut,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { useAuth } from '@/src/context/AuthContext'; // 👈 NOVO!
+import { useAuth } from '@/src/context/AuthContext';
 
 export function Navbar() {
-  // 👈 Removeu props, vai usar contexto
   const [isSocialMenuOpen, setIsSocialMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 👈 USANDO O CONTEXTO!
   const { usuario, isAuthenticated, logout, isLoading } = useAuth();
 
   const socialMenuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Fechar menus quando clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -49,13 +46,11 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // 👈 FUNÇÃO DE LOGOUT
   const handleLogout = () => {
     setIsUserMenuOpen(false);
     logout();
   };
 
-  // Mostrar loading enquanto verifica token
   if (isLoading) {
     return (
       <nav className="bg-white/90 backdrop-blur-lg border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
@@ -178,7 +173,7 @@ export function Navbar() {
               <Search className="w-5 h-5" />
             </button>
 
-            {!isAuthenticated ? ( // 👈 MUDOU AQUI
+            {!isAuthenticated ? (
               /* Botões ultra sofisticados */
               <div className="hidden md:flex items-center gap-3">
                 <Link href="/login">
@@ -205,7 +200,6 @@ export function Navbar() {
                   className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-purple-50/80 transition-all duration-300 group"
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 >
-                  {/* 👈 MUDOU AQUI - usando dados do contexto */}
                   <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-purple-300 transition-all duration-300">
                     <span className="text-white text-sm font-medium">
                       {usuario?.nome?.charAt(0).toUpperCase()}
@@ -253,7 +247,7 @@ export function Navbar() {
 
                       <button
                         className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50/80 transition-all duration-300 w-full text-left font-medium"
-                        onClick={handleLogout} // 👈 MUDOU AQUI
+                        onClick={handleLogout}
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sair</span>
@@ -318,7 +312,7 @@ export function Navbar() {
               Reviews
             </Link>
 
-            {!isAuthenticated && ( // 👈 MUDOU AQUI
+            {!isAuthenticated && (
               <div className="pt-4 space-y-3">
                 <Link
                   href="/login"
@@ -337,7 +331,7 @@ export function Navbar() {
               </div>
             )}
 
-            {isAuthenticated && ( // 👈 MUDOU AQUI
+            {isAuthenticated && (
               <div className="pt-4 flex items-center gap-3 px-4 py-3 bg-purple-50 rounded-xl">
                 <span className="text-sm font-semibold text-gray-700">
                   Olá, {usuario?.nome}

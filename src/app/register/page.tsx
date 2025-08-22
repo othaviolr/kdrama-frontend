@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { useAuth } from 'src/context/AuthContext';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -15,6 +18,10 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [error, setError] = useState('');
+
+  const { registrar } = useAuth();
+  const router = useRouter();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -22,22 +29,39 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    // Validações
     if (!acceptTerms) {
-      alert('Você deve aceitar os termos de uso');
+      setError('Você deve aceitar os termos de uso');
       return;
     }
     if (formData.password !== formData.confirmPassword) {
-      alert('As senhas não coincidem');
+      setError('As senhas não coincidem');
+      return;
+    }
+    if (formData.password.length < 6) {
+      setError('A senha deve ter pelo menos 6 caracteres');
       return;
     }
 
     setIsLoading(true);
 
-    // Simular registro
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      await registrar({
+        nome: formData.name,
+        nomeUsuario: formData.username,
+        email: formData.email,
+        senha: formData.password,
+      });
 
-    setIsLoading(false);
-    // Aqui você faria a lógica de registro real
+      router.push('/');
+    } catch (error: any) {
+      console.error('Erro no registro:', error);
+      setError('Erro ao criar conta. Verifique os dados e tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -68,6 +92,12 @@ export default function RegisterPage() {
               <p className="text-gray-600">Junte-se à comunidade KDrama</p>
             </div>
 
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-red-600 text-sm font-medium">{error}</p>
+              </div>
+            )}
+
             {/* Formulário */}
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Nome */}
@@ -86,6 +116,29 @@ export default function RegisterPage() {
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     placeholder="Seu nome completo"
+                    required
+                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl bg-gray-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300 text-sm outline-none font-medium placeholder:text-gray-500"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="username"
+                  className="text-sm font-semibold text-gray-700"
+                >
+                  Nome de usuário
+                </label>
+                <div className="relative group">
+                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-purple-500 transition-colors" />
+                  <input
+                    id="username"
+                    type="text"
+                    value={formData.username}
+                    onChange={(e) =>
+                      handleInputChange('username', e.target.value)
+                    }
+                    placeholder="seunomeusuario"
                     required
                     className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl bg-gray-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300 text-sm outline-none font-medium placeholder:text-gray-500"
                   />

@@ -22,13 +22,10 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // 👈 LOGIN DE VERDADE!
       await login(email, password);
 
-      // Sucesso! Redireciona para home
       router.push('/');
     } catch (error: any) {
-      // 👈 TRATAMENTO DE ERRO
       console.error('Erro no login:', error);
       setError('Email ou senha incorretos. Tente novamente.');
     } finally {
@@ -64,7 +61,6 @@ export default function LoginPage() {
               <p className="text-gray-600">Entre na sua conta para continuar</p>
             </div>
 
-            {/* 👈 MENSAGEM DE ERRO */}
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
                 <p className="text-red-600 text-sm font-medium">{error}</p>

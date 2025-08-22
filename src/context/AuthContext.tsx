@@ -62,7 +62,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response: LoginResponse = await usuarioService.registrar(dados);
 
-      // Auto-login após registro
       localStorage.setItem('token', response.token);
       setUsuario({
         usuarioId: response.usuarioId,
