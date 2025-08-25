@@ -1,40 +1,28 @@
 import { ApiService } from './api';
-
-interface Usuario {
-  usuarioId: string;
-  nome: string;
-  nomeUsuario: string;
-  email: string;
-}
-
-interface LoginResponse {
-  usuarioId: string;
-  nome: string;
-  nomeUsuario: string;
-  email: string;
-  token: string;
-}
+import {
+  PerfilApi,
+  Usuario,
+  LoginResponse,
+  UsuarioRegistro,
+  UsuarioLogin,
+} from '../types/user';
 
 export class UsuarioService extends ApiService {
-  async registrar(data: {
-    nomeUsuario: string;
-    email: string;
-    senha: string;
-  }): Promise<LoginResponse> {
+  async registrar(data: UsuarioRegistro): Promise<LoginResponse> {
     return this.makeRequest('/usuarios/registrar', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async login(data: { email: string; senha: string }): Promise<LoginResponse> {
+  async login(data: UsuarioLogin): Promise<LoginResponse> {
     return this.makeRequest('/usuarios/login', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async getPerfil(): Promise<Usuario> {
+  async getPerfil(): Promise<PerfilApi> {
     return this.makeRequest('/usuarios/perfil');
   }
 
@@ -65,6 +53,14 @@ export class UsuarioService extends ApiService {
     return this.makeRequest(`/usuarios/${id}/deixar-de-seguir`, {
       method: 'POST',
     });
+  }
+
+  convertPerfilApi(perfil: PerfilApi): Omit<Usuario, 'usuarioId'> {
+    return {
+      nome: perfil.nome,
+      nomeUsuario: perfil.nomeUsuario,
+      email: perfil.email,
+    };
   }
 }
 

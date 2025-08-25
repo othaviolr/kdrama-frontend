@@ -1,28 +1,61 @@
 import { ApiService } from './api';
+import {
+  AvaliacaoApi,
+  AvaliacaoCreateApi,
+  AvaliacaoUpdateApi,
+  Avaliacao,
+  AvaliacaoCreate,
+  AvaliacaoUpdate,
+} from '../types/avaliacao';
 
 export class AvaliacaoService extends ApiService {
-  async criarAvaliacao(data: any) {
+  async criarAvaliacao(data: AvaliacaoCreate): Promise<void> {
+    const apiData: AvaliacaoCreateApi = {
+      temporadaId: data.temporadaId,
+      nota: data.nota,
+      comentario: data.comentario,
+      recomendadoPorNomeLivre: data.recomendadoPorNomeLivre || '',
+    };
+
     return this.makeRequest('/avaliacoes', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify(apiData),
     });
   }
 
-  async updateAvaliacao(data: any) {
+  async updateAvaliacao(data: AvaliacaoUpdate): Promise<void> {
+    const apiData: AvaliacaoUpdateApi = {
+      temporadaId: data.temporadaId,
+      nota: data.nota,
+      comentario: data.comentario,
+      recomendadoPorNomeLivre: data.recomendadoPorNomeLivre || '',
+    };
+
     return this.makeRequest('/avaliacoes', {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: JSON.stringify(apiData),
     });
   }
 
-  async getAvaliacao(temporadaId: string) {
+  async getAvaliacao(temporadaId: string): Promise<AvaliacaoApi> {
     return this.makeRequest(`/avaliacoes/${temporadaId}`);
   }
 
-  async deleteAvaliacao(temporadaId: string) {
+  async deleteAvaliacao(temporadaId: string): Promise<void> {
     return this.makeRequest(`/avaliacoes/${temporadaId}`, {
       method: 'DELETE',
     });
+  }
+
+  convertAvaliacaoApi(avaliacao: AvaliacaoApi): Avaliacao {
+    return {
+      id: avaliacao.id,
+      temporadaId: avaliacao.temporadaId,
+      nota: avaliacao.nota,
+      comentario: avaliacao.comentario,
+      recomendadoPor: avaliacao.recomendadoPorNomeLivre || undefined,
+      dataAvaliacao: new Date(avaliacao.dataAvaliacao),
+    };
   }
 }
 
