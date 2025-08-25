@@ -1,4 +1,6 @@
-import { MessageSquare, Star, Eye, Users, Settings } from 'lucide-react';
+'use client';
+
+import { Activity, Star, List, Users, Settings } from 'lucide-react';
 
 interface ProfileTabsProps {
   activeTab: string;
@@ -7,32 +9,53 @@ interface ProfileTabsProps {
 
 export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
   const tabs = [
-    { id: 'atividade', label: 'Atividade Recente', icon: MessageSquare },
-    { id: 'reviews', label: 'Minhas Reviews', icon: Star },
-    { id: 'listas', label: 'Minhas Listas', icon: Eye },
-    { id: 'seguidores', label: 'Seguidores', icon: Users },
-    { id: 'configuracoes', label: 'Configurações', icon: Settings },
+    {
+      id: 'atividade',
+      label: 'Atividades',
+      icon: Activity,
+    },
+    {
+      id: 'reviews',
+      label: 'Reviews',
+      icon: Star,
+    },
+    {
+      id: 'listas',
+      label: 'Listas',
+      icon: List,
+    },
+    {
+      id: 'seguidores',
+      label: 'Seguidores',
+      icon: Users,
+    },
+    {
+      id: 'configuracoes',
+      label: 'Configurações',
+      icon: Settings,
+    },
   ];
 
   return (
-    <div className="bg-white rounded-3xl shadow-lg mb-8">
-      <div className="border-b border-gray-100">
-        <nav className="flex gap-8 px-8 overflow-x-auto">
-          {tabs.map((tab) => (
+    <div className="mb-8">
+      <div className="flex gap-2 p-2 bg-white rounded-2xl shadow-lg overflow-x-auto">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex items-center gap-2 py-4 px-2 border-b-2 font-medium transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'border-purple-600 text-purple-600'
-                  : 'border-transparent text-gray-600 hover:text-purple-600'
+                  ? 'bg-purple-600 text-white shadow-lg transform scale-105'
+                  : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
               }`}
             >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
+              <Icon className="w-5 h-5" />
+              <span>{tab.label}</span>
             </button>
-          ))}
-        </nav>
+          );
+        })}
       </div>
     </div>
   );
