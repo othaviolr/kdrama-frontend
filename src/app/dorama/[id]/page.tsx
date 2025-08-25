@@ -7,7 +7,6 @@ import {
   Star,
   Calendar,
   MapPin,
-  Play,
   Plus,
   Heart,
   Share2,
@@ -28,6 +27,7 @@ export default function DoramaDetalhes() {
     new Set()
   );
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
+  const [showAllActors, setShowAllActors] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -35,7 +35,6 @@ export default function DoramaDetalhes() {
     }
   }, [id]);
 
-  // Função para gerar rating simulado
   const getRating = (dorama: DoramaCompleto) => {
     const hash = dorama.doramaId.split('').reduce((a, b) => {
       a = (a << 5) - a + b.charCodeAt(0);
@@ -112,12 +111,8 @@ export default function DoramaDetalhes() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header com backdrop */}
       <div className="relative h-96 bg-gradient-to-r from-purple-900 to-purple-700 overflow-hidden">
-        {/* Background blur effect */}
         <div className="absolute inset-0 bg-black/40"></div>
-
-        {/* Navigation */}
         <div className="absolute top-0 left-0 right-0 z-20 p-6">
           <button
             onClick={() => router.back()}
@@ -127,12 +122,9 @@ export default function DoramaDetalhes() {
             <span>Voltar</span>
           </button>
         </div>
-
-        {/* Hero content */}
         <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row gap-6">
-              {/* Poster */}
               <div className="w-48 h-72 flex-shrink-0 rounded-xl overflow-hidden shadow-2xl">
                 {doramaAtual.capaUrl && doramaAtual.capaUrl !== 'teste' ? (
                   <img
@@ -142,12 +134,10 @@ export default function DoramaDetalhes() {
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-                    <Play className="w-16 h-16 text-white opacity-80" />
+                    <Users className="w-16 h-16 text-white opacity-80" />
                   </div>
                 )}
               </div>
-
-              {/* Info */}
               <div className="flex-1">
                 <h1 className="text-4xl font-bold text-white mb-2">
                   {doramaAtual.titulo}
@@ -157,8 +147,6 @@ export default function DoramaDetalhes() {
                     {doramaAtual.tituloOriginal}
                   </p>
                 )}
-
-                {/* Metadata */}
                 <div className="flex flex-wrap items-center gap-4 mb-4 text-white">
                   <div className="flex items-center gap-1">
                     <Star className="w-5 h-5 text-yellow-400 fill-current" />
@@ -182,8 +170,6 @@ export default function DoramaDetalhes() {
                     </span>
                   )}
                 </div>
-
-                {/* Gêneros */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {doramaAtual.generos.map((genero) => (
                     <span
@@ -194,15 +180,10 @@ export default function DoramaDetalhes() {
                     </span>
                   ))}
                 </div>
-
-                {/* Ações */}
                 <div className="flex gap-3">
                   <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2">
-                    <Play className="w-5 h-5" />
-                    Assistir
-                  </button>
-                  <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-3 rounded-xl transition-colors">
                     <Plus className="w-5 h-5" />
+                    Adicionar à lista
                   </button>
                   <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-3 rounded-xl transition-colors">
                     <Heart className="w-5 h-5" />
@@ -217,12 +198,9 @@ export default function DoramaDetalhes() {
         </div>
       </div>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Sinopse */}
             <section className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Sinopse</h2>
               <div className="relative">
@@ -244,7 +222,6 @@ export default function DoramaDetalhes() {
               </div>
             </section>
 
-            {/* Temporadas */}
             <section className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl font-bold text-gray-900 mb-4">
                 Temporadas ({doramaAtual.temporadas.length})
@@ -312,42 +289,67 @@ export default function DoramaDetalhes() {
               </div>
             </section>
 
-            {/* Elenco */}
             {doramaAtual.atores.length > 0 && (
               <section className="bg-white rounded-2xl p-6 shadow-sm">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
                   Elenco ({doramaAtual.atores.length})
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {doramaAtual.atores.slice(0, 8).map((ator) => (
-                    <div key={ator.id} className="text-center">
-                      <div className="w-24 h-24 mx-auto mb-2 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 to-purple-600">
-                        {ator.fotoUrl && ator.fotoUrl !== 'teste' ? (
-                          <img
-                            src={ator.fotoUrl}
-                            alt={ator.nome}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Users className="w-8 h-8 text-white opacity-80" />
+                  {showAllActors
+                    ? doramaAtual.atores.map((ator) => (
+                        <div key={ator.id} className="text-center">
+                          <div className="w-24 h-24 mx-auto mb-2 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 to-purple-600">
+                            {ator.fotoUrl && ator.fotoUrl !== 'teste' ? (
+                              <img
+                                src={ator.fotoUrl}
+                                alt={ator.nome}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Users className="w-8 h-8 text-white opacity-80" />
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <h3 className="font-medium text-gray-900 text-sm">
-                        {ator.nome}
-                      </h3>
-                      <p className="text-xs text-gray-600">{ator.pais}</p>
-                    </div>
-                  ))}
+                          <h3 className="font-medium text-gray-900 text-sm">
+                            {ator.nome}
+                          </h3>
+                          <p className="text-xs text-gray-600">{ator.pais}</p>
+                        </div>
+                      ))
+                    : doramaAtual.atores.slice(0, 8).map((ator) => (
+                        <div key={ator.id} className="text-center">
+                          <div className="w-24 h-24 mx-auto mb-2 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 to-purple-600">
+                            {ator.fotoUrl && ator.fotoUrl !== 'teste' ? (
+                              <img
+                                src={ator.fotoUrl}
+                                alt={ator.nome}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Users className="w-8 h-8 text-white opacity-80" />
+                              </div>
+                            )}
+                          </div>
+                          <h3 className="font-medium text-gray-900 text-sm">
+                            {ator.nome}
+                          </h3>
+                          <p className="text-xs text-gray-600">{ator.pais}</p>
+                        </div>
+                      ))}
                 </div>
+                <button
+                  onClick={() => setShowAllActors(!showAllActors)}
+                  className="mt-4 text-purple-600 hover:text-purple-700 font-medium text-sm"
+                >
+                  {showAllActors ? 'Ver menos' : 'Ver todos os atores'}
+                </button>
               </section>
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
-            {/* Informações técnicas */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h3 className="font-bold text-gray-900 mb-4">Informações</h3>
               <div className="space-y-3 text-sm">
@@ -382,7 +384,6 @@ export default function DoramaDetalhes() {
               </div>
             </div>
 
-            {/* Ações */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h3 className="font-bold text-gray-900 mb-4">Suas ações</h3>
               <div className="space-y-3">
