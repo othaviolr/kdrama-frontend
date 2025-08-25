@@ -1,63 +1,128 @@
 'use client';
 
-import { useState } from 'react';
-import { X, Save, Loader2 } from 'lucide-react';
-import { Usuario } from '@/types/user';
+import { useState, useEffect, ChangeEvent } from 'react';
+import { X, Save, Loader2, Trash2 } from 'lucide-react';
+import { PerfilApi } from '@/types/user';
+import { usuarioService } from 'src/services/usuarioService';
 
 interface EditProfileModalProps {
   isOpen: boolean;
-  usuario: Usuario;
+  usuario: PerfilApi;
   onClose: () => void;
+  onUpdate: (usuario: PerfilApi) => void;
 }
 
 export function EditProfileModal({
   isOpen,
   usuario,
   onClose,
+  onUpdate,
 }: EditProfileModalProps) {
   const [formData, setFormData] = useState({
     nome: usuario.nome,
-    bio: '', // Bio não está no Usuario atual, pode ser adicionada futuramente
+    bio: usuario.bio ?? '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
+  const [fotoPreview, setFotoPreview] = useState(usuario.fotoUrl ?? '');
+  const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setFormData({
+      nome: usuario.nome,
+      bio: usuario.bio ?? '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
+    setFotoPreview(usuario.fotoUrl ?? '');
+    setFotoFile(null);
+  }, [usuario]);
+
+  const handleChange = (field: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleFotoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFotoFile(file);
+      setFotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemoveFoto = () => {
+    setFotoFile(null);
+    setFotoPreview('');
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      nome: usuario.nome,
+      bio: usuario.bio ?? '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
+    setFotoPreview(usuario.fotoUrl ?? '');
+    setFotoFile(null);
+    onClose();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // TODO: Implementar atualização real via API
-      console.log('Atualizando perfil:', formData);
+      let fotoUrl = usuario.fotoUrl;
 
-      // Simular delay da API
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      if (fotoFile) {
+        // Upload da nova foto
+        const form = new FormData();
+        form.append('file', fotoFile);
+        const uploadResult = await fetch('/api/upload', {
+          method: 'POST',
+          body: form,
+        });
+        const data = await uploadResult.json();
+        fotoUrl = data.url;
+      } else if (!fotoPreview) {
+        // Remove a foto
+        fotoUrl = '';
+      }
 
-      // Aqui você chamaria: await usuarioService.updatePerfil(formData);
+      // Atualiza o perfil no backend
+      await usuarioService.updatePerfil({
+        nome: formData.nome,
+        nomeUsuario: usuario.nomeUsuario,
+        bio: formData.bio,
+        fotoUrl,
+      });
 
+      // Atualiza o estado do usuário no componente pai
+      onUpdate({
+        ...usuario,
+        nome: formData.nome,
+        bio: formData.bio,
+        fotoUrl,
+      });
+
+      // Fecha o modal
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao atualizar perfil:', error);
+
+      // Tenta pegar mensagem do backend se existir
+      if (error?.message) {
+        alert(`Erro ao salvar perfil: ${error.message}`);
+      } else {
+        alert('Erro ao salvar perfil. Tente novamente.');
+      }
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      nome: usuario.nome,
-      bio: '',
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
-    onClose();
-  };
-
-  const handleChange = (field: keyof typeof formData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   if (!isOpen) return null;
@@ -86,6 +151,41 @@ export function EditProfileModal({
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Foto */}
+            <div className="flex items-center gap-4">
+              {fotoPreview ? (
+                <img
+                  src={fotoPreview}
+                  alt="Foto do perfil"
+                  className="w-20 h-20 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                  Sem foto
+                </div>
+              )}
+              <div className="flex flex-col gap-2">
+                <label className="cursor-pointer text-purple-600 hover:underline flex items-center gap-1">
+                  Alterar foto
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFotoChange}
+                    className="hidden"
+                  />
+                </label>
+                {fotoPreview && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveFoto}
+                    className="flex items-center gap-1 text-red-600 hover:underline"
+                  >
+                    <Trash2 className="w-4 h-4" /> Remover
+                  </button>
+                )}
+              </div>
+            </div>
+
             {/* Nome */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -133,54 +233,36 @@ export function EditProfileModal({
               </p>
             </div>
 
-            {/* Alteração de senha */}
+            {/* Senha */}
             <div className="space-y-4 pt-4 border-t border-gray-200">
               <h3 className="text-lg font-medium text-gray-900">
                 Alterar Senha
               </h3>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Senha Atual
-                </label>
-                <input
-                  type="password"
-                  value={formData.currentPassword}
-                  onChange={(e) =>
-                    handleChange('currentPassword', e.target.value)
-                  }
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all outline-none"
-                  placeholder="Digite sua senha atual"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nova Senha
-                </label>
-                <input
-                  type="password"
-                  value={formData.newPassword}
-                  onChange={(e) => handleChange('newPassword', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all outline-none"
-                  placeholder="Digite sua nova senha"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirmar Nova Senha
-                </label>
-                <input
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) =>
-                    handleChange('confirmPassword', e.target.value)
-                  }
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all outline-none"
-                  placeholder="Confirme sua nova senha"
-                />
-              </div>
+              <input
+                type="password"
+                value={formData.currentPassword}
+                onChange={(e) =>
+                  handleChange('currentPassword', e.target.value)
+                }
+                placeholder="Senha atual"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all outline-none"
+              />
+              <input
+                type="password"
+                value={formData.newPassword}
+                onChange={(e) => handleChange('newPassword', e.target.value)}
+                placeholder="Nova senha"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all outline-none"
+              />
+              <input
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  handleChange('confirmPassword', e.target.value)
+                }
+                placeholder="Confirmar nova senha"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all outline-none"
+              />
             </div>
 
             {/* Actions */}

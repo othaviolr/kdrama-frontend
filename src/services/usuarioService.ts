@@ -26,8 +26,10 @@ export class UsuarioService extends ApiService {
     return this.makeRequest('/usuarios/perfil');
   }
 
-  async updatePerfil(data: any): Promise<void> {
-    return this.makeRequest('/usuarios/perfil', {
+  async updatePerfil(
+    data: Pick<PerfilApi, 'nome' | 'nomeUsuario' | 'bio' | 'fotoUrl'>
+  ): Promise<PerfilApi> {
+    return await this.makeRequest<PerfilApi>('/usuarios/perfil', {
       method: 'PUT',
       body: JSON.stringify(data),
     });
@@ -39,14 +41,18 @@ export class UsuarioService extends ApiService {
     });
   }
 
-  async getUsuario(nomeUsuario: string): Promise<Usuario> {
+  async getUsuario(nomeUsuario: string): Promise<
+    PerfilApi & {
+      totalSeguidores: number;
+      totalSeguindo: number;
+      segueUsuarioAtual: boolean;
+    }
+  > {
     return this.makeRequest(`/usuarios/${nomeUsuario}`);
   }
 
   async seguirUsuario(id: string): Promise<void> {
-    return this.makeRequest(`/usuarios/${id}/seguir`, {
-      method: 'POST',
-    });
+    return this.makeRequest(`/usuarios/${id}/seguir`, { method: 'POST' });
   }
 
   async deixarDeSeguir(id: string): Promise<void> {

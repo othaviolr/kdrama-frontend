@@ -7,10 +7,11 @@ export interface PerfilApi {
 }
 
 export interface Usuario {
-  usuarioId: string;
+  usuarioId?: string;
   nome: string;
   nomeUsuario: string;
   email: string;
+  fotoUrl?: string | null;
 }
 
 export interface LoginResponse {
@@ -19,6 +20,7 @@ export interface LoginResponse {
   nomeUsuario: string;
   email: string;
   token: string;
+  fotoUrl?: string | null;
 }
 
 export interface AuthContextType {

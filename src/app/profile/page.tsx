@@ -10,12 +10,21 @@ import { UserLists } from '@/components/profile/UserLists';
 import { FollowersSection } from '@/components/profile/FollowersSection';
 import { SettingsSection } from '@/components/profile/SettingsSection';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
-import { Usuario } from '@/types/user';
+import { PerfilApi } from '@/types/user';
+import { usuarioService } from 'src/services/usuarioService';
 
 export default function ProfilePage() {
   const { usuario, isAuthenticated, isLoading } = useAuth();
+  const [perfil, setPerfil] = useState<PerfilApi | null>(null);
   const [activeTab, setActiveTab] = useState('atividade');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // Carregar perfil completo
+  useEffect(() => {
+    if (usuario) {
+      usuarioService.getPerfil().then(setPerfil).catch(console.error);
+    }
+  }, [usuario]);
 
   // Redirect se não estiver logado
   useEffect(() => {
@@ -24,7 +33,7 @@ export default function ProfilePage() {
     }
   }, [isAuthenticated, isLoading]);
 
-  if (isLoading) {
+  if (isLoading || !perfil) {
     return (
       <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
         <div className="flex items-center gap-3">
@@ -78,7 +87,11 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 pt-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProfileHeader
-          usuario={usuario}
+          usuario={{
+            ...usuario,
+            fotoUrl: perfil.fotoUrl,
+            bio: perfil.bio,
+          }}
           onEditClick={() => setIsEditModalOpen(true)}
         />
 
@@ -90,8 +103,9 @@ export default function ProfilePage() {
 
         <EditProfileModal
           isOpen={isEditModalOpen}
-          usuario={usuario}
+          usuario={perfil}
           onClose={() => setIsEditModalOpen(false)}
+          onUpdate={(novoPerfil) => setPerfil(novoPerfil)}
         />
       </div>
     </div>
