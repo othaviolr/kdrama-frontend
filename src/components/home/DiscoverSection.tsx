@@ -1,72 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-import { Star, TrendingUp, MapPin, User } from 'lucide-react';
-import { Button } from '../ui/Button';
-
-interface Show {
-  id: string;
-  title: string;
-  rating: number;
-  recommendation: string;
-  badge: string;
-  imageUrl: string;
-}
+import { useState, useEffect } from 'react';
+import { Star, TrendingUp, MapPin, User, Play } from 'lucide-react';
+import { useDorama } from '../../context/DoramaContext';
+import { DoramaCompleto } from '../../types/dorama';
 
 export function DiscoverSection() {
   const [activeTab, setActiveTab] = useState('recommended');
+  const { doramas, carregarDoramas, loading } = useDorama();
 
-  const shows: Show[] = [
-    {
-      id: '1',
-      title: 'Trigger',
-      rating: 4.9,
-      recommendation: 'May recomendou',
-      badge: '',
-      imageUrl:
-        'https://m.media-amazon.com/images/M/MV5BMTM3MWRiYWMtZmVkMi00OWE0LWI1M2ItMzE2ODc3YWM3YTU4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
-    },
-    {
-      id: '2',
-      title: 'My Demon',
-      rating: 4.8,
-      recommendation: 'Em alta',
-      badge: 'trending',
-      imageUrl: 'https://photos.hancinema.net/photos/fullsizephoto1730021.jpg',
-    },
-    {
-      id: '3',
-      title: 'Weak Hero Class 2',
-      rating: 4.9,
-      recommendation: 'Similar aos seus',
-      badge: 'similar',
-      imageUrl:
-        'https://m.media-amazon.com/images/M/MV5BYjJmZjU5MDYtMTljMy00YmRkLWJlMWMtZDQ2NjYxNzIyYzYzXkEyXkFqcGc@._V1_.jpg',
-    },
-    {
-      id: '4',
-      title: 'Vincenzo',
-      rating: 4.7,
-      recommendation: 'Você recomendou',
-      badge: '',
-      imageUrl:
-        'https://br.web.img3.acsta.net/pictures/21/12/03/15/42/0565547.jpg',
-    },
-    {
-      id: '5',
-      title: 'The Glory',
-      rating: 4.8,
-      recommendation: 'Similar aos seus',
-      badge: '',
-      imageUrl: 'https://bancodeseries.tv.br/images/posters/26376.jpg',
-    },
-  ];
+  // Carregar doramas quando o componente monta
+  useEffect(() => {
+    carregarDoramas();
+  }, []);
 
   const tabs = [
     { id: 'recommended', label: 'Recomendados', active: true },
     { id: 'trending', label: 'Em Alta', active: false },
     { id: 'new', label: 'Novos', active: false },
   ];
+
+  // Função para gerar badge baseado no dorama
+  const getBadge = (dorama: DoramaCompleto, index: number) => {
+    if (index === 0 || index === 1) return 'trending';
+    if (index === 2 || index === 3) return 'similar';
+    return '';
+  };
+
+  // Função para gerar recomendação
+  const getRecommendation = (dorama: DoramaCompleto, index: number) => {
+    const recommendations = [
+      'Em alta',
+      'Recomendado para você',
+      'Similar aos seus',
+      'Você pode gostar',
+      'Popular',
+    ];
+    return recommendations[index % recommendations.length];
+  };
+
+  // Função para gerar rating (simulado)
+  const getRating = (dorama: DoramaCompleto) => {
+    // Gera um rating baseado no ID do dorama para consistência
+    const hash = dorama.doramaId.split('').reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    return Math.abs(hash % 11) / 10 + 4.0; // Rating entre 4.0 e 5.0
+  };
+
+  const handleDoramaClick = (dorama: DoramaCompleto) => {
+    console.log('Clicou no dorama:', dorama.titulo);
+    // Aqui você pode navegar para a página de detalhes
+    // router.push(`/dorama/${dorama.doramaId}`);
+  };
 
   return (
     <div className="mb-16">
@@ -107,73 +94,155 @@ export function DiscoverSection() {
             </div>
           </div>
 
-          {/* Shows Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-            {shows.map((show) => (
-              <div key={show.id} className="group cursor-pointer">
-                <div className="aspect-[3/4] mb-4 relative overflow-hidden rounded-2xl bg-gray-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
-                  {/* Imagem de fundo com zoom sofisticado */}
+          {/* Loading State */}
+          {loading ? (
+            <div className="flex justify-center items-center py-16">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-purple-600 font-medium">
+                  Carregando doramas...
+                </span>
+              </div>
+            </div>
+          ) : doramas.length === 0 ? (
+            // Empty State
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Play className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Nenhum dorama encontrado
+              </h3>
+              <p className="text-gray-600">
+                Tente novamente ou adicione alguns doramas.
+              </p>
+            </div>
+          ) : (
+            // Shows Grid
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+              {doramas.slice(0, 10).map((dorama, index) => {
+                const badge = getBadge(dorama, index);
+                const recommendation = getRecommendation(dorama, index);
+                const rating = getRating(dorama);
+
+                return (
                   <div
-                    className="absolute inset-0 w-full h-full bg-cover bg-center transform scale-100 group-hover:scale-110 transition-transform duration-700 ease-out"
-                    style={{ backgroundImage: `url(${show.imageUrl})` }}
-                  />
+                    key={dorama.doramaId}
+                    className="group cursor-pointer"
+                    onClick={() => handleDoramaClick(dorama)}
+                  >
+                    <div className="aspect-[3/4] mb-4 relative overflow-hidden rounded-2xl bg-gray-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                      {/* Imagem de fundo ou placeholder */}
+                      {dorama.capaUrl && dorama.capaUrl !== 'teste' ? (
+                        <div
+                          className="absolute inset-0 w-full h-full bg-cover bg-center transform scale-100 group-hover:scale-110 transition-transform duration-700 ease-out"
+                          style={{ backgroundImage: `url(${dorama.capaUrl})` }}
+                        />
+                      ) : (
+                        // Placeholder quando não tem imagem
+                        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                          <div className="text-white text-center">
+                            <Play className="w-12 h-12 mx-auto mb-2 opacity-80" />
+                            <span className="text-sm font-medium opacity-90">
+                              {dorama.titulo}
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500"></div>
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500"></div>
 
-                  {/* Badge */}
-                  {show.badge && (
-                    <div className="absolute top-3 left-3">
-                      <div className="bg-black/70 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/20">
-                        <div className="flex items-center gap-1.5">
-                          {show.badge === 'trending' && (
-                            <TrendingUp className="w-3 h-3 text-yellow-400" />
-                          )}
-                          {show.badge === 'similar' && (
-                            <MapPin className="w-3 h-3 text-blue-400" />
-                          )}
-                          <span className="text-xs text-white font-semibold">
-                            {show.badge === 'trending' ? 'Em alta' : 'Similar'}
+                      {/* Badge */}
+                      {badge && (
+                        <div className="absolute top-3 left-3">
+                          <div className="bg-black/70 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/20">
+                            <div className="flex items-center gap-1.5">
+                              {badge === 'trending' && (
+                                <TrendingUp className="w-3 h-3 text-yellow-400" />
+                              )}
+                              {badge === 'similar' && (
+                                <MapPin className="w-3 h-3 text-blue-400" />
+                              )}
+                              <span className="text-xs text-white font-semibold">
+                                {badge === 'trending' ? 'Em alta' : 'Similar'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Indicador de país */}
+                      <div className="absolute top-3 right-3">
+                        <div className="bg-black/50 backdrop-blur-sm px-2 py-1 rounded-lg">
+                          <span className="text-xs text-white font-medium">
+                            {dorama.paisOrigem}
                           </span>
                         </div>
                       </div>
+
+                      {/* Efeito de brilho sutil */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/0 to-white/0 group-hover:via-white/10 group-hover:to-white/5 transition-all duration-600"></div>
                     </div>
-                  )}
 
-                  {/* Efeito de brilho sutil */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/0 to-white/0 group-hover:via-white/10 group-hover:to-white/5 transition-all duration-600"></div>
-                </div>
+                    {/* Título */}
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors text-lg line-clamp-2">
+                      {dorama.titulo}
+                    </h3>
 
-                {/* Título */}
-                <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors text-lg">
-                  {show.title}
-                </h3>
+                    {/* Ano e Status */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm text-gray-600">
+                        {dorama.anoLancamento}
+                      </span>
+                      {dorama.emExibicao && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                          Em exibição
+                        </span>
+                      )}
+                    </div>
 
-                {/* Rating com estrelas amarelas */}
-                <div className="flex items-center gap-1 mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(show.rating)
-                          ? 'text-yellow-400 fill-current'
-                          : 'text-gray-200'
-                      }`}
-                    />
-                  ))}
-                  <span className="text-sm text-gray-900 ml-1">
-                    {show.rating}
-                  </span>
-                </div>
+                    {/* Rating com estrelas */}
+                    <div className="flex items-center gap-1 mb-3">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < Math.floor(rating)
+                              ? 'text-yellow-400 fill-current'
+                              : 'text-gray-200'
+                          }`}
+                        />
+                      ))}
+                      <span className="text-sm text-gray-900 ml-1">
+                        {rating.toFixed(1)}
+                      </span>
+                    </div>
 
-                {/* Recomendação */}
-                <div className="flex items-center gap-1.5 text-sm text-gray-900">
-                  <User className="w-3 h-3" />
-                  <span>{show.recommendation}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+                    {/* Gêneros */}
+                    {dorama.generos.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {dorama.generos.slice(0, 2).map((genero) => (
+                          <span
+                            key={genero.id}
+                            className="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded-md font-medium"
+                          >
+                            {genero.nome}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Recomendação */}
+                    <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                      <User className="w-3 h-3" />
+                      <span>{recommendation}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 

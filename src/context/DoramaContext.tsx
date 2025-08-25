@@ -1,75 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from 'react';
+'use client';
+
+import { createContext, useContext, useState, ReactNode } from 'react';
 import { doramaService } from '../services';
-
-interface Genero {
-  id: string;
-  nome: string;
-}
-
-interface Ator {
-  id: string;
-  nome: string;
-  nomeCompleto: string;
-  anoNascimento: number;
-  altura: number;
-  pais: string;
-  biografia: string;
-  fotoUrl: string;
-  instagram: string;
-}
-
-interface Episodio {
-  id: string;
-  temporadaId: string;
-  numero: number;
-  titulo: string;
-  duracaoMinutos: number;
-  tipo: number;
-  sinopse: string;
-}
-
-interface Temporada {
-  episodios: Episodio[];
-  id: string;
-  nome: string;
-  ordem: number;
-  doramaId: string;
-  dataEstreia: string;
-  dataFim: string | null;
-}
-
-interface DoramaCompleto {
-  doramaId: string;
-  titulo: string;
-  tituloOriginal: string;
-  sinopse: string;
-  capaUrl: string;
-  anoLancamento: number;
-  paisOrigem: string;
-  emExibicao: boolean;
-  plataforma: number;
-  generos: Genero[];
-  atores: Ator[];
-  temporadas: Temporada[];
-}
-
-interface DoramaContextType {
-  doramas: DoramaCompleto[];
-  doramaAtual: DoramaCompleto | null;
-  loading: boolean;
-  loadingDorama: boolean;
-
-  carregarDoramas: () => Promise<void>;
-  carregarDorama: (id: string) => Promise<void>;
-  limparDoramaAtual: () => void;
-  buscarDoramaPorId: (id: string) => DoramaCompleto | undefined;
-}
+import { DoramaCompleto, DoramaContextType } from '../types/dorama';
 
 const DoramaContext = createContext<DoramaContextType | undefined>(undefined);
 
@@ -79,32 +12,41 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [loadingDorama, setLoadingDorama] = useState(false);
 
+  // Carregar lista de doramas
   const carregarDoramas = async () => {
-    if (doramas.length > 0) return;
+    if (doramas.length > 0) return; // Já carregou, não carrega de novo
 
     setLoading(true);
     try {
+      console.log('🎬 Carregando doramas...');
       const lista = await doramaService.getDoramas();
+      console.log('✅ Doramas carregados:', lista.length);
       setDoramas(lista);
     } catch (error) {
-      console.error('Erro ao carregar doramas:', error);
+      console.error('❌ Erro ao carregar doramas:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  // Carregar dorama específico
   const carregarDorama = async (id: string) => {
+    // Primeiro verifica se já tem no cache
     const doramaExistente = doramas.find((d) => d.doramaId === id);
     if (doramaExistente) {
+      console.log('📋 Dorama encontrado no cache:', doramaExistente.titulo);
       setDoramaAtual(doramaExistente);
       return;
     }
 
     setLoadingDorama(true);
     try {
+      console.log('🎬 Carregando dorama:', id);
       const dorama = await doramaService.getDoramaCompleto(id);
+      console.log('✅ Dorama carregado:', dorama.titulo);
       setDoramaAtual(dorama);
 
+      // Adiciona no cache se não existir
       setDoramas((prev) => {
         const existe = prev.find((d) => d.doramaId === id);
         if (!existe) {
@@ -113,17 +55,19 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
         return prev;
       });
     } catch (error) {
-      console.error('Erro ao carregar dorama:', error);
+      console.error('❌ Erro ao carregar dorama:', error);
       setDoramaAtual(null);
     } finally {
       setLoadingDorama(false);
     }
   };
 
+  // Limpar dorama atual
   const limparDoramaAtual = () => {
     setDoramaAtual(null);
   };
 
+  // Buscar dorama por ID no cache
   const buscarDoramaPorId = (id: string) => {
     return doramas.find((d) => d.doramaId === id);
   };
@@ -144,6 +88,7 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Hook para usar o contexto
 export function useDorama() {
   const context = useContext(DoramaContext);
   if (context === undefined) {

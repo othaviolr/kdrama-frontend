@@ -1,5 +1,5 @@
 export * from './user';
-export * from './drama';
+export * from './dorama';
 export * from './avaliacao';
 export * from './lista';
 export * from './atividade';
