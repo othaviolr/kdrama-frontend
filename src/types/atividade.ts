@@ -1,117 +1,46 @@
-export type TipoAtividade =
-  | 'REGISTRO'
-  | 'LOGIN'
-  | 'DORAMA_ADICIONADO'
-  | 'DORAMA_ATUALIZADO'
-  | 'AVALIACAO_ADICIONADA'
-  | 'AVALIACAO_ATUALIZADA'
-  | 'LISTA_CRIADA'
-  | 'DORAMA_LISTA_ADICIONADO'
-  | 'SEGUIR_USUARIO'
-  | 'PROGRESSO_ATUALIZADO'
-  | 'STATUS_ATUALIZADO';
+export interface AtividadeApi {
+  usuarioId: string;
+  usuarioNome: string;
+  usuarioAvatarUrl: string;
+  tipoAtividade: number;
+  doramaId: string | null;
+  doramaTitulo: string | null;
+  temporadaNumero: number | null;
+  episodioNumero: number | null;
+  nota: number | null;
+  comentario: string | null;
+  prateleiraId: string | null;
+  prateleiraNome: string | null;
+  criadoEm: string;
+}
 
 export interface Atividade {
   id: string;
-  tipo: TipoAtividade;
   usuarioId: string;
-  usuario: {
-    nomeUsuario: string;
-    nomeExibicao?: string;
-    avatar?: string;
-  };
+  usuarioNome: string;
+  usuarioAvatarUrl: string;
+  tipo: TipoAtividade;
   dados: AtividadeDados;
   dataCriacao: Date;
 }
 
-export type AtividadeDados =
-  | AtividadeDorama
-  | AtividadeAvaliacao
-  | AtividadeLista
-  | AtividadeUsuario
-  | AtividadeProgresso;
+export type TipoAtividade = 'PROGRESSO_TEMPORADA' | 'AVALIACAO' | 'PRATELEIRA';
 
-export interface AtividadeDorama {
-  doramaId: string;
-  doramaTitulo: string;
-  doramaImagem: string;
-  temporadaNumero?: number;
-}
-
-export interface AtividadeAvaliacao {
-  doramaId: string;
-  doramaTitulo: string;
-  doramaImagem: string;
-  temporadaId: string;
-  temporadaNumero: number;
-  nota: number;
-  comentario?: string;
-}
-
-export interface AtividadeLista {
-  listaId: string;
-  listaTitulo: string;
+export interface AtividadeDados {
   doramaId?: string;
   doramaTitulo?: string;
-  doramaImagem?: string;
+  temporadaNumero?: number;
+  episodioNumero?: number;
+  nota?: number;
+  comentario?: string;
+  prateleiraId?: string;
+  prateleiraNome?: string;
 }
 
-export interface AtividadeUsuario {
-  usuarioAlvoId: string;
-  usuarioAlvoNome: string;
-}
-
-export interface AtividadeProgresso {
-  doramaId: string;
-  doramaTitulo: string;
-  doramaImagem: string;
-  temporadaId: string;
-  temporadaNumero: number;
-  episodioAtual: number;
-  totalEpisodios: number;
-  statusAnterior?: string;
-  statusNovo?: string;
-}
-
-export interface ProgressoTemporada {
-  id: string;
-  usuarioId: string;
-  temporadaId: string;
-  episodioAtual: number;
-  status: StatusTemporada;
-  dataInicio?: Date;
-  dataConclusao?: Date;
-  temporada: {
-    numero: number;
-    titulo: string;
-    episodios: number;
-    dorama: {
-      id: string;
-      titulo: string;
-      imagemCapa: string;
-    };
-  };
-}
-
-export type StatusTemporada =
-  | 'NAO_INICIADO'
-  | 'ASSISTINDO'
-  | 'PAUSADO'
-  | 'ABANDONADO'
-  | 'CONCLUIDO';
-
-export interface UpdateProgressoData {
-  temporadaId: string;
-  episodioAtual: number;
-}
-
-export interface UpdateStatusData {
-  temporadaId: string;
-  status: StatusTemporada;
-}
-
-export interface FeedAtividades {
+export interface AtividadeContextType {
   atividades: Atividade[];
-  total: number;
-  hasMore: boolean;
+  loading: boolean;
+  feedAtividades: (quantidade: number) => Promise<void>;
+  atividadesUsuario: (usuarioId: string) => Promise<void>;
+  limparAtividades: () => void;
 }

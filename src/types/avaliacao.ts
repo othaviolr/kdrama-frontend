@@ -1,22 +1,58 @@
-export interface Avaliacao {
+export interface AvaliacaoApi {
   id: string;
-  usuarioId: string;
   temporadaId: string;
   nota: number;
-  comentario?: string;
+  comentario: string;
+  recomendadoPorUsuarioId: string | null;
+  recomendadoPorNomeLivre: string;
+  dataAvaliacao: string;
+}
+
+export interface AvaliacaoCreateApi {
+  temporadaId: string;
+  nota: number;
+  comentario: string;
+  recomendadoPorUsuarioId?: string;
+  recomendadoPorNomeLivre?: string;
+}
+
+export interface AvaliacaoUpdateApi {
+  temporadaId: string;
+  nota: number;
+  comentario: string;
+  recomendadoPorUsuarioId?: string;
+  recomendadoPorNomeLivre?: string;
+}
+
+export interface Avaliacao {
+  id: string;
+  temporadaId: string;
+  nota: number;
+  comentario: string;
+  recomendadoPor?: string;
   dataAvaliacao: Date;
-  spoiler: boolean;
 }
 
 export interface AvaliacaoCreate {
   temporadaId: string;
   nota: number;
-  comentario?: string;
-  spoiler?: boolean;
+  comentario: string;
+  recomendadoPorNomeLivre?: string;
 }
 
 export interface AvaliacaoUpdate {
-  nota?: number;
-  comentario?: string;
-  spoiler?: boolean;
+  temporadaId: string;
+  nota: number;
+  comentario: string;
+  recomendadoPorNomeLivre?: string;
+}
+
+export interface AvaliacaoContextType {
+  minhaAvaliacao: Avaliacao | null;
+  loading: boolean;
+  criarAvaliacao: (data: AvaliacaoCreate) => Promise<void>;
+  atualizarAvaliacao: (data: AvaliacaoUpdate) => Promise<void>;
+  obterAvaliacao: (temporadaId: string) => Promise<void>;
+  deletarAvaliacao: (temporadaId: string) => Promise<void>;
+  limparAvaliacao: () => void;
 }

@@ -1,16 +1,37 @@
-export interface Usuario {
-  id: string;
+export interface PerfilApi {
+  nome: string;
   nomeUsuario: string;
   email: string;
-  nomeExibicao?: string;
-  bio?: string;
-  avatar?: string;
-  seguidores: number;
-  seguindo: number;
-  dataCriacao: Date;
+  fotoUrl: string;
+  bio: string;
+}
+
+export interface Usuario {
+  usuarioId: string;
+  nome: string;
+  nomeUsuario: string;
+  email: string;
+}
+
+export interface LoginResponse {
+  usuarioId: string;
+  nome: string;
+  nomeUsuario: string;
+  email: string;
+  token: string;
+}
+
+export interface AuthContextType {
+  usuario: Usuario | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (email: string, senha: string) => Promise<void>;
+  registrar: (dados: any) => Promise<void>;
+  logout: () => void;
 }
 
 export interface UsuarioRegistro {
+  nome: string;
   nomeUsuario: string;
   email: string;
   senha: string;
@@ -25,4 +46,14 @@ export interface UsuarioUpdate {
   nomeExibicao?: string;
   bio?: string;
   avatar?: string;
+}
+
+export interface EstatisticasPerfil {
+  doramasAssistidos: number;
+  doramasAssistindo: number;
+  avaliacoes: number;
+  listas: number;
+  seguidores: number;
+  seguindo: number;
+  tempoTotalAssistido?: number;
 }

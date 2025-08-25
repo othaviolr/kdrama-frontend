@@ -1,51 +1,60 @@
-export interface ListaPrateleira {
+export interface ListaApi {
   id: string;
-  titulo: string;
-  descricao?: string;
+  nome: string;
+  descricao: string;
+  imagemCapaUrl: string;
+  privacidade: number;
+  shareToken: string | null;
   usuarioId: string;
-  usuario: {
-    nomeUsuario: string;
-    nomeExibicao?: string;
-    avatar?: string;
-  };
-  doramas: DoramaLista[];
+  dataCriacao: string;
+  doramas: DoramaListaApi[];
+}
+
+export interface DoramaListaApi {
+  doramaId: string;
+  dataAdicao: string;
+}
+
+export interface ListaCreateApi {
+  nome: string;
+  descricao: string;
+  imagemCapaUrl: string;
+  privacidade: number;
+}
+
+export interface Lista {
+  id: string;
+  nome: string;
+  descricao: string;
+  imagemCapaUrl: string;
   publica: boolean;
+  usuarioId: string;
   dataCriacao: Date;
-  dataAtualizacao: Date;
+  doramas: DoramaLista[];
 }
 
 export interface DoramaLista {
-  id: string;
   doramaId: string;
-  listaId: string;
   dataAdicao: Date;
-  ordem: number;
-  notas?: string;
-  dorama: {
-    id: string;
-    titulo: string;
-    imagemCapa: string;
-    ano: number;
-  };
 }
 
 export interface ListaCreate {
-  titulo: string;
-  descricao?: string;
+  nome: string;
+  descricao: string;
+  imagemCapaUrl: string;
   publica: boolean;
 }
 
 export interface ListaUpdate {
-  titulo?: string;
+  nome?: string;
   descricao?: string;
+  imagemCapaUrl?: string;
   publica?: boolean;
 }
 
 export interface AdicionarDoramaLista {
   listaId: string;
   doramaId: string;
-  notas?: string;
-  ordem?: number;
 }
 
 export interface RemoverDoramaLista {
@@ -53,20 +62,16 @@ export interface RemoverDoramaLista {
   doramaId: string;
 }
 
-export interface ListaWithDoramas extends ListaPrateleira {
-  doramas: Array<{
-    id: string;
-    ordem: number;
-    notas?: string;
-    dataAdicao: Date;
-    dorama: {
-      id: string;
-      titulo: string;
-      imagemCapa: string;
-      ano: number;
-      pais: string;
-      status: string;
-      generos: string[];
-    };
-  }>;
+export interface ListaContextType {
+  listas: Lista[];
+  listaAtual: Lista | null;
+  loading: boolean;
+  loadingLista: boolean;
+  carregarListasPublicas: () => Promise<void>;
+  carregarLista: (listaId: string) => Promise<void>;
+  criarLista: (data: ListaCreate) => Promise<void>;
+  atualizarLista: (listaId: string, data: ListaUpdate) => Promise<void>;
+  deletarLista: (listaId: string) => Promise<void>;
+  adicionarDoramaLista: (data: AdicionarDoramaLista) => Promise<void>;
+  removerDoramaLista: (data: RemoverDoramaLista) => Promise<void>;
 }
