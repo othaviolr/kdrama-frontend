@@ -11,7 +11,6 @@ import {
   Share2,
   Tv,
   Users,
-  Play,
   Bookmark,
 } from 'lucide-react';
 import { DoramaCompleto } from '@/types/dorama';
@@ -33,14 +32,14 @@ export default function DoramaHeader({
     <div className="relative min-h-[100vh] overflow-hidden">
       {/* Background com imagem de fundo desfocada */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/95 via-purple-800/90 to-indigo-900/95" />
         {dorama.capaUrl && dorama.capaUrl !== 'teste' && (
           <img
             src={dorama.capaUrl}
             alt=""
-            className="w-full h-full object-cover opacity-20 blur-sm scale-105"
+            className="w-full h-full object-cover opacity-18 blur-[3px] scale-105"
           />
         )}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/70 via-purple-800/60 to-indigo-900/70" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
       </div>
@@ -145,28 +144,23 @@ export default function DoramaHeader({
                 ))}
               </div>
 
-              {/* Botões de ação modernos */}
-              <div className="flex flex-wrap gap-4 pt-4">
-                <button className="group bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white px-8 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-purple-500/25 transform hover:scale-105 border border-purple-500/50">
-                  <Play className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                  Assistir agora
-                </button>
-
-                <button className="group bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white px-8 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-indigo-500/25 transform hover:scale-105 border border-indigo-500/50">
-                  <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+              {/* Botões de ação compactos */}
+              <div className="flex flex-wrap gap-3 pt-4">
+                <button className="group bg-white/95 hover:bg-white text-purple-700 hover:text-purple-800 px-5 py-2.5 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-white/25 transform hover:scale-105 border border-white/50 text-sm">
+                  <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                   Minha Lista
                 </button>
 
-                <button className="group bg-white/10 backdrop-blur-md hover:bg-white/20 text-white p-4 rounded-2xl transition-all duration-300 border border-white/20 hover:border-white/30 transform hover:scale-105 shadow-lg">
-                  <Heart className="w-6 h-6 group-hover:fill-red-500 group-hover:text-red-500 transition-all duration-300" />
+                <button className="group bg-white/15 backdrop-blur-md hover:bg-white/25 text-white p-2.5 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-md">
+                  <Heart className="w-4 h-4 group-hover:fill-red-400 group-hover:text-red-400 transition-all duration-300" />
                 </button>
 
-                <button className="group bg-white/10 backdrop-blur-md hover:bg-white/20 text-white p-4 rounded-2xl transition-all duration-300 border border-white/20 hover:border-white/30 transform hover:scale-105 shadow-lg">
-                  <Bookmark className="w-6 h-6 group-hover:fill-current transition-all duration-300" />
+                <button className="group bg-white/15 backdrop-blur-md hover:bg-white/25 text-white p-2.5 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-md">
+                  <Bookmark className="w-4 h-4 group-hover:fill-current transition-all duration-300" />
                 </button>
 
-                <button className="group bg-white/10 backdrop-blur-md hover:bg-white/20 text-white p-4 rounded-2xl transition-all duration-300 border border-white/20 hover:border-white/30 transform hover:scale-105 shadow-lg">
-                  <Share2 className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                <button className="group bg-white/15 backdrop-blur-md hover:bg-white/25 text-white p-2.5 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-md">
+                  <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
                 </button>
               </div>
             </div>
