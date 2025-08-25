@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Search, Filter, Grid, List, Star, Play, Calendar } from 'lucide-react';
-import { useDorama } from '../../context/DoramaContext';
+import { useDorama } from 'src/context/DoramaContext';
 import { DoramaCompleto } from '@/types/dorama';
 
+import { useRouter } from 'next/navigation';
+
 export default function CatalogPage() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
@@ -13,12 +16,10 @@ export default function CatalogPage() {
 
   const { doramas, carregarDoramas, loading } = useDorama();
 
-  // Carregar doramas quando o componente monta
   useEffect(() => {
     carregarDoramas();
   }, []);
 
-  // Extrair gêneros únicos dos doramas
   const availableGenres = useMemo(() => {
     const genres = new Set<string>();
     doramas.forEach((dorama) => {
@@ -27,7 +28,6 @@ export default function CatalogPage() {
     return Array.from(genres).sort();
   }, [doramas]);
 
-  // Extrair países únicos dos doramas
   const availableCountries = useMemo(() => {
     const countries = new Set<string>();
     doramas.forEach((dorama) => {
@@ -36,11 +36,9 @@ export default function CatalogPage() {
     return Array.from(countries).sort();
   }, [doramas]);
 
-  // Filtrar doramas baseado nos filtros ativos
   const filteredDoramas = useMemo(() => {
     let filtered = doramas;
 
-    // Filtro de busca
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -55,14 +53,12 @@ export default function CatalogPage() {
       );
     }
 
-    // Filtro de gênero
     if (selectedGenre !== 'all') {
       filtered = filtered.filter((dorama) =>
         dorama.generos.some((genero) => genero.nome === selectedGenre)
       );
     }
 
-    // Filtro de país
     if (selectedCountry !== 'all') {
       filtered = filtered.filter(
         (dorama) => dorama.paisOrigem === selectedCountry
@@ -72,7 +68,6 @@ export default function CatalogPage() {
     return filtered;
   }, [doramas, searchQuery, selectedGenre, selectedCountry]);
 
-  // Função para gerar rating simulado
   const getRating = (dorama: DoramaCompleto) => {
     const hash = dorama.doramaId.split('').reduce((a, b) => {
       a = (a << 5) - a + b.charCodeAt(0);
@@ -82,8 +77,7 @@ export default function CatalogPage() {
   };
 
   const handleDoramaClick = (dorama: DoramaCompleto) => {
-    console.log('Navegando para:', dorama.titulo);
-    // router.push(`/dorama/${dorama.doramaId}`);
+    router.push(`/dorama/${dorama.doramaId}`);
   };
 
   return (
