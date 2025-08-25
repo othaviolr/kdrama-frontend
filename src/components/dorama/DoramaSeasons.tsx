@@ -60,9 +60,7 @@ export default function DoramaSeasons({ seasons }: DoramaSeasonsProps) {
             </div>
           </div>
         </div>
-        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-          <Calendar className="w-6 h-6 text-white" />
-        </div>
+        <Calendar className="w-6 h-6 text-purple-600" />
       </div>
 
       {/* Lista de temporadas */}

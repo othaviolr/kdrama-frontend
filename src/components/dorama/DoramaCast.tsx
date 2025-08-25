@@ -29,9 +29,7 @@ export default function DoramaCast({ actors }: DoramaCastProps) {
             {actors.length} {actors.length === 1 ? 'ator' : 'atores'}
           </p>
         </div>
-        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-          <Users className="w-6 h-6 text-white" />
-        </div>
+        <Users className="w-6 h-6 text-purple-600" />
       </div>
 
       {/* Grid do elenco */}
