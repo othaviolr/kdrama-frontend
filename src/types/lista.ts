@@ -28,6 +28,7 @@ export interface Lista {
   descricao: string;
   imagemCapaUrl: string;
   publica: boolean;
+  shareToken?: string;
   usuarioId: string;
   dataCriacao: Date;
   doramas: DoramaLista[];
@@ -64,14 +65,17 @@ export interface RemoverDoramaLista {
 
 export interface ListaContextType {
   listas: Lista[];
+  minhasListas: Lista[];
   listaAtual: Lista | null;
   loading: boolean;
   loadingLista: boolean;
   carregarListasPublicas: () => Promise<void>;
+  carregarMinhasListas: () => Promise<void>;
   carregarLista: (listaId: string) => Promise<void>;
   criarLista: (data: ListaCreate) => Promise<void>;
   atualizarLista: (listaId: string, data: ListaUpdate) => Promise<void>;
   deletarLista: (listaId: string) => Promise<void>;
+  compartilharLista: (listaId: string) => Promise<string>;
   adicionarDoramaLista: (data: AdicionarDoramaLista) => Promise<void>;
   removerDoramaLista: (data: RemoverDoramaLista) => Promise<void>;
 }

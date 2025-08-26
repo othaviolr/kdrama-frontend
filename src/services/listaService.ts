@@ -14,6 +14,10 @@ export class ListaService extends ApiService {
     return this.makeRequest('/listas-prateleira/publicas');
   }
 
+  async getMinhasListas(): Promise<ListaApi[]> {
+    return this.makeRequest('/listas-prateleira/minhas');
+  }
+
   async getLista(listaId: string): Promise<ListaApi> {
     return this.makeRequest(`/listas-prateleira/${listaId}`);
   }
@@ -53,6 +57,12 @@ export class ListaService extends ApiService {
     });
   }
 
+  async compartilharLista(listaId: string): Promise<{ shareToken: string }> {
+    return this.makeRequest(`/listas-prateleira/${listaId}/compartilhar`, {
+      method: 'POST',
+    });
+  }
+
   async adicionarDoramaLista(data: AdicionarDoramaLista): Promise<void> {
     return this.makeRequest('/dorama-lista', {
       method: 'POST',
@@ -80,6 +90,7 @@ export class ListaService extends ApiService {
       descricao: lista.descricao,
       imagemCapaUrl: lista.imagemCapaUrl,
       publica: lista.privacidade === 1,
+      shareToken: lista.shareToken || undefined,
       usuarioId: lista.usuarioId,
       dataCriacao: new Date(lista.dataCriacao),
       doramas: lista.doramas.map((dorama) => ({

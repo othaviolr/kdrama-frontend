@@ -15,6 +15,7 @@ const ListaContext = createContext<ListaContextType | undefined>(undefined);
 
 export function ListaProvider({ children }: { children: ReactNode }) {
   const [listas, setListas] = useState<Lista[]>([]);
+  const [minhasListas, setMinhasListas] = useState<Lista[]>([]);
   const [listaAtual, setListaAtual] = useState<Lista | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingLista, setLoadingLista] = useState(false);
@@ -35,6 +36,25 @@ export function ListaProvider({ children }: { children: ReactNode }) {
       setListas(listasConvertidas);
     } catch (error) {
       console.error('❌ Erro ao carregar listas públicas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const carregarMinhasListas = async () => {
+    setLoading(true);
+    try {
+      console.log('📋 Carregando minhas listas...');
+      const listasApi = await listaService.getMinhasListas();
+
+      const listasConvertidas = listasApi.map((lista) =>
+        listaService.convertListaApi(lista)
+      );
+
+      console.log('✅ Minhas listas carregadas:', listasConvertidas.length);
+      setMinhasListas(listasConvertidas);
+    } catch (error) {
+      console.error('❌ Erro ao carregar minhas listas:', error);
     } finally {
       setLoading(false);
     }
@@ -79,8 +99,7 @@ export function ListaProvider({ children }: { children: ReactNode }) {
       console.log('➕ Criando nova lista:', data.nome);
       await listaService.criarLista(data);
 
-      setListas([]);
-      await carregarListasPublicas();
+      await carregarMinhasListas();
 
       console.log('✅ Lista criada com sucesso');
     } catch (error) {
@@ -98,6 +117,7 @@ export function ListaProvider({ children }: { children: ReactNode }) {
       await listaService.updateLista(listaId, data);
 
       await carregarLista(listaId);
+      await carregarMinhasListas(); // Atualizar também as minhas listas
 
       console.log('✅ Lista atualizada com sucesso');
     } catch (error) {
@@ -115,6 +135,7 @@ export function ListaProvider({ children }: { children: ReactNode }) {
       await listaService.deleteLista(listaId);
 
       setListas((prev) => prev.filter((l) => l.id !== listaId));
+      setMinhasListas((prev) => prev.filter((l) => l.id !== listaId));
 
       if (listaAtual?.id === listaId) {
         setListaAtual(null);
@@ -126,6 +147,27 @@ export function ListaProvider({ children }: { children: ReactNode }) {
       throw error;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const compartilharLista = async (listaId: string) => {
+    try {
+      console.log('🔗 Gerando link de compartilhamento...');
+      const response = await listaService.compartilharLista(listaId);
+
+      setMinhasListas((prev) =>
+        prev.map((lista) =>
+          lista.id === listaId
+            ? { ...lista, shareToken: response.shareToken }
+            : lista
+        )
+      );
+
+      console.log('✅ Link de compartilhamento gerado');
+      return response.shareToken;
+    } catch (error) {
+      console.error('❌ Erro ao gerar link de compartilhamento:', error);
+      throw error;
     }
   };
 
@@ -159,14 +201,17 @@ export function ListaProvider({ children }: { children: ReactNode }) {
 
   const value = {
     listas,
+    minhasListas,
     listaAtual,
     loading,
     loadingLista,
     carregarListasPublicas,
+    carregarMinhasListas,
     carregarLista,
     criarLista,
     atualizarLista,
     deletarLista,
+    compartilharLista,
     adicionarDoramaLista,
     removerDoramaLista,
   };
