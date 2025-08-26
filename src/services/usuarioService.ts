@@ -61,6 +61,14 @@ export class UsuarioService extends ApiService {
     });
   }
 
+  async getSeguidores(usuarioId: string): Promise<any[]> {
+    return this.makeRequest(`/usuarios/${usuarioId}/seguidores`);
+  }
+
+  async getSeguindo(usuarioId: string): Promise<any[]> {
+    return this.makeRequest(`/usuarios/${usuarioId}/seguindo`);
+  }
+
   convertPerfilApi(perfil: PerfilApi): Omit<Usuario, 'usuarioId'> {
     return {
       nome: perfil.nome,

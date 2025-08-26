@@ -98,11 +98,11 @@ export default function ListaPage() {
 
   if (loadingLista) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 pt-20">
+      <div className="min-h-screen bg-gray-50 pt-20">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-center justify-center py-20">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
               <span className="text-purple-600 font-medium">
                 Carregando lista...
               </span>
@@ -115,15 +115,35 @@ export default function ListaPage() {
 
   if (!listaAtual) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 pt-20">
+      <div className="min-h-screen bg-gray-50 pt-20">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center py-20">
+            <div className="w-20 h-20 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className="w-10 h-10 text-purple-400">
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                  />
+                </svg>
+              </div>
+            </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-4">
               Lista não encontrada
             </h1>
+            <p className="text-gray-600 mb-6">
+              A lista que você está procurando pode ter sido removida ou não
+              existe.
+            </p>
             <button
               onClick={() => router.back()}
-              className="text-purple-600 hover:text-purple-700"
+              className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-2xl transition-colors duration-200 font-medium"
             >
               Voltar
             </button>
@@ -134,7 +154,7 @@ export default function ListaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 pt-20">
+    <div className="min-h-screen bg-gray-50 pt-20">
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         <ListaBanner
           lista={listaAtual}

@@ -2,7 +2,8 @@ import { AvaliacaoCompleta } from '@/types/avaliacao';
 import { StarIcon } from '@heroicons/react/24/solid';
 import {
   StarIcon as StarOutlineIcon,
-  CalendarIcon,
+  ClockIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 
 interface ReviewCardProps {
@@ -20,9 +21,12 @@ export function ReviewCard({ avaliacao }: ReviewCardProps) {
 
   const renderStars = (nota: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className="inline-block">
+      <span
+        key={i}
+        className="inline-block transform transition-all duration-200 hover:scale-110"
+      >
         {i < nota ? (
-          <StarIcon className="w-4 h-4 text-yellow-400" />
+          <StarIcon className="w-4 h-4 text-yellow-400 drop-shadow-sm" />
         ) : (
           <StarOutlineIcon className="w-4 h-4 text-gray-300" />
         )}
@@ -31,67 +35,85 @@ export function ReviewCard({ avaliacao }: ReviewCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200">
-      <div className="flex gap-4">
-        {/* Capa do dorama */}
-        <div className="flex-shrink-0">
-          <img
-            src={avaliacao.dorama?.capaUrl || '/placeholder-dorama.jpg'}
-            alt={avaliacao.dorama?.titulo || 'Dorama'}
-            className="w-16 h-20 object-cover rounded-lg shadow-sm"
-          />
-        </div>
+    <div className="group relative">
+      <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl border border-purple-100 p-6 hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 transition-all duration-300 ease-out">
+        <div className="flex gap-5">
+          {/* Capa do dorama */}
+          <div className="flex-shrink-0">
+            <div className="relative overflow-hidden rounded-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+              <img
+                src={avaliacao.dorama?.capaUrl || '/placeholder-dorama.jpg'}
+                alt={avaliacao.dorama?.titulo || 'Dorama'}
+                className="w-18 h-24 object-cover transform group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </div>
+          </div>
 
-        {/* Conteúdo da review */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between mb-3">
-            <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-lg text-gray-900 mb-1 truncate">
-                {avaliacao.dorama?.titulo || 'Carregando...'}
-              </h3>
+          {/* Conteúdo da review */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between mb-3">
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-lg text-black mb-1 truncate">
+                  {avaliacao.dorama?.titulo || 'Carregando...'}
+                </h3>
 
-              {avaliacao.temporada && (
-                <p className="text-sm text-gray-600 mb-2">
-                  {avaliacao.temporada.nome} • {avaliacao.dorama?.anoLancamento}
-                </p>
-              )}
+                {avaliacao.temporada && (
+                  <p className="text-sm text-gray-500 mb-3">
+                    <span className="font-medium text-purple-600">
+                      {avaliacao.temporada.nome}
+                    </span>{' '}
+                    • {avaliacao.dorama?.anoLancamento}
+                  </p>
+                )}
 
-              {/* Estrelas e nota */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex items-center gap-1">
-                  {renderStars(avaliacao.nota)}
+                {/* Estrelas e nota */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-0.5">
+                    {renderStars(avaliacao.nota)}
+                  </div>
+                  <span className="text-sm font-semibold text-black ml-1">
+                    {avaliacao.nota}/5
+                  </span>
                 </div>
-                <span className="text-sm font-medium text-gray-700">
-                  {avaliacao.nota}/5
+              </div>
+
+              {/* Data da avaliação */}
+              <div className="flex items-center gap-2 text-sm font-medium text-gray-600 ml-4">
+                <ClockIcon className="w-4 h-4 text-purple-500" />
+                <span className="text-black">
+                  {formatDate(avaliacao.dataAvaliacao)}
                 </span>
               </div>
             </div>
 
-            {/* Data da avaliação */}
-            <div className="flex items-center gap-1 text-xs text-gray-500 ml-4">
-              <CalendarIcon className="w-3 h-3" />
-              {formatDate(avaliacao.dataAvaliacao)}
-            </div>
+            {/* Comentário */}
+            {avaliacao.comentario && (
+              <div className="bg-white rounded-xl p-4 border border-purple-100 mb-3">
+                <p className="text-gray-700 text-sm leading-relaxed italic">
+                  "{avaliacao.comentario}"
+                </p>
+              </div>
+            )}
+
+            {/* Recomendação */}
+            {avaliacao.recomendadoPor && (
+              <div className="flex items-center gap-2 pt-2 border-t border-purple-100">
+                <UserIcon className="w-4 h-4 text-purple-500" />
+                <span className="text-sm text-gray-600">
+                  Recomendado por:{' '}
+                  <span className="font-medium text-purple-600">
+                    {avaliacao.recomendadoPor}
+                  </span>
+                </span>
+              </div>
+            )}
           </div>
+        </div>
 
-          {/* Comentário */}
-          {avaliacao.comentario && (
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-gray-700 text-sm leading-relaxed">
-                {avaliacao.comentario}
-              </p>
-            </div>
-          )}
-
-          {/* Recomendação */}
-          {avaliacao.recomendadoPor && (
-            <div className="mt-3 flex items-center gap-2">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span className="text-xs text-gray-600">
-                Recomendado por: {avaliacao.recomendadoPor}
-              </span>
-            </div>
-          )}
+        {/* Shimmer effect no hover */}
+        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
         </div>
       </div>
     </div>

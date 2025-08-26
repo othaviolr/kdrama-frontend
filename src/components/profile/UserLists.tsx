@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useLista } from 'src/context/ListaContext';
 import { Lista } from '@/types/lista';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { ListaCard } from './UserLists/ListaCard';
 import { CreateListaModal } from './UserLists/CreateListaModal';
 import { DeleteListaModal } from './UserLists/DeleteListaModal';
@@ -89,24 +89,44 @@ export function UserLists({ usuarioId }: UserListsProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header modernizado */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Minhas Listas
-          </h2>
-          <p className="text-gray-600 mt-1">
-            Organize seus doramas em listas personalizadas
-          </p>
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-4">
+              <ListBulletIcon className="w-8 h-8 text-purple-500" />
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">
+                  Minhas Listas
+                </h2>
+                <p className="text-gray-600 text-lg">
+                  Organize seus doramas em listas personalizadas
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Total de listas + Botão criar */}
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <div className="text-3xl font-bold text-gray-900">
+                {minhasListas.length}
+              </div>
+              <div className="text-sm text-purple-600">
+                lista{minhasListas.length !== 1 ? 's' : ''}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="group flex items-center gap-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-2xl hover:shadow-lg hover:shadow-purple-500/25 hover:-translate-y-1 transition-all duration-300 font-medium"
+            >
+              <PlusIcon className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+              Nova Lista
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-200"
-        >
-          <PlusIcon className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
-          Nova Lista
-        </button>
       </div>
 
       {/* Conteúdo */}
@@ -114,13 +134,18 @@ export function UserLists({ usuarioId }: UserListsProps) {
         <EmptyState onCreateClick={() => setShowCreateModal(true)} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {minhasListas.map((lista) => (
-            <ListaCard
+          {minhasListas.map((lista, index) => (
+            <div
               key={lista.id}
-              lista={lista}
-              onShare={() => handleCompartilhar(lista)}
-              onDelete={() => setDeletingLista(lista)}
-            />
+              className="animate-in slide-in-from-bottom-4 duration-500"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <ListaCard
+                lista={lista}
+                onShare={() => handleCompartilhar(lista)}
+                onDelete={() => setDeletingLista(lista)}
+              />
+            </div>
           ))}
         </div>
       )}
@@ -155,11 +180,8 @@ export function UserLists({ usuarioId }: UserListsProps) {
 function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
   return (
     <div className="text-center py-16">
-      <div className="relative">
-        <div className="w-32 h-32 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl flex items-center justify-center mx-auto mb-6 transform hover:scale-105 transition-transform duration-200">
-          <PlusIcon className="w-16 h-16 text-purple-400" />
-        </div>
-        <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-20 animate-pulse"></div>
+      <div className="w-20 h-20 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <ListBulletIcon className="w-10 h-10 text-purple-400" />
       </div>
 
       <h3 className="text-2xl font-bold text-gray-900 mb-3">
@@ -172,10 +194,10 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
 
       <button
         onClick={onCreateClick}
-        className="group px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-200 font-medium"
+        className="group px-8 py-4 bg-purple-500 hover:bg-purple-600 text-white rounded-2xl hover:shadow-xl hover:shadow-purple-500/25 hover:-translate-y-1 transition-all duration-300 font-medium"
       >
         <span className="flex items-center gap-2">
-          <PlusIcon className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
+          <PlusIcon className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
           Criar Primeira Lista
         </span>
       </button>

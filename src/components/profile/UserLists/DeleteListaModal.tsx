@@ -24,14 +24,14 @@ export function DeleteListaModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md animate-in fade-in zoom-in-95 duration-300">
+      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md animate-in fade-in zoom-in-95 duration-300 border border-gray-100">
         <div className="p-8 text-center">
           {/* Ícone de aviso */}
-          <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-            <ExclamationTriangleIcon className="w-10 h-10 text-red-500" />
+          <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-100">
+            <ExclamationTriangleIcon className="w-8 h-8 text-red-500" />
           </div>
 
           <h3 className="text-2xl font-bold text-gray-900 mb-3">
@@ -42,13 +42,14 @@ export function DeleteListaModal({
             <p className="text-gray-600 mb-2">
               Tem certeza que deseja deletar a lista
             </p>
-            <p className="font-semibold text-gray-900 text-lg">
-              "{lista.nome}"?
-            </p>
-            <p className="text-sm text-red-600 mt-2">
-              Esta ação não pode ser desfeita e todos os {lista.doramas.length}{' '}
-              doramas serão removidos.
-            </p>
+            <p className="font-semibold text-black text-lg">"{lista.nome}"?</p>
+            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl">
+              <p className="text-sm text-red-700">
+                Esta ação não pode ser desfeita e todos os{' '}
+                <span className="font-semibold">{lista.doramas.length}</span>{' '}
+                doramas serão removidos.
+              </p>
+            </div>
           </div>
 
           <div className="flex gap-4">
@@ -62,7 +63,7 @@ export function DeleteListaModal({
             <button
               onClick={onConfirm}
               disabled={loading}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl hover:shadow-lg disabled:opacity-50 transition-all duration-200 font-medium"
+              className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl hover:shadow-lg hover:shadow-red-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

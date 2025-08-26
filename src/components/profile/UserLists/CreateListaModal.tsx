@@ -5,7 +5,7 @@ import {
   EyeIcon,
   EyeSlashIcon,
   XMarkIcon,
-  SparklesIcon,
+  ListBulletIcon,
 } from '@heroicons/react/24/outline';
 
 interface CreateListaModalProps {
@@ -55,16 +55,16 @@ export function CreateListaModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
+      <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg animate-in fade-in zoom-in-95 duration-300 border border-gray-100">
         <div className="p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center">
-                <SparklesIcon className="w-6 h-6 text-purple-600" />
+              <div className="w-10 h-10 bg-purple-100 rounded-2xl flex items-center justify-center">
+                <ListBulletIcon className="w-6 h-6 text-purple-600" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900">Nova Lista</h3>
             </div>
@@ -87,8 +87,8 @@ export function CreateListaModal({
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, nome: e.target.value }))
                 }
-                placeholder="Ex: Meus Doramas de Romance fav ❤️"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                placeholder="Ex: Meus Doramas de Romance favoritos"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200"
                 required
               />
             </div>
@@ -107,7 +107,7 @@ export function CreateListaModal({
                 }
                 placeholder="Descreva sua lista..."
                 rows={3}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none transition-all duration-200"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none transition-all duration-200"
               />
             </div>
 
@@ -125,7 +125,7 @@ export function CreateListaModal({
                   }))
                 }
                 placeholder="https://exemplo.com/imagem.jpg"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200"
               />
             </div>
 
@@ -135,7 +135,7 @@ export function CreateListaModal({
                 <img
                   src={formData.imagemCapaUrl}
                   alt="Preview"
-                  className="w-full h-24 object-cover rounded-2xl"
+                  className="w-full h-24 object-cover rounded-2xl border border-gray-200"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}
@@ -148,7 +148,13 @@ export function CreateListaModal({
                 Privacidade
               </label>
               <div className="space-y-3">
-                <label className="flex items-center p-3 border-2 border-gray-200 rounded-2xl cursor-pointer hover:border-purple-300 transition-colors duration-200">
+                <label
+                  className={`flex items-center p-3 border-2 rounded-2xl cursor-pointer transition-colors duration-200 ${
+                    formData.publica
+                      ? 'border-purple-300 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
                   <input
                     type="radio"
                     name="privacidade"
@@ -167,7 +173,13 @@ export function CreateListaModal({
                   </div>
                 </label>
 
-                <label className="flex items-center p-3 border-2 border-gray-200 rounded-2xl cursor-pointer hover:border-purple-300 transition-colors duration-200">
+                <label
+                  className={`flex items-center p-3 border-2 rounded-2xl cursor-pointer transition-colors duration-200 ${
+                    !formData.publica
+                      ? 'border-purple-300 bg-purple-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
                   <input
                     type="radio"
                     name="privacidade"
@@ -199,7 +211,7 @@ export function CreateListaModal({
               <button
                 type="submit"
                 disabled={loading || !formData.nome.trim()}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl hover:shadow-lg disabled:opacity-50 transition-all duration-200 font-medium"
+                className="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-2xl hover:shadow-lg hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
