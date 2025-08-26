@@ -41,6 +41,10 @@ export class AvaliacaoService extends ApiService {
     return this.makeRequest(`/avaliacoes/${temporadaId}`);
   }
 
+  async getMinhasAvaliacoes(): Promise<AvaliacaoApi[]> {
+    return this.makeRequest('/avaliacoes/minhas');
+  }
+
   async deleteAvaliacao(temporadaId: string): Promise<void> {
     return this.makeRequest(`/avaliacoes/${temporadaId}`, {
       method: 'DELETE',

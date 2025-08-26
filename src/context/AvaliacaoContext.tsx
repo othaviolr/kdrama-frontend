@@ -15,7 +15,9 @@ const AvaliacaoContext = createContext<AvaliacaoContextType | undefined>(
 
 export function AvaliacaoProvider({ children }: { children: ReactNode }) {
   const [minhaAvaliacao, setMinhaAvaliacao] = useState<Avaliacao | null>(null);
+  const [minhasAvaliacoes, setMinhasAvaliacoes] = useState<Avaliacao[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingAvaliacoes, setLoadingAvaliacoes] = useState(false);
 
   const criarAvaliacao = async (data: AvaliacaoCreate) => {
     setLoading(true);
@@ -70,6 +72,28 @@ export function AvaliacaoProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const carregarMinhasAvaliacoes = async () => {
+    setLoadingAvaliacoes(true);
+    try {
+      console.log('📋 Carregando minhas avaliações...');
+      const avaliacoesApi = await avaliacaoService.getMinhasAvaliacoes();
+
+      const avaliacoesConvertidas = avaliacoesApi.map((avaliacao) =>
+        avaliacaoService.convertAvaliacaoApi(avaliacao)
+      );
+
+      console.log(
+        '✅ Minhas avaliações carregadas:',
+        avaliacoesConvertidas.length
+      );
+      setMinhasAvaliacoes(avaliacoesConvertidas);
+    } catch (error) {
+      console.error('❌ Erro ao carregar minhas avaliações:', error);
+    } finally {
+      setLoadingAvaliacoes(false);
+    }
+  };
+
   const deletarAvaliacao = async (temporadaId: string) => {
     setLoading(true);
     try {
@@ -77,6 +101,12 @@ export function AvaliacaoProvider({ children }: { children: ReactNode }) {
       await avaliacaoService.deleteAvaliacao(temporadaId);
 
       setMinhaAvaliacao(null);
+
+      // Remove da lista de minhas avaliações também
+      setMinhasAvaliacoes((prev) =>
+        prev.filter((avaliacao) => avaliacao.temporadaId !== temporadaId)
+      );
+
       console.log('✅ Avaliação deletada com sucesso');
     } catch (error) {
       console.error('❌ Erro ao deletar avaliação:', error);
@@ -92,10 +122,13 @@ export function AvaliacaoProvider({ children }: { children: ReactNode }) {
 
   const value = {
     minhaAvaliacao,
+    minhasAvaliacoes,
     loading,
+    loadingAvaliacoes,
     criarAvaliacao,
     atualizarAvaliacao,
     obterAvaliacao,
+    carregarMinhasAvaliacoes,
     deletarAvaliacao,
     limparAvaliacao,
   };

@@ -1,3 +1,5 @@
+import { DoramaCompleto, Temporada } from './dorama';
+
 export interface AvaliacaoApi {
   id: string;
   temporadaId: string;
@@ -33,6 +35,11 @@ export interface Avaliacao {
   dataAvaliacao: Date;
 }
 
+export interface AvaliacaoCompleta extends Avaliacao {
+  temporada?: Temporada;
+  dorama?: DoramaCompleto;
+}
+
 export interface AvaliacaoCreate {
   temporadaId: string;
   nota: number;
@@ -49,10 +56,13 @@ export interface AvaliacaoUpdate {
 
 export interface AvaliacaoContextType {
   minhaAvaliacao: Avaliacao | null;
+  minhasAvaliacoes: Avaliacao[];
   loading: boolean;
+  loadingAvaliacoes: boolean;
   criarAvaliacao: (data: AvaliacaoCreate) => Promise<void>;
   atualizarAvaliacao: (data: AvaliacaoUpdate) => Promise<void>;
   obterAvaliacao: (temporadaId: string) => Promise<void>;
+  carregarMinhasAvaliacoes: () => Promise<void>;
   deletarAvaliacao: (temporadaId: string) => Promise<void>;
   limparAvaliacao: () => void;
 }
