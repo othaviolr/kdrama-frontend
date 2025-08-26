@@ -6,28 +6,12 @@ export class AtividadeService extends ApiService {
     return this.makeRequest(`/atividades/feed/${quantidade}`);
   }
 
+  async getMinhasAtividades(): Promise<AtividadeApi[]> {
+    return this.makeRequest('/atividades/minhas');
+  }
+
   async getAtividadesUsuario(usuarioId: string): Promise<AtividadeApi[]> {
     return this.makeRequest(`/atividades/usuario/${usuarioId}`);
-  }
-
-  async updateProgressoTemporada(data: any): Promise<void> {
-    return this.makeRequest('/progresso-temporada/progresso', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async updateStatusTemporada(data: any): Promise<void> {
-    return this.makeRequest('/progresso-temporada/status', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async deleteProgressoTemporada(temporadaId: string): Promise<void> {
-    return this.makeRequest(`/progresso-temporada/${temporadaId}`, {
-      method: 'DELETE',
-    });
   }
 
   convertAtividadeApi(atividade: AtividadeApi): Atividade {
@@ -45,10 +29,12 @@ export class AtividadeService extends ApiService {
     };
 
     return {
-      id: `${atividade.usuarioId}-${atividade.criadoEm}`,
-      usuarioId: atividade.usuarioId,
-      usuarioNome: atividade.usuarioNome,
-      usuarioAvatarUrl: atividade.usuarioAvatarUrl,
+      id: `${atividade.usuarioId}-${atividade.tipoAtividade}-${atividade.criadoEm}`,
+      usuario: {
+        id: atividade.usuarioId,
+        nome: atividade.usuarioNome,
+        avatarUrl: atividade.usuarioAvatarUrl,
+      },
       tipo: getTipo(atividade.tipoAtividade),
       dados: {
         doramaId: atividade.doramaId || undefined,

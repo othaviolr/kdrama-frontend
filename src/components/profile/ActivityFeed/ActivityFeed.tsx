@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { useAtividade } from 'src/context/AtividadeContext';
-import { ActivityCard } from './ActivityFeed/ActivityCard';
-import { EmptyActivity } from './ActivityFeed/EmptyActivity';
-import { LoadingActivity } from './ActivityFeed/LoadingActivity';
+import { ActivityCard } from './ActivityCard';
+import { EmptyActivity } from './EmptyActivity';
+import { LoadingActivity } from './LoadingActivity';
 
 interface ActivityFeedProps {
   usuarioId: string;

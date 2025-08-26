@@ -14,16 +14,6 @@ export interface AtividadeApi {
   criadoEm: string;
 }
 
-export interface Atividade {
-  id: string;
-  usuarioId: string;
-  usuarioNome: string;
-  usuarioAvatarUrl: string;
-  tipo: TipoAtividade;
-  dados: AtividadeDados;
-  dataCriacao: Date;
-}
-
 export type TipoAtividade = 'PROGRESSO_TEMPORADA' | 'AVALIACAO' | 'PRATELEIRA';
 
 export interface AtividadeDados {
@@ -37,10 +27,25 @@ export interface AtividadeDados {
   prateleiraNome?: string;
 }
 
+export interface Atividade {
+  id: string;
+  usuario: {
+    id: string;
+    nome: string;
+    avatarUrl: string;
+  };
+  tipo: TipoAtividade;
+  dados: AtividadeDados;
+  dataCriacao: Date;
+}
+
 export interface AtividadeContextType {
   atividades: Atividade[];
+  minhasAtividades: Atividade[];
   loading: boolean;
-  feedAtividades: (quantidade: number) => Promise<void>;
-  atividadesUsuario: (usuarioId: string) => Promise<void>;
+  loadingMinhas: boolean;
+  carregarFeed: (quantidade: number) => Promise<void>;
+  carregarMinhasAtividades: () => Promise<void>;
+  carregarAtividadesUsuario: (usuarioId: string) => Promise<void>;
   limparAtividades: () => void;
 }

@@ -10,9 +10,11 @@ const AtividadeContext = createContext<AtividadeContextType | undefined>(
 
 export function AtividadeProvider({ children }: { children: ReactNode }) {
   const [atividades, setAtividades] = useState<Atividade[]>([]);
+  const [minhasAtividades, setMinhasAtividades] = useState<Atividade[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMinhas, setLoadingMinhas] = useState(false);
 
-  const feedAtividades = async (quantidade: number) => {
+  const carregarFeed = async (quantidade: number) => {
     setLoading(true);
     try {
       console.log('📱 Carregando feed de atividades...');
@@ -36,7 +38,29 @@ export function AtividadeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const atividadesUsuario = async (usuarioId: string) => {
+  const carregarMinhasAtividades = async () => {
+    setLoadingMinhas(true);
+    try {
+      console.log('👤 Carregando minhas atividades...');
+      const atividadesApi = await atividadeService.getMinhasAtividades();
+
+      const atividadesConvertidas = atividadesApi.map((atividade) =>
+        atividadeService.convertAtividadeApi(atividade)
+      );
+
+      console.log(
+        '✅ Minhas atividades carregadas:',
+        atividadesConvertidas.length
+      );
+      setMinhasAtividades(atividadesConvertidas);
+    } catch (error) {
+      console.error('❌ Erro ao carregar minhas atividades:', error);
+    } finally {
+      setLoadingMinhas(false);
+    }
+  };
+
+  const carregarAtividadesUsuario = async (usuarioId: string) => {
     setLoading(true);
     try {
       console.log('👤 Carregando atividades do usuário:', usuarioId);
@@ -61,13 +85,17 @@ export function AtividadeProvider({ children }: { children: ReactNode }) {
 
   const limparAtividades = () => {
     setAtividades([]);
+    setMinhasAtividades([]);
   };
 
   const value = {
     atividades,
+    minhasAtividades,
     loading,
-    feedAtividades,
-    atividadesUsuario,
+    loadingMinhas,
+    carregarFeed,
+    carregarMinhasAtividades,
+    carregarAtividadesUsuario,
     limparAtividades,
   };
 
