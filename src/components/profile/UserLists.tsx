@@ -7,7 +7,6 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { ListaCard } from './UserLists/ListaCard';
 import { CreateListaModal } from './UserLists/CreateListaModal';
 import { DeleteListaModal } from './UserLists/DeleteListaModal';
-import { ListaDetailsModal } from './UserLists/ListaDetailsModal';
 import { Toast } from './UserLists/Toast';
 
 interface UserListsProps {
@@ -25,7 +24,6 @@ export function UserLists({ usuarioId }: UserListsProps) {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [deletingLista, setDeletingLista] = useState<Lista | null>(null);
-  const [selectedLista, setSelectedLista] = useState<Lista | null>(null);
   const [toast, setToast] = useState<{
     message: string;
     type: 'success' | 'error';
@@ -120,7 +118,6 @@ export function UserLists({ usuarioId }: UserListsProps) {
             <ListaCard
               key={lista.id}
               lista={lista}
-              onClick={() => setSelectedLista(lista)}
               onShare={() => handleCompartilhar(lista)}
               onDelete={() => setDeletingLista(lista)}
             />
@@ -140,11 +137,6 @@ export function UserLists({ usuarioId }: UserListsProps) {
         onConfirm={handleDelete}
         onCancel={() => setDeletingLista(null)}
         loading={loading}
-      />
-
-      <ListaDetailsModal
-        lista={selectedLista}
-        onClose={() => setSelectedLista(null)}
       />
 
       {/* Toast */}

@@ -1,26 +1,23 @@
 import { Lista } from '@/types/lista';
+import { useRouter } from 'next/navigation';
 import {
   EyeIcon,
   EyeSlashIcon,
   LinkIcon,
   ShareIcon,
   TrashIcon,
-  PlayIcon,
+  ArrowRightIcon,
 } from '@heroicons/react/24/outline';
 
 interface ListaCardProps {
   lista: Lista;
-  onClick: () => void;
   onShare: () => void;
   onDelete: () => void;
 }
 
-export function ListaCard({
-  lista,
-  onClick,
-  onShare,
-  onDelete,
-}: ListaCardProps) {
+export function ListaCard({ lista, onShare, onDelete }: ListaCardProps) {
+  const router = useRouter();
+
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('pt-BR', {
       day: '2-digit',
@@ -29,9 +26,13 @@ export function ListaCard({
     }).format(date);
   };
 
+  const handleCardClick = () => {
+    router.push(`/lista/${lista.id}`);
+  };
+
   return (
     <div
-      onClick={onClick}
+      onClick={handleCardClick}
       className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group cursor-pointer transform hover:-translate-y-2"
     >
       {/* Imagem de capa */}
@@ -50,7 +51,7 @@ export function ListaCard({
           {/* Botão de ver detalhes no centro */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="bg-white/20 backdrop-blur-md rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform duration-300">
-              <PlayIcon className="w-8 h-8 text-white rotate-0" />
+              <ArrowRightIcon className="w-8 h-8 text-white" />
             </div>
           </div>
 
