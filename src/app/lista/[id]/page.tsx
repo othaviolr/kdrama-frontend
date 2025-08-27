@@ -96,6 +96,12 @@ export default function ListaPage() {
     setTimeout(() => setToast(null), 3000);
   };
 
+  const handleListaChanged = () => {
+    if (listaId) {
+      carregarLista(listaId);
+    }
+  };
+
   if (loadingLista) {
     return (
       <div className="min-h-screen bg-gray-50 pt-20">
@@ -168,6 +174,7 @@ export default function ListaPage() {
           doramas={doramasComInfo}
           loading={loadingDoramas}
           onDoramaClick={(doramaId) => router.push(`/dorama/${doramaId}`)}
+          listaId={listaId}
         />
 
         {toast && (

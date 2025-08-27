@@ -14,7 +14,7 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
 
   // Carregar lista de doramas
   const carregarDoramas = async () => {
-    if (doramas.length > 0) return; // Já carregou, não carrega de novo
+    //if (doramas.length > 0) return; // Já carregou, não carrega de novo
 
     setLoading(true);
     try {
@@ -31,7 +31,6 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
 
   // Carregar dorama específico
   const carregarDorama = async (id: string) => {
-    // Primeiro verifica se já tem no cache
     const doramaExistente = doramas.find((d) => d.doramaId === id);
     if (doramaExistente) {
       console.log('📋 Dorama encontrado no cache:', doramaExistente.titulo);
@@ -46,7 +45,6 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
       console.log('✅ Dorama carregado:', dorama.titulo);
       setDoramaAtual(dorama);
 
-      // Adiciona no cache se não existir
       setDoramas((prev) => {
         const existe = prev.find((d) => d.doramaId === id);
         if (!existe) {
@@ -62,12 +60,10 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Limpar dorama atual
   const limparDoramaAtual = () => {
     setDoramaAtual(null);
   };
 
-  // Buscar dorama por ID no cache
   const buscarDoramaPorId = (id: string) => {
     return doramas.find((d) => d.doramaId === id);
   };
@@ -88,7 +84,6 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook para usar o contexto
 export function useDorama() {
   const context = useContext(DoramaContext);
   if (context === undefined) {

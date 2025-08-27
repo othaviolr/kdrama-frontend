@@ -61,29 +61,19 @@ export function ListaProvider({ children }: { children: ReactNode }) {
   };
 
   const carregarLista = async (listaId: string) => {
-    const listaExistente = listas.find((l) => l.id === listaId);
-    if (listaExistente) {
-      console.log('📋 Lista encontrada no cache:', listaExistente.nome);
-      setListaAtual(listaExistente);
-      return;
-    }
-
     setLoadingLista(true);
     try {
       console.log('📋 Carregando lista:', listaId);
       const listaApi = await listaService.getLista(listaId);
-
       const listaConvertida = listaService.convertListaApi(listaApi);
 
       console.log('✅ Lista carregada:', listaConvertida.nome);
+      console.log('✅ Doramas na lista:', listaConvertida.doramas.length);
       setListaAtual(listaConvertida);
 
       setListas((prev) => {
-        const existe = prev.find((l) => l.id === listaId);
-        if (!existe) {
-          return [...prev, listaConvertida];
-        }
-        return prev;
+        const filtered = prev.filter((l) => l.id !== listaId);
+        return [...filtered, listaConvertida];
       });
     } catch (error) {
       console.error('❌ Erro ao carregar lista:', error);
@@ -117,7 +107,7 @@ export function ListaProvider({ children }: { children: ReactNode }) {
       await listaService.updateLista(listaId, data);
 
       await carregarLista(listaId);
-      await carregarMinhasListas(); // Atualizar também as minhas listas
+      await carregarMinhasListas();
 
       console.log('✅ Lista atualizada com sucesso');
     } catch (error) {

@@ -67,7 +67,7 @@ export class ListaService extends ApiService {
     return this.makeRequest('/dorama-lista', {
       method: 'POST',
       body: JSON.stringify({
-        listaId: data.listaId,
+        listaPrateleiraId: data.listaId,
         doramaId: data.doramaId,
       }),
     });
@@ -77,7 +77,7 @@ export class ListaService extends ApiService {
     return this.makeRequest('/dorama-lista', {
       method: 'DELETE',
       body: JSON.stringify({
-        listaId: data.listaId,
+        listaPrateleiraId: data.listaId,
         doramaId: data.doramaId,
       }),
     });
