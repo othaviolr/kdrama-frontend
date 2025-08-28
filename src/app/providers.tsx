@@ -2,6 +2,7 @@
 
 import { AuthProvider } from '../context/AuthContext';
 import { DoramaProvider } from '../context/DoramaContext';
+import { ProgressoProvider } from '../context/ProgressoContext';
 import { AtividadeProvider } from '../context/AtividadeContext';
 import { AvaliacaoProvider } from '../context//AvaliacaoContext';
 import { ListaProvider } from '../context//ListaContext';
@@ -15,11 +16,13 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
       <DoramaProvider>
-        <AtividadeProvider>
-          <AvaliacaoProvider>
-            <ListaProvider>{children}</ListaProvider>
-          </AvaliacaoProvider>
-        </AtividadeProvider>
+        <ProgressoProvider>
+          <AtividadeProvider>
+            <AvaliacaoProvider>
+              <ListaProvider>{children}</ListaProvider>
+            </AvaliacaoProvider>
+          </AtividadeProvider>
+        </ProgressoProvider>
       </DoramaProvider>
     </AuthProvider>
   );
