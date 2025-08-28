@@ -1,6 +1,7 @@
 import { ApiService } from './api';
 import {
   AvaliacaoApi,
+  AvaliacaoPublicaApi,
   AvaliacaoCreateApi,
   AvaliacaoUpdateApi,
   Avaliacao,
@@ -43,6 +44,11 @@ export class AvaliacaoService extends ApiService {
 
   async getMinhasAvaliacoes(): Promise<AvaliacaoApi[]> {
     return this.makeRequest('/avaliacoes/minhas');
+  }
+
+  async getAvaliacoesDorama(doramaId: string): Promise<AvaliacaoPublicaApi[]> {
+    console.log('Buscando avaliações do dorama:', doramaId);
+    return this.makeRequest(`/avaliacoes/dorama/${doramaId}`);
   }
 
   async deleteAvaliacao(temporadaId: string): Promise<void> {

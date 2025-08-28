@@ -8,9 +8,14 @@ import { useAvaliacao } from 'src/context/AvaliacaoContext';
 interface AvaliacaoModalProps {
   dorama: DoramaCompleto;
   onClose: () => void;
+  onAvaliacaoSalva?: () => void;
 }
 
-export function AvaliacaoModal({ dorama, onClose }: AvaliacaoModalProps) {
+export function AvaliacaoModal({
+  dorama,
+  onClose,
+  onAvaliacaoSalva,
+}: AvaliacaoModalProps) {
   const {
     minhaAvaliacao,
     loading,
@@ -25,7 +30,6 @@ export function AvaliacaoModal({ dorama, onClose }: AvaliacaoModalProps) {
   const [comentario, setComentario] = useState('');
   const [recomendadoPor, setRecomendadoPor] = useState('');
 
-  // Usar a primeira temporada como padrão (pode ser ajustado depois)
   const temporadaId = dorama.temporadas[0]?.id;
 
   useEffect(() => {
@@ -57,6 +61,10 @@ export function AvaliacaoModal({ dorama, onClose }: AvaliacaoModalProps) {
         await atualizarAvaliacao(dados);
       } else {
         await criarAvaliacao(dados);
+      }
+
+      if (onAvaliacaoSalva) {
+        onAvaliacaoSalva();
       }
 
       onClose();

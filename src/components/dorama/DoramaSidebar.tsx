@@ -22,16 +22,17 @@ import { useProgressButton } from '@/hooks/useProgressButton';
 interface DoramaSidebarProps {
   dorama: DoramaCompleto;
   totalEpisodes: number;
+  onAvaliacaoSalva?: () => void;
 }
 
 export default function DoramaSidebar({
   dorama,
   totalEpisodes,
+  onAvaliacaoSalva,
 }: DoramaSidebarProps) {
   const [showSelectListModal, setShowSelectListModal] = useState(false);
   const [showAvaliacaoModal, setShowAvaliacaoModal] = useState(false);
 
-  // Hook para gerenciar o progresso
   const { progressoInfo, showModal, openModal, closeModal } =
     useProgressButton(dorama);
 
@@ -220,6 +221,7 @@ export default function DoramaSidebar({
         <AvaliacaoModal
           dorama={dorama}
           onClose={() => setShowAvaliacaoModal(false)}
+          onAvaliacaoSalva={onAvaliacaoSalva}
         />
       )}
     </>

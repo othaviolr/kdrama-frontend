@@ -10,6 +10,19 @@ export interface AvaliacaoApi {
   dataAvaliacao: string;
 }
 
+export interface AvaliacaoPublicaApi {
+  id: string;
+  temporadaId: string;
+  nota: number;
+  comentario: string;
+  usuarioId: string;
+  usuarioNome: string;
+  usuarioFoto: string;
+  recomendadoPorUsuarioId: string | null;
+  recomendadoPorNomeLivre: string;
+  dataAvaliacao: string;
+}
+
 export interface AvaliacaoCreateApi {
   temporadaId: string;
   nota: number;

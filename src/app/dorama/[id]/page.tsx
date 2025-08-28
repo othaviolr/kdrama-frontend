@@ -1,11 +1,10 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDorama } from 'src/context/DoramaContext';
 import { DoramaCompleto } from '@/types/dorama';
 
-// Componentes separados
 import DoramaHeader from '@/components/dorama/DoramaHeader';
 import DoramaSynopsis from '@/components/dorama/DoramaSynopsis';
 import DoramaSeasons from '@/components/dorama/DoramaSeasons';
@@ -18,12 +17,19 @@ import DoramaNotFound from '@/components/dorama/DoramaNotFound';
 export default function DoramaDetalhes() {
   const { id } = useParams();
   const { doramaAtual, carregarDorama, loadingDorama } = useDorama();
+  const reviewsRef = useRef<{ recarregar: () => void }>(null);
 
   useEffect(() => {
     if (id) {
       carregarDorama(id as string);
     }
   }, [id]);
+
+  const handleAvaliacaoSalva = () => {
+    if (reviewsRef.current) {
+      reviewsRef.current.recarregar();
+    }
+  };
 
   const getRating = (dorama: DoramaCompleto) => {
     const hash = dorama.doramaId.split('').reduce((a, b) => {
@@ -65,12 +71,17 @@ export default function DoramaDetalhes() {
             <DoramaCast actors={doramaAtual.atores} />
 
             <DoramaReviews
+              ref={reviewsRef}
               doramaId={doramaAtual.doramaId}
               titulo={doramaAtual.titulo}
             />
           </div>
 
-          <DoramaSidebar dorama={doramaAtual} totalEpisodes={totalEpisodes} />
+          <DoramaSidebar
+            dorama={doramaAtual}
+            totalEpisodes={totalEpisodes}
+            onAvaliacaoSalva={handleAvaliacaoSalva}
+          />
         </div>
       </div>
     </div>
