@@ -17,11 +17,11 @@ export function AvaliacaoModal({
   onAvaliacaoSalva,
 }: AvaliacaoModalProps) {
   const {
-    minhaAvaliacao,
     loading,
     criarAvaliacao,
     atualizarAvaliacao,
     deletarAvaliacao,
+    minhaAvaliacao,
     obterAvaliacao,
   } = useAvaliacao();
 
@@ -29,22 +29,24 @@ export function AvaliacaoModal({
   const [hoverNota, setHoverNota] = useState(0);
   const [comentario, setComentario] = useState('');
   const [recomendadoPor, setRecomendadoPor] = useState('');
+  const [carregou, setCarregou] = useState(false);
 
   const temporadaId = dorama.temporadas[0]?.id;
 
   useEffect(() => {
-    if (temporadaId) {
+    if (temporadaId && !carregou) {
       obterAvaliacao(temporadaId);
+      setCarregou(true);
     }
-  }, [temporadaId, obterAvaliacao]);
+  }, [temporadaId, carregou, obterAvaliacao]);
 
   useEffect(() => {
-    if (minhaAvaliacao) {
+    if (carregou && minhaAvaliacao) {
       setNota(minhaAvaliacao.nota);
       setComentario(minhaAvaliacao.comentario);
       setRecomendadoPor(minhaAvaliacao.recomendadoPor || '');
     }
-  }, [minhaAvaliacao]);
+  }, [minhaAvaliacao, carregou]);
 
   const handleSubmit = async () => {
     if (!temporadaId || nota === 0 || !comentario.trim()) return;
@@ -63,10 +65,7 @@ export function AvaliacaoModal({
         await criarAvaliacao(dados);
       }
 
-      if (onAvaliacaoSalva) {
-        onAvaliacaoSalva();
-      }
-
+      onAvaliacaoSalva?.();
       onClose();
     } catch (error) {
       console.error('Erro ao salvar avaliação:', error);
