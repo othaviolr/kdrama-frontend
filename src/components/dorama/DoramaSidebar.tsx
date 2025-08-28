@@ -16,6 +16,7 @@ import {
 import { DoramaCompleto } from '@/types/dorama';
 import { SelectListModal } from '@/components/modals/SelectListModal';
 import { ProgressModal } from '@/components/modals/ProgressModal';
+import { AvaliacaoModal } from '@/components/modals/AvaliacaoModal';
 import { useProgressButton } from '@/hooks/useProgressButton';
 
 interface DoramaSidebarProps {
@@ -28,7 +29,9 @@ export default function DoramaSidebar({
   totalEpisodes,
 }: DoramaSidebarProps) {
   const [showSelectListModal, setShowSelectListModal] = useState(false);
+  const [showAvaliacaoModal, setShowAvaliacaoModal] = useState(false);
 
+  // Hook para gerenciar o progresso
   const { progressoInfo, showModal, openModal, closeModal } =
     useProgressButton(dorama);
 
@@ -179,7 +182,10 @@ export default function DoramaSidebar({
               )}
             </button>
 
-            <button className="group w-full bg-white border border-gray-200 hover:border-yellow-300 hover:bg-yellow-50 text-gray-700 hover:text-yellow-700 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-sm transform hover:scale-[1.01]">
+            <button
+              onClick={() => setShowAvaliacaoModal(true)}
+              className="group w-full bg-white border border-gray-200 hover:border-yellow-300 hover:bg-yellow-50 text-gray-700 hover:text-yellow-700 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-sm transform hover:scale-[1.01]"
+            >
               <Star className="w-4 h-4 group-hover:fill-current group-hover:text-yellow-500 transition-all duration-300" />
               Avaliar Dorama
             </button>
@@ -208,6 +214,14 @@ export default function DoramaSidebar({
 
       {/* Modal de Progresso */}
       {showModal && <ProgressModal dorama={dorama} onClose={closeModal} />}
+
+      {/* Modal de Avaliação */}
+      {showAvaliacaoModal && (
+        <AvaliacaoModal
+          dorama={dorama}
+          onClose={() => setShowAvaliacaoModal(false)}
+        />
+      )}
     </>
   );
 }

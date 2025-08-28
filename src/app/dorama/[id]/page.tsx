@@ -10,6 +10,7 @@ import DoramaHeader from '@/components/dorama/DoramaHeader';
 import DoramaSynopsis from '@/components/dorama/DoramaSynopsis';
 import DoramaSeasons from '@/components/dorama/DoramaSeasons';
 import DoramaCast from '@/components/dorama/DoramaCast';
+import DoramaReviews from '@/components/dorama/DoramaReviews';
 import DoramaSidebar from '@/components/dorama/DoramaSidebar';
 import DoramaLoading from '@/components/dorama/DoramaLoading';
 import DoramaNotFound from '@/components/dorama/DoramaNotFound';
@@ -62,6 +63,11 @@ export default function DoramaDetalhes() {
             <DoramaSeasons seasons={doramaAtual.temporadas} />
 
             <DoramaCast actors={doramaAtual.atores} />
+
+            <DoramaReviews
+              doramaId={doramaAtual.doramaId}
+              titulo={doramaAtual.titulo}
+            />
           </div>
 
           <DoramaSidebar dorama={doramaAtual} totalEpisodes={totalEpisodes} />
