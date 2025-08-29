@@ -1,47 +1,27 @@
 'use client';
 
-import { useState } from 'react';
 import { Edit, Clock, Info } from 'lucide-react';
 import { Button } from '../ui/Button';
-
-interface WatchingData {
-  id: string;
-  title: string;
-  episode: string;
-  season: string;
-  progress: number;
-  poster: string;
-  color: string;
-}
+import { useUltimoDoramaAssistindo } from 'src/hooks/useUltimoDoramaAssistindo';
 
 export function HeroWatchingSection() {
-  const [currentShow] = useState<WatchingData>({
-    id: '1',
-    title: 'Bloodhounds',
-    episode: 'Episódio 6 de 8',
-    season: 'Temporada 2',
-    progress: 80,
-    poster:
-      'https://i.pinimg.com/736x/73/a6/4c/73a64cc413461d6f00b8e7f0df150895.jpg',
-    color: 'bg-purple-600',
-  });
+  const ultimoDorama = useUltimoDoramaAssistindo();
+
+  if (!ultimoDorama) return null;
 
   return (
     <div className="relative min-h-[60vh] lg:min-h-[70vh] overflow-hidden">
-      {/* Background com imagem de fundo desfocada - ESTILO DO HEADER */}
       <div className="absolute inset-0">
-        {currentShow.poster && (
+        {ultimoDorama.imageUrl && (
           <img
-            src={currentShow.poster}
-            alt=""
+            src={ultimoDorama.imageUrl}
+            alt={ultimoDorama.title}
             className="w-full h-full object-cover opacity-18 blur-[3px] scale-105"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/70 via-purple-800/60 to-indigo-900/70" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
-
-        {/* Gradiente inferior forte para evitar barra branca */}
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent" />
       </div>
 
@@ -62,11 +42,11 @@ export function HeroWatchingSection() {
             </div>
 
             <h1 className="text-3xl lg:text-5xl font-bold text-white mb-4 leading-tight">
-              {currentShow.title}
+              {ultimoDorama.title}
             </h1>
 
             <p className="text-lg text-purple-100 mb-8 opacity-90">
-              {currentShow.episode} • {currentShow.season}
+              {ultimoDorama.episode}
             </p>
 
             <div className="max-w-md mx-auto lg:mx-0 mb-8">
@@ -75,7 +55,7 @@ export function HeroWatchingSection() {
                   Progresso
                 </span>
                 <span className="text-white text-lg font-bold">
-                  {currentShow.progress}%
+                  {ultimoDorama.progress}%
                 </span>
               </div>
               {/* Progress bar moderna */}
@@ -83,7 +63,7 @@ export function HeroWatchingSection() {
                 <div
                   className="h-full bg-gradient-to-r from-white to-purple-100 rounded-full transition-all duration-500 ease-out shadow-lg"
                   style={{
-                    width: `${Math.min(100, Math.max(0, currentShow.progress))}%`,
+                    width: `${Math.min(100, Math.max(0, ultimoDorama.progress))}%`,
                   }}
                 />
               </div>
@@ -115,22 +95,15 @@ export function HeroWatchingSection() {
               <div className="w-48 h-64 lg:w-72 lg:h-96 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-lg rounded-3xl p-1 shadow-2xl overflow-hidden border border-white/20">
                 <div
                   className="w-full h-full bg-cover bg-center rounded-2xl relative overflow-hidden transform scale-100 group-hover:scale-105 transition-transform duration-700"
-                  style={{ backgroundImage: `url(${currentShow.poster})` }}
+                  style={{ backgroundImage: `url(${ultimoDorama.imageUrl})` }}
                 >
-                  {/* Overlay escuro para melhor contraste */}
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-500"></div>
-
-                  {/* Efeito de brilho sutil */}
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/0 to-white/0 group-hover:via-white/5 group-hover:to-white/2 transition-all duration-600"></div>
-
-                  {/* Status indicator */}
                   <div className="absolute top-4 right-4 w-12 h-12 bg-green-500/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
                     <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                   </div>
                 </div>
               </div>
-
-              {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-3xl blur-xl -z-10 group-hover:scale-110 transition-transform duration-300"></div>
             </div>
           </div>
