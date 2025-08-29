@@ -1,13 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Play, Clock, Pause, Ban, CheckCircle, Star } from 'lucide-react';
+import { X, Play, Clock, Pause, Ban, CheckCircle } from 'lucide-react';
 import { DoramaCompleto, Temporada } from '@/types/dorama';
-import {
-  StatusDoramaEnum,
-  StatusDoramaLabels,
-  StatusDoramaColors,
-} from '@/types/progresso';
+import { StatusDoramaEnum, StatusDoramaLabels } from '@/types/progresso';
 import { useProgresso } from 'src/context/ProgressoContext';
 
 interface ProgressModalProps {
@@ -16,25 +12,15 @@ interface ProgressModalProps {
 }
 
 export function ProgressModal({ dorama, onClose }: ProgressModalProps) {
-  const {
-    atualizarStatus,
-    atualizarProgresso,
-    obterProgresso,
-    loading,
-    carregarProgressos,
-  } = useProgresso();
+  const { atualizarStatus, atualizarProgresso, obterProgresso } =
+    useProgresso();
+
   const [selectedStatus, setSelectedStatus] = useState<StatusDoramaEnum | null>(
     null
   );
   const [selectedSeason, setSelectedSeason] = useState<Temporada | null>(null);
   const [episodiosAssistidos, setEpisodiosAssistidos] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  console.log('🎬 MODAL - ProgressModal abriu para dorama:', dorama.titulo);
-  console.log(
-    '🎬 MODAL - Temporadas disponíveis:',
-    dorama.temporadas.map((t) => ({ id: t.id, nome: t.nome }))
-  );
 
   useEffect(() => {
     if (dorama.temporadas.length > 0) {
@@ -66,82 +52,46 @@ export function ProgressModal({ dorama, onClose }: ProgressModalProps) {
     {
       status: StatusDoramaEnum.PlanejoAssistir,
       icon: Clock,
-      color: 'text-blue-600 bg-blue-50 border-blue-200',
     },
     {
       status: StatusDoramaEnum.Assistindo,
       icon: Play,
-      color: 'text-green-600 bg-green-50 border-green-200',
     },
     {
       status: StatusDoramaEnum.Pausado,
       icon: Pause,
-      color: 'text-yellow-600 bg-yellow-50 border-yellow-200',
     },
     {
       status: StatusDoramaEnum.Abandonado,
       icon: Ban,
-      color: 'text-red-600 bg-red-50 border-red-200',
     },
     {
       status: StatusDoramaEnum.Concluido,
       icon: CheckCircle,
-      color: 'text-purple-600 bg-purple-50 border-purple-200',
     },
   ];
 
   const handleSave = async () => {
     if (!selectedSeason || selectedStatus === null) return;
 
-    console.log('💾 Salvando progresso:', {
-      temporadaId: selectedSeason.id,
-      status: selectedStatus,
-      episodiosAssistidos,
-      selectedSeason: {
-        id: selectedSeason.id,
-        nome: selectedSeason.nome,
-        doramaId: selectedSeason.doramaId,
-      },
-    });
-
     setIsSubmitting(true);
     try {
-      // Atualizar status
-      console.log('📤 ENVIANDO para API - atualizarStatus:', {
+      await atualizarStatus({
         temporadaId: selectedSeason.id,
         status: selectedStatus,
       });
-
-      const statusResult = await atualizarStatus({
-        temporadaId: selectedSeason.id,
-        status: selectedStatus,
-      });
-
-      console.log('📥 RECEBIDO da API - statusResult:', statusResult);
-      console.log(
-        '🔑 Campo temporadaId do resultado:',
-        statusResult.temporadaId
-      );
 
       if (selectedStatus !== StatusDoramaEnum.PlanejoAssistir) {
-        const progressoResult = await atualizarProgresso({
+        await atualizarProgresso({
           temporadaId: selectedSeason.id,
           episodiosAssistidos,
         });
-        console.log('✅ Progresso salvo:', progressoResult);
-        console.log(
-          '🔍 Verificando campo temporadaId do resultado:',
-          progressoResult?.temporadaId
-        );
       }
 
-      console.log('🎉 Tudo salvo! Fechando modal...');
-
       await new Promise((resolve) => setTimeout(resolve, 100));
-
       onClose();
     } catch (error) {
-      console.error('❌ Erro ao salvar progresso:', error);
+      console.error('Erro ao salvar progresso:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -161,21 +111,21 @@ export function ProgressModal({ dorama, onClose }: ProgressModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="bg-white rounded-3xl max-w-md w-full h-fit shadow-2xl border border-violet-100">
         {/* Header */}
-        <div className="sticky top-0 bg-white rounded-t-2xl p-6 border-b border-gray-100">
+        <div className="bg-gradient-to-r from-violet-600 to-purple-600 rounded-t-3xl p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-white">
                 Atualizar Progresso
               </h2>
-              <p className="text-sm text-gray-600 mt-1">{dorama.titulo}</p>
+              <p className="text-violet-100 mt-1">{dorama.titulo}</p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-white/20 rounded-full transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-white" />
             </button>
           </div>
         </div>
@@ -188,20 +138,20 @@ export function ProgressModal({ dorama, onClose }: ProgressModalProps) {
               <label className="block text-sm font-semibold text-gray-900 mb-3">
                 Temporada
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 {dorama.temporadas.map((temporada) => (
                   <button
                     key={temporada.id}
                     onClick={() => setSelectedSeason(temporada)}
-                    className={`p-3 rounded-xl border-2 transition-all text-left ${
+                    className={`p-4 rounded-xl border-2 transition-all text-left hover:scale-105 transform ${
                       selectedSeason?.id === temporada.id
-                        ? 'border-purple-500 bg-purple-50 text-purple-900'
-                        : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50/50'
+                        ? 'border-violet-500 bg-gradient-to-br from-violet-50 to-purple-50 text-violet-900 shadow-lg'
+                        : 'border-gray-200 hover:border-violet-300 hover:bg-violet-50/50'
                     }`}
                   >
-                    <div className="font-medium">{temporada.nome}</div>
+                    <div className="font-semibold">{temporada.nome}</div>
                     <div className="text-xs text-gray-600 mt-1">
-                      {temporada.numeroEpisodios} eps
+                      {temporada.numeroEpisodios} episódios
                     </div>
                   </button>
                 ))}
@@ -214,30 +164,32 @@ export function ProgressModal({ dorama, onClose }: ProgressModalProps) {
             <label className="block text-sm font-semibold text-gray-900 mb-3">
               Status
             </label>
-            <div className="grid grid-cols-1 gap-2">
-              {statusOptions.map(({ status, icon: Icon, color }) => (
+            <div className="space-y-3">
+              {statusOptions.map(({ status, icon: Icon }) => (
                 <button
                   key={status}
-                  onClick={() => {
-                    console.log(
-                      '🎯 MODAL - Status selecionado:',
-                      status,
-                      StatusDoramaLabels[status]
-                    );
-                    setSelectedStatus(status);
-                  }}
-                  className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                  onClick={() => setSelectedStatus(status)}
+                  className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-4 hover:scale-[1.02] transform ${
                     selectedStatus === status
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50/50'
+                      ? 'border-violet-500 bg-gradient-to-r from-violet-50 to-purple-50 shadow-lg'
+                      : 'border-gray-200 hover:border-violet-300 hover:bg-violet-50/30'
                   }`}
                 >
-                  <div className={`p-2 rounded-lg border ${color}`}>
+                  <div
+                    className={`p-2.5 rounded-lg border ${
+                      selectedStatus === status
+                        ? 'text-violet-600 bg-violet-50 border-violet-200'
+                        : 'text-gray-400 bg-gray-50 border-gray-200'
+                    }`}
+                  >
                     <Icon className="w-4 h-4" />
                   </div>
                   <span className="font-medium text-gray-900">
                     {StatusDoramaLabels[status]}
                   </span>
+                  {selectedStatus === status && (
+                    <div className="ml-auto w-2 h-2 rounded-full bg-violet-500"></div>
+                  )}
                 </button>
               ))}
             </div>
@@ -247,46 +199,52 @@ export function ProgressModal({ dorama, onClose }: ProgressModalProps) {
           {selectedStatus !== null &&
             selectedStatus !== StatusDoramaEnum.PlanejoAssistir && (
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-3">
+                <label className="block text-sm font-semibold text-gray-900 mb-4">
                   Episódios Assistidos
                 </label>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
                     <button
                       onClick={() =>
                         handleEpisodeChange(episodiosAssistidos - 1)
                       }
-                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                      className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-100 to-purple-100 hover:from-violet-200 hover:to-purple-200 flex items-center justify-center transition-all hover:scale-110 disabled:opacity-50 disabled:hover:scale-100"
                       disabled={episodiosAssistidos <= 0}
                     >
-                      -
+                      <span className="text-violet-600 font-bold text-lg">
+                        −
+                      </span>
                     </button>
+
                     <div className="flex-1 text-center">
-                      <div className="text-2xl font-bold text-purple-600">
+                      <div className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
                         {episodiosAssistidos}
                       </div>
                       <div className="text-sm text-gray-600">
                         de {selectedSeason?.numeroEpisodios || 0}
                       </div>
                     </div>
+
                     <button
                       onClick={() =>
                         handleEpisodeChange(episodiosAssistidos + 1)
                       }
-                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                      className="w-12 h-12 rounded-full bg-gradient-to-r from-violet-100 to-purple-100 hover:from-violet-200 hover:to-purple-200 flex items-center justify-center transition-all hover:scale-110 disabled:opacity-50 disabled:hover:scale-100"
                       disabled={
                         episodiosAssistidos >=
                         (selectedSeason?.numeroEpisodios || 0)
                       }
                     >
-                      +
+                      <span className="text-violet-600 font-bold text-lg">
+                        +
+                      </span>
                     </button>
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-gradient-to-r from-violet-500 to-purple-600 h-3 rounded-full transition-all duration-500 ease-out"
                       style={{
                         width: selectedSeason
                           ? `${(episodiosAssistidos / selectedSeason.numeroEpisodios) * 100}%`
@@ -294,33 +252,35 @@ export function ProgressModal({ dorama, onClose }: ProgressModalProps) {
                       }}
                     />
                   </div>
+
+                  <div className="text-center text-sm text-gray-600">
+                    {selectedSeason
+                      ? Math.round(
+                          (episodiosAssistidos /
+                            selectedSeason.numeroEpisodios) *
+                            100
+                        )
+                      : 0}
+                    % concluído
+                  </div>
                 </div>
               </div>
             )}
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-gray-50 rounded-b-2xl p-6 border-t border-gray-100">
+        <div className="bg-gray-50 rounded-b-3xl p-6 border-t border-gray-100">
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 py-3 px-4 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-100 transition-colors"
+              className="flex-1 py-3 px-6 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-100 transition-all hover:scale-[1.02] transform"
             >
               Cancelar
             </button>
             <button
-              onClick={() => {
-                console.log('💾 MODAL - Botão Salvar clicado!');
-                console.log('💾 MODAL - selectedSeason:', selectedSeason);
-                console.log('💾 MODAL - selectedStatus:', selectedStatus);
-                console.log(
-                  '💾 MODAL - episodiosAssistidos:',
-                  episodiosAssistidos
-                );
-                handleSave();
-              }}
+              onClick={handleSave}
               disabled={selectedStatus === null || isSubmitting}
-              className="flex-1 py-3 px-4 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3 px-6 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2 hover:scale-[1.02] transform disabled:hover:scale-100"
             >
               {isSubmitting ? (
                 <>
