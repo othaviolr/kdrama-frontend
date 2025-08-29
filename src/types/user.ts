@@ -59,3 +59,9 @@ export interface EstatisticasPerfil {
   seguindo: number;
   tempoTotalAssistido?: number;
 }
+
+export interface UsuarioSeguidor {
+  usuarioId: string;
+  nome: string;
+  fotoPerfilUrl: string;
+}

@@ -5,6 +5,7 @@ import {
   LoginResponse,
   UsuarioRegistro,
   UsuarioLogin,
+  UsuarioSeguidor, // Adicionar este import
 } from '../types/user';
 
 export class UsuarioService extends ApiService {
@@ -61,11 +62,23 @@ export class UsuarioService extends ApiService {
     });
   }
 
-  async getSeguidores(usuarioId: string): Promise<any[]> {
+  // MEUS seguidores
+  async getMeusSeguidores(): Promise<UsuarioSeguidor[]> {
+    return this.makeRequest('/usuarios/seguidores');
+  }
+
+  // MEUS seguindo
+  async getMeusSeguindo(): Promise<UsuarioSeguidor[]> {
+    return this.makeRequest('/usuarios/seguindo');
+  }
+
+  // Seguidores de OUTRO usuário
+  async getSeguidores(usuarioId: string): Promise<UsuarioSeguidor[]> {
     return this.makeRequest(`/usuarios/${usuarioId}/seguidores`);
   }
 
-  async getSeguindo(usuarioId: string): Promise<any[]> {
+  // Seguindo de OUTRO usuário
+  async getSeguindo(usuarioId: string): Promise<UsuarioSeguidor[]> {
     return this.makeRequest(`/usuarios/${usuarioId}/seguindo`);
   }
 
@@ -74,6 +87,15 @@ export class UsuarioService extends ApiService {
       nome: perfil.nome,
       nomeUsuario: perfil.nomeUsuario,
       email: perfil.email,
+    };
+  }
+
+  // Converter para formato padrão se precisar
+  convertUsuarioSeguidor(usuario: UsuarioSeguidor): Partial<Usuario> {
+    return {
+      usuarioId: usuario.usuarioId,
+      nome: usuario.nome,
+      fotoUrl: usuario.fotoPerfilUrl, // Conversão do campo
     };
   }
 }
