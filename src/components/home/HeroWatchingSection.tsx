@@ -27,22 +27,34 @@ export function HeroWatchingSection() {
   });
 
   return (
-    <div className="min-h-[60vh] lg:min-h-[70vh] bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 relative overflow-hidden">
-      {/* Background Effects */}
+    <div className="relative min-h-[60vh] lg:min-h-[70vh] overflow-hidden">
+      {/* Background com imagem de fundo desfocada - ESTILO DO HEADER */}
       <div className="absolute inset-0">
-        {/* Geometric shapes */}
-        <div className="absolute top-20 right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-500/5 rounded-full blur-2xl"></div>
+        {currentShow.poster && (
+          <img
+            src={currentShow.poster}
+            alt=""
+            className="w-full h-full object-cover opacity-18 blur-[3px] scale-105"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/70 via-purple-800/60 to-indigo-900/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
 
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        {/* Gradiente inferior forte para evitar barra branca */}
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent" />
+      </div>
+
+      {/* Efeitos visuais modernos */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-20 right-20 w-72 h-72 bg-purple-500 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-indigo-500 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           <div className="flex-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-white/20">
               <Clock className="w-4 h-4 text-purple-200" />
               <span className="text-purple-100 text-sm font-medium">
                 Continue assistindo
@@ -100,7 +112,7 @@ export function HeroWatchingSection() {
           {/* Poster Section */}
           <div className="flex justify-center lg:justify-end">
             <div className="relative group">
-              <div className="w-48 h-64 lg:w-72 lg:h-96 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-lg rounded-3xl p-1 shadow-2xl overflow-hidden">
+              <div className="w-48 h-64 lg:w-72 lg:h-96 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-lg rounded-3xl p-1 shadow-2xl overflow-hidden border border-white/20">
                 <div
                   className="w-full h-full bg-cover bg-center rounded-2xl relative overflow-hidden transform scale-100 group-hover:scale-105 transition-transform duration-700"
                   style={{ backgroundImage: `url(${currentShow.poster})` }}
@@ -112,7 +124,7 @@ export function HeroWatchingSection() {
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/0 to-white/0 group-hover:via-white/5 group-hover:to-white/2 transition-all duration-600"></div>
 
                   {/* Status indicator */}
-                  <div className="absolute top-4 right-4 w-12 h-12 bg-green-500/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <div className="absolute top-4 right-4 w-12 h-12 bg-green-500/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
                     <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                   </div>
                 </div>
@@ -123,16 +135,6 @@ export function HeroWatchingSection() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Bottom wave */}
-      <div className="absolute bottom-0 left-0 w-full">
-        <svg viewBox="0 0 1440 120" className="w-full h-20 text-gray-50">
-          <path
-            fill="currentColor"
-            d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,69.3C960,85,1056,107,1152,112C1248,117,1344,107,1392,101.3L1440,96L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"
-          />
-        </svg>
       </div>
     </div>
   );
