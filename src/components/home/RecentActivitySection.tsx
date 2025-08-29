@@ -255,7 +255,7 @@ export function RecentActivitySection() {
                         {activity.tipoAtividade ===
                           TipoAtividadeFeed.Progresso && (
                           <p className="text-sm text-gray-600 mb-4">
-                            Temporada {activity.temporadaNumero}, Episódio{' '}
+                            Temporada {activity.temporadaNumero}
                             {activity.episodioNumero}
                           </p>
                         )}
