@@ -30,7 +30,6 @@ export function SelectListModal({
     carregarMinhasListas();
   }, []);
 
-  // Verifica se o dorama já está em cada lista
   const getListsWithDoramaStatus = () => {
     return minhasListas.map((lista) => ({
       ...lista,
@@ -49,9 +48,6 @@ export function SelectListModal({
       });
 
       setAddedToLists((prev) => new Set(prev).add(listaId));
-
-      // Opcional: fechar modal após adicionar
-      // setTimeout(() => onClose(), 1500);
     } catch (error) {
       console.error('Erro ao adicionar à lista:', error);
     } finally {
@@ -62,37 +58,36 @@ export function SelectListModal({
   const listsWithStatus = getListsWithDoramaStatus();
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl h-fit border border-violet-100">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Adicionar à Lista
-            </h2>
-            <p className="text-gray-600 mt-1">
-              Escolha onde adicionar "{doramaTitle}"
-            </p>
+        <div className="bg-gradient-to-r from-violet-600 to-purple-600 rounded-t-3xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-white">
+                Adicionar à Lista
+              </h2>
+              <p className="text-violet-100 mt-1">
+                Escolha onde adicionar "{doramaTitle}"
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-white/20 rounded-full transition-colors duration-200"
+            >
+              <XMarkIcon className="w-6 h-6 text-white" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-          >
-            <XMarkIcon className="w-6 h-6 text-gray-600" />
-          </button>
         </div>
 
         {/* Content */}
-        <div
-          className="p-6 overflow-y-auto"
-          style={{ maxHeight: 'calc(80vh - 140px)' }}
-        >
+        <div className="p-6 max-h-96 overflow-y-auto">
           {loading ? (
             <LoadingState />
           ) : listsWithStatus.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {listsWithStatus.map((lista) => (
                 <ListItem
                   key={lista.id}
@@ -109,9 +104,9 @@ export function SelectListModal({
           {/* Create New List Button */}
           {!loading && (
             <div className="mt-6 pt-6 border-t border-gray-100">
-              <button className="w-full flex items-center justify-center gap-3 p-4 border-2 border-dashed border-purple-300 rounded-xl text-purple-600 hover:bg-purple-50 hover:border-purple-400 transition-all duration-200">
+              <button className="w-full flex items-center justify-center gap-3 p-4 border-2 border-dashed border-violet-300 rounded-xl text-violet-600 hover:bg-violet-50 hover:border-violet-400 transition-all duration-300 hover:scale-[1.02] transform">
                 <PlusIcon className="w-5 h-5" />
-                <span className="font-medium">Criar Nova Lista</span>
+                <span className="font-semibold">Criar Nova Lista</span>
               </button>
             </div>
           )}
@@ -123,18 +118,18 @@ export function SelectListModal({
 
 function LoadingState() {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {Array.from({ length: 3 }).map((_, i) => (
         <div
           key={i}
-          className="flex gap-4 p-4 bg-gray-50 rounded-xl animate-pulse"
+          className="flex gap-4 p-4 bg-gradient-to-r from-gray-50 to-violet-50/30 rounded-xl animate-pulse border-2 border-gray-200"
         >
-          <div className="w-16 h-12 bg-gray-200 rounded-lg"></div>
+          <div className="w-16 h-12 bg-gradient-to-br from-gray-200 to-violet-200/50 rounded-lg"></div>
           <div className="flex-1 space-y-2">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-4 bg-gradient-to-r from-gray-200 to-violet-200/50 rounded w-3/4"></div>
+            <div className="h-3 bg-gradient-to-r from-gray-200 to-violet-200/50 rounded w-1/2"></div>
           </div>
-          <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+          <div className="w-24 h-10 bg-gradient-to-br from-violet-200 to-purple-200 rounded-full"></div>
         </div>
       ))}
     </div>
@@ -143,15 +138,17 @@ function LoadingState() {
 
 function EmptyState() {
   return (
-    <div className="text-center py-12">
-      <ListBulletIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+    <div className="text-center py-16">
+      <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-violet-100 to-purple-100 rounded-2xl flex items-center justify-center">
+        <ListBulletIcon className="w-10 h-10 text-violet-400" />
+      </div>
+      <h3 className="text-xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-3">
         Você ainda não tem listas
       </h3>
-      <p className="text-gray-600 mb-6">
+      <p className="text-gray-600 mb-6 max-w-sm mx-auto">
         Crie sua primeira lista para organizar seus doramas favoritos
       </p>
-      <button className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-2xl font-medium transition-colors duration-200">
+      <button className="px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white rounded-2xl font-semibold transition-all duration-300 hover:scale-105 transform shadow-lg">
         Criar Primeira Lista
       </button>
     </div>
@@ -175,27 +172,29 @@ function ListItem({
     if (hasDorama)
       return {
         text: 'Já adicionado',
-        color: 'bg-gray-500',
+        color: 'bg-white border-2 border-gray-300 text-gray-500',
         icon: CheckIcon,
         disabled: true,
       };
     if (isAdded)
       return {
         text: 'Adicionado!',
-        color: 'bg-green-500',
+        color:
+          'bg-gradient-to-r from-violet-500 to-purple-600 border-2 border-violet-400 text-white',
         icon: CheckIcon,
         disabled: true,
       };
     if (isAdding)
       return {
         text: 'Adicionando...',
-        color: 'bg-purple-400',
-        icon: PlusIcon,
+        color: 'bg-white border-2 border-violet-300 text-violet-600',
+        icon: null,
         disabled: true,
       };
     return {
       text: 'Adicionar',
-      color: 'bg-purple-500 hover:bg-purple-600',
+      color:
+        'bg-white border-2 border-violet-400 hover:border-violet-500 hover:bg-violet-50 text-violet-600',
       icon: PlusIcon,
       disabled: false,
     };
@@ -206,14 +205,14 @@ function ListItem({
 
   return (
     <div
-      className={`flex gap-4 p-4 rounded-xl border transition-all duration-200 ${
+      className={`flex gap-4 p-4 rounded-xl border-2 transition-all duration-300 hover:scale-[1.02] transform ${
         hasDorama || isAdded
-          ? 'bg-gray-50 border-gray-200'
-          : 'bg-gradient-to-r from-purple-50 to-white border-purple-100 hover:shadow-md'
+          ? 'bg-gradient-to-r from-violet-50 to-purple-50 border-violet-200 shadow-md'
+          : 'bg-white border-gray-200 hover:border-violet-300 hover:shadow-lg hover:bg-violet-50/30'
       }`}
     >
       {/* Lista Image */}
-      <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gray-100">
+      <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-violet-100/50 shadow-sm">
         {lista.imagemCapaUrl ? (
           <img
             src={lista.imagemCapaUrl}
@@ -222,7 +221,7 @@ function ListItem({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <PhotoIcon className="w-6 h-6 text-gray-400" />
+            <PhotoIcon className="w-6 h-6 text-violet-400" />
           </div>
         )}
       </div>
@@ -232,7 +231,7 @@ function ListItem({
         <h3 className="font-semibold text-gray-900 line-clamp-1 mb-1">
           {lista.nome}
         </h3>
-        <p className="text-sm text-gray-500 line-clamp-1">
+        <p className="text-sm text-violet-600 font-medium line-clamp-1">
           {lista.doramas.length} doramas •{' '}
           {lista.publica ? 'Pública' : 'Privada'}
         </p>
@@ -242,9 +241,13 @@ function ListItem({
       <button
         onClick={onAdd}
         disabled={buttonState.disabled}
-        className={`flex items-center justify-center w-24 h-10 text-white rounded-full text-sm font-medium transition-all duration-200 disabled:cursor-not-allowed ${buttonState.color}`}
+        className={`flex items-center justify-center min-w-28 h-10 rounded-xl text-sm font-semibold transition-all duration-300 disabled:cursor-not-allowed hover:scale-105 transform disabled:hover:scale-100 shadow-sm ${buttonState.color}`}
       >
-        <IconComponent className="w-4 h-4 mr-1" />
+        {isAdding ? (
+          <div className="w-4 h-4 border-2 border-violet-600/30 border-t-violet-600 rounded-full animate-spin mr-2" />
+        ) : IconComponent ? (
+          <IconComponent className="w-4 h-4 mr-2" />
+        ) : null}
         {buttonState.text}
       </button>
     </div>
