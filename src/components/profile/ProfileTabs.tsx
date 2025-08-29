@@ -16,7 +16,7 @@ export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
     },
     {
       id: 'reviews',
-      label: 'Reviews',
+      label: 'Avaliações',
       icon: Star,
     },
     {

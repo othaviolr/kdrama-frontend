@@ -94,7 +94,7 @@ export function ReviewsList({ usuarioId }: ReviewsListProps) {
               <StarIcon className="w-8 h-8 text-purple-500" />
               <div>
                 <h2 className="text-3xl font-bold text-gray-900">
-                  Minhas Reviews
+                  Minhas Avaliações
                 </h2>
                 <p className="text-gray-600 text-lg">
                   Suas avaliações e comentários sobre doramas
