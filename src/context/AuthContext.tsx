@@ -28,26 +28,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const verificarToken = async () => {
     const token = localStorage.getItem('token');
+    const savedUsuarioId = localStorage.getItem('usuarioId'); // Recuperar usuarioId salvo
 
-    if (token) {
+    if (token && savedUsuarioId) {
       try {
         console.log('🔍 Verificando token existente...');
         const perfilApi: PerfilApi = await usuarioService.getPerfil();
 
-        // Converter PerfilApi para Usuario (sem usuarioId)
+        // Converter PerfilApi para Usuario COM usuarioId salvo
         const usuarioData: Usuario = {
+          usuarioId: savedUsuarioId, // ← AQUI estava faltando!
           nome: perfilApi.nome,
           nomeUsuario: perfilApi.nomeUsuario,
           email: perfilApi.email,
           fotoUrl: perfilApi.fotoUrl ?? null,
         };
 
-        console.log('✅ Usuário autenticado:', usuarioData.nomeUsuario);
+        console.log(
+          '✅ Usuário autenticado:',
+          usuarioData.nomeUsuario,
+          'ID:',
+          usuarioData.usuarioId
+        );
         setUsuario(usuarioData);
       } catch (error) {
         console.error('❌ Token inválido, removendo...');
         logout();
       }
+    } else if (token && !savedUsuarioId) {
+      // Se tem token mas não tem usuarioId salvo, limpa tudo
+      console.log('⚠️ Token sem usuarioId, limpando...');
+      logout();
     }
 
     setIsLoading(false);
@@ -65,9 +76,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       console.log('✅ Login realizado com sucesso');
 
+      // Salvar token E usuarioId
       localStorage.setItem('token', response.token);
+      localStorage.setItem('usuarioId', response.usuarioId); // ← IMPORTANTE!
 
       setUsuario({
+        usuarioId: response.usuarioId, // ← AQUI estava faltando!
         nome: response.nome,
         nomeUsuario: response.nomeUsuario,
         email: response.email,
@@ -88,8 +102,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       console.log('✅ Registro realizado com sucesso');
 
+      // Salvar token E usuarioId
       localStorage.setItem('token', response.token);
+      localStorage.setItem('usuarioId', response.usuarioId); // ← IMPORTANTE!
+
       setUsuario({
+        usuarioId: response.usuarioId, // ← AQUI estava faltando!
         nome: response.nome,
         nomeUsuario: response.nomeUsuario,
         email: response.email,
@@ -104,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     console.log('👋 Fazendo logout...');
     localStorage.removeItem('token');
+    localStorage.removeItem('usuarioId'); // ← Limpar usuarioId também
     setUsuario(null);
   };
 

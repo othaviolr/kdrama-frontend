@@ -19,19 +19,35 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('atividade');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Carregar perfil completo
   useEffect(() => {
     if (usuario) {
       usuarioService.getPerfil().then(setPerfil).catch(console.error);
     }
   }, [usuario]);
 
-  // Redirect se não estiver logado
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       // router.push('/login');
     }
   }, [isAuthenticated, isLoading]);
+
+  console.log('🔍 Debug Auth:', {
+    isAuthenticated,
+    isLoading,
+    usuario: usuario
+      ? {
+          usuarioId: usuario.usuarioId,
+          nome: usuario.nome,
+          email: usuario.email,
+        }
+      : null,
+    perfil: perfil
+      ? {
+          nome: perfil.nome,
+          email: perfil.email,
+        }
+      : null,
+  });
 
   if (isLoading || !perfil) {
     return (
@@ -64,22 +80,38 @@ export default function ProfilePage() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'atividade':
-        return <ActivityFeed usuarioId={usuario.usuarioId} />;
+        return usuario.usuarioId ? (
+          <ActivityFeed usuarioId={usuario.usuarioId} />
+        ) : (
+          <div>Erro: ID do usuário não encontrado</div>
+        );
 
       case 'reviews':
-        return <ReviewsList usuarioId={usuario.usuarioId} />;
+        return usuario.usuarioId ? (
+          <ReviewsList usuarioId={usuario.usuarioId} />
+        ) : (
+          <div>Erro: ID do usuário não encontrado</div>
+        );
 
       case 'listas':
-        return <UserLists usuarioId={usuario.usuarioId} />;
+        return usuario.usuarioId ? (
+          <UserLists usuarioId={usuario.usuarioId} />
+        ) : (
+          <div>Erro: ID do usuário não encontrado</div>
+        );
 
       case 'seguidores':
-        return <FollowersSection usuarioId={usuario.usuarioId} />;
+        return <FollowersSection />;
 
       case 'configuracoes':
         return <SettingsSection usuario={usuario} />;
 
       default:
-        return <ActivityFeed usuarioId={usuario.usuarioId} />;
+        return usuario.usuarioId ? (
+          <ActivityFeed usuarioId={usuario.usuarioId} />
+        ) : (
+          <div>Erro: ID do usuário não encontrado</div>
+        );
     }
   };
 
