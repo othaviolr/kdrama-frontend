@@ -57,6 +57,10 @@ export class ListaService extends ApiService {
     });
   }
 
+  async getListasUsuario(usuarioId: string): Promise<any[]> {
+    return this.makeRequest(`/listas-prateleira/usuario/${usuarioId}`);
+  }
+
   async compartilharLista(listaId: string): Promise<{ shareToken: string }> {
     return this.makeRequest(`/listas-prateleira/${listaId}/compartilhar`, {
       method: 'POST',

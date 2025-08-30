@@ -57,6 +57,10 @@ export class AvaliacaoService extends ApiService {
     });
   }
 
+  async getAvaliacoesUsuario(usuarioId: string): Promise<any[]> {
+    return this.makeRequest(`/avaliacoes/usuario/${usuarioId}`);
+  }
+
   convertAvaliacaoApi(avaliacao: AvaliacaoApi): Avaliacao {
     return {
       id: avaliacao.id,

@@ -1,13 +1,27 @@
 import { useState, useEffect } from 'react';
 import { listaService } from 'src/services/listaService';
-import { ListaApi } from '@/types/lista';
+
+interface ListaUsuarioApi {
+  id: string;
+  nome: string;
+  descricao: string;
+  imagemCapaUrl: string;
+  privacidade: number;
+  shareToken?: string;
+  usuarioId: string;
+  dataCriacao: string;
+  doramas: Array<{
+    doramaId: string;
+    dataAdicao: string;
+  }>;
+}
 
 interface PublicUserListsProps {
   usuarioId: string;
 }
 
 export function PublicUserLists({ usuarioId }: PublicUserListsProps) {
-  const [listas, setListas] = useState<ListaApi[]>([]);
+  const [listas, setListas] = useState<ListaUsuarioApi[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,15 +33,10 @@ export function PublicUserLists({ usuarioId }: PublicUserListsProps) {
     try {
       console.log('📋 Carregando listas públicas para:', usuarioId);
 
-      // Você precisa criar este endpoint no backend:
-      // GET /listas-prateleira/usuario/{usuarioId}
-      // Por enquanto, deixar vazio até criar o endpoint
+      const data = await listaService.getListasUsuario(usuarioId);
+      setListas(data);
 
-      setListas([]);
-      console.log(
-        '⚠️ Endpoint /listas-prateleira/usuario/{usuarioId} ainda não existe!'
-      );
-      console.log('💡 Precisa criar no backend para buscar listas por usuário');
+      console.log('✅ Listas carregadas:', data.length);
     } catch (error) {
       console.error('❌ Erro ao carregar listas públicas:', error);
     } finally {
@@ -73,6 +82,9 @@ export function PublicUserLists({ usuarioId }: PublicUserListsProps) {
                 src={lista.imagemCapaUrl}
                 alt={lista.nome}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">

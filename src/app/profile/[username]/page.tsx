@@ -12,9 +12,7 @@ import { FollowersSection } from '@/components/profile/FollowersSection';
 import { usuarioService } from 'src/services/usuarioService';
 import { PerfilPublico } from '@/types/user';
 
-interface PublicProfile extends PerfilPublico {
-  // Não precisa mais adicionar usuarioId, já vem da API
-}
+interface PublicProfile extends PerfilPublico {}
 
 export default function PublicProfilePage() {
   const { usuario: currentUser } = useAuth();
@@ -40,7 +38,6 @@ export default function PublicProfilePage() {
     try {
       console.log('🔍 Carregando perfil público:', username);
 
-      // Verificar se é o próprio usuário
       if (currentUser?.nomeUsuario === username) {
         console.log('🔄 É o próprio usuário, redirecionando...');
         router.push('/profile');
@@ -50,14 +47,12 @@ export default function PublicProfilePage() {
       const data = await usuarioService.getUsuario(username);
 
       console.log('✅ Perfil público carregado:', data);
+      console.log('🆔 UsuarioId real da API:', data.usuarioId);
+      console.log('DEBUG COMPLETO:', JSON.stringify(data, null, 2));
 
-      // Debug: ver se tem algum campo de ID real
-      console.log('🔍 Campos disponíveis:', Object.keys(data));
+      setPerfil(data);
 
-      setPerfil({
-        ...data,
-        usuarioId: data.nomeUsuario, // Usar nomeUsuario como identificador
-      });
+      console.log('🎯 Perfil definido com usuarioId:', data.usuarioId);
     } catch (error: any) {
       console.error('❌ Erro ao carregar perfil:', error);
 
@@ -141,29 +136,34 @@ export default function PublicProfilePage() {
   }
 
   const renderTabContent = () => {
-    console.log('🔍 Debug renderTabContent:', {
+    if (!perfil) return null;
+
+    console.log('🔥 RENDERIZANDO COMPONENTE:', {
       activeTab,
-      usuarioId: perfil?.usuarioId,
-      nomeUsuario: perfil?.nomeUsuario,
+      'perfil.usuarioId': perfil.usuarioId,
+      'perfil.nomeUsuario': perfil.nomeUsuario,
+      'typeof usuarioId': typeof perfil.usuarioId,
     });
 
     switch (activeTab) {
       case 'atividade':
-        return <ActivityFeed usuarioId={perfil!.usuarioId} />;
+        console.log('⚡ Passando para ActivityFeed:', perfil.usuarioId);
+        return <ActivityFeed usuarioId={perfil.usuarioId} />;
 
       case 'reviews':
-        console.log('📝 Carregando reviews para usuário:', perfil!.usuarioId);
-        return <PublicReviewsList usuarioId={perfil!.usuarioId} />;
+        console.log('⚡ Passando para PublicReviewsList:', perfil.usuarioId);
+        return <PublicReviewsList usuarioId={perfil.usuarioId} />;
 
       case 'listas':
-        console.log('📋 Carregando listas para usuário:', perfil!.usuarioId);
-        return <PublicUserLists usuarioId={perfil!.usuarioId} />;
+        console.log('⚡ Passando para PublicUserLists:', perfil.usuarioId);
+        return <PublicUserLists usuarioId={perfil.usuarioId} />;
 
       case 'seguidores':
-        return <FollowersSection usuarioId={perfil!.usuarioId} />;
+        console.log('⚡ Passando para FollowersSection:', perfil.usuarioId);
+        return <FollowersSection usuarioId={perfil.usuarioId} />;
 
       default:
-        return <ActivityFeed usuarioId={perfil!.usuarioId} />;
+        return <ActivityFeed usuarioId={perfil.usuarioId} />;
     }
   };
 
@@ -175,13 +175,13 @@ export default function PublicProfilePage() {
           isCurrentUser={false}
           isFollowing={perfil.segueUsuarioAtual}
           onFollowToggle={handleSeguir}
-          showFollowButton={!!currentUser} // Só mostra se tiver logado
+          showFollowButton={!!currentUser}
         />
 
         <ProfileTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          hideSettingsTab={true} // Não mostrar aba de configurações
+          hideSettingsTab={true}
         />
 
         <div className="bg-white rounded-3xl shadow-lg">

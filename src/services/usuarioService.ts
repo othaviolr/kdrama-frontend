@@ -6,7 +6,7 @@ import {
   UsuarioRegistro,
   UsuarioLogin,
   UsuarioSeguidor,
-  PerfilPublico, // Adicionar este import
+  PerfilPublico,
 } from '../types/user';
 
 export class UsuarioService extends ApiService {
@@ -57,22 +57,26 @@ export class UsuarioService extends ApiService {
     });
   }
 
-  // MEUS seguidores
+  async getAvaliacoesUsuario(usuarioId: string): Promise<any[]> {
+    return this.makeRequest(`/avaliacoes/usuario/${usuarioId}`);
+  }
+
+  async getListasUsuario(usuarioId: string): Promise<any[]> {
+    return this.makeRequest(`/listas-prateleira/usuario/${usuarioId}`);
+  }
+
   async getMeusSeguidores(): Promise<UsuarioSeguidor[]> {
     return this.makeRequest('/usuarios/seguidores');
   }
 
-  // MEUS seguindo
   async getMeusSeguindo(): Promise<UsuarioSeguidor[]> {
     return this.makeRequest('/usuarios/seguindo');
   }
 
-  // Seguidores de OUTRO usuário
   async getSeguidores(usuarioId: string): Promise<UsuarioSeguidor[]> {
     return this.makeRequest(`/usuarios/${usuarioId}/seguidores`);
   }
 
-  // Seguindo de OUTRO usuário
   async getSeguindo(usuarioId: string): Promise<UsuarioSeguidor[]> {
     return this.makeRequest(`/usuarios/${usuarioId}/seguindo`);
   }
@@ -85,12 +89,11 @@ export class UsuarioService extends ApiService {
     };
   }
 
-  // Converter para formato padrão se precisar
   convertUsuarioSeguidor(usuario: UsuarioSeguidor): Partial<Usuario> {
     return {
       usuarioId: usuario.usuarioId,
       nome: usuario.nome,
-      fotoUrl: usuario.fotoPerfilUrl, // Conversão do campo
+      fotoUrl: usuario.fotoPerfilUrl,
     };
   }
 }

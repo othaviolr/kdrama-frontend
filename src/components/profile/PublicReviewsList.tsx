@@ -1,13 +1,23 @@
 import { useState, useEffect } from 'react';
 import { avaliacaoService } from 'src/services/avaliacaoService';
-import { AvaliacaoApi } from '@/types/avaliacao';
+
+interface AvaliacaoUsuarioApi {
+  id: string;
+  usuarioId: string;
+  temporadaId: string;
+  nota: number;
+  comentario: string;
+  recomendadoPorUsuarioId?: string;
+  recomendadoPorNomeLivre: string;
+  dataAvaliacao: string;
+}
 
 interface PublicReviewsListProps {
   usuarioId: string;
 }
 
 export function PublicReviewsList({ usuarioId }: PublicReviewsListProps) {
-  const [reviews, setReviews] = useState<AvaliacaoApi[]>([]);
+  const [reviews, setReviews] = useState<AvaliacaoUsuarioApi[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,17 +29,10 @@ export function PublicReviewsList({ usuarioId }: PublicReviewsListProps) {
     try {
       console.log('📝 Carregando reviews públicas para:', usuarioId);
 
-      // Você precisa criar este endpoint no backend:
-      // GET /avaliacoes/usuario/{usuarioId}
-      // Por enquanto, deixar vazio até criar o endpoint
+      const data = await avaliacaoService.getAvaliacoesUsuario(usuarioId);
+      setReviews(data);
 
-      setReviews([]);
-      console.log(
-        '⚠️ Endpoint /avaliacoes/usuario/{usuarioId} ainda não existe!'
-      );
-      console.log(
-        '💡 Precisa criar no backend para buscar avaliações por usuário'
-      );
+      console.log('✅ Reviews carregadas:', data.length);
     } catch (error) {
       console.error('❌ Erro ao carregar reviews públicas:', error);
     } finally {
