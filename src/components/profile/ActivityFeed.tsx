@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAuth } from 'src/context/AuthContext';
 import { useAtividade } from 'src/context/AtividadeContext';
 import { ActivityCard } from './ActivityFeed/ActivityCard';
 import { EmptyActivity } from './ActivityFeed/EmptyActivity';
@@ -17,18 +18,52 @@ interface ActivityFeedProps {
 }
 
 export function ActivityFeed({ usuarioId }: ActivityFeedProps) {
-  const { minhasAtividades, loadingMinhas, carregarMinhasAtividades } =
-    useAtividade();
+  const { usuario: currentUser } = useAuth();
+  const {
+    atividades,
+    minhasAtividades,
+    loading,
+    loadingMinhas,
+    carregarMinhasAtividades,
+    carregarAtividadesUsuario,
+  } = useAtividade();
+
   const [showAll, setShowAll] = useState(false);
   const [filter, setFilter] = useState<
     'TODOS' | 'AVALIACAO' | 'PRATELEIRA' | 'PROGRESSO_TEMPORADA'
   >('TODOS');
 
-  useEffect(() => {
-    carregarMinhasAtividades();
-  }, [usuarioId]);
+  // Verificar se é o usuário atual ou outro usuário
+  const isCurrentUser = currentUser?.usuarioId === usuarioId;
 
-  const filteredActivities = minhasAtividades.filter((atividade) =>
+  // Debug completo
+  console.log('🔍 ActivityFeed Debug:', {
+    usuarioId: usuarioId,
+    currentUserId: currentUser?.usuarioId,
+    isCurrentUser: isCurrentUser,
+    atividadesLength: atividades.length,
+    minhasAtividadesLength: minhasAtividades.length,
+    loading: loading,
+    loadingMinhas: loadingMinhas,
+  });
+
+  // Usar os dados corretos baseado em quem é o usuário
+  const atividadesData = isCurrentUser ? minhasAtividades : atividades;
+  const isLoading = isCurrentUser ? loadingMinhas : loading;
+
+  useEffect(() => {
+    console.log('🚀 useEffect executado:', { usuarioId, isCurrentUser });
+
+    if (isCurrentUser) {
+      console.log('📱 Executando carregarMinhasAtividades...');
+      carregarMinhasAtividades();
+    } else {
+      console.log('👤 Executando carregarAtividadesUsuario com ID:', usuarioId);
+      carregarAtividadesUsuario(usuarioId);
+    }
+  }, [usuarioId, isCurrentUser]);
+
+  const filteredActivities = atividadesData.filter((atividade) =>
     filter === 'TODOS' ? true : atividade.tipo === filter
   );
 
@@ -37,30 +72,30 @@ export function ActivityFeed({ usuarioId }: ActivityFeedProps) {
     : filteredActivities.slice(0, 10);
 
   const filterOptions = [
-    { value: 'TODOS', label: 'Todas', count: minhasAtividades.length },
+    { value: 'TODOS', label: 'Todas', count: atividadesData.length },
     {
       value: 'AVALIACAO',
       label: 'Avaliações',
-      count: minhasAtividades.filter((a) => a.tipo === 'AVALIACAO').length,
+      count: atividadesData.filter((a) => a.tipo === 'AVALIACAO').length,
     },
     {
       value: 'PRATELEIRA',
       label: 'Listas',
-      count: minhasAtividades.filter((a) => a.tipo === 'PRATELEIRA').length,
+      count: atividadesData.filter((a) => a.tipo === 'PRATELEIRA').length,
     },
     {
       value: 'PROGRESSO_TEMPORADA',
       label: 'Progresso',
-      count: minhasAtividades.filter((a) => a.tipo === 'PROGRESSO_TEMPORADA')
+      count: atividadesData.filter((a) => a.tipo === 'PROGRESSO_TEMPORADA')
         .length,
     },
   ];
 
-  if (loadingMinhas) {
+  if (isLoading) {
     return <LoadingActivity />;
   }
 
-  if (minhasAtividades.length === 0) {
+  if (atividadesData.length === 0) {
     return <EmptyActivity />;
   }
 
@@ -77,19 +112,21 @@ export function ActivityFeed({ usuarioId }: ActivityFeedProps) {
                   Atividades Recentes
                 </h2>
                 <p className="text-gray-600 text-lg">
-                  Suas ações e interações na plataforma
+                  {isCurrentUser
+                    ? 'Suas ações e interações na plataforma'
+                    : 'Ações e interações deste usuário'}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Total de atividades - versão minimalista */}
+          {/* Total de atividades */}
           <div className="text-right">
             <div className="text-3xl font-bold text-gray-900">
-              {minhasAtividades.length}
+              {atividadesData.length}
             </div>
             <div className="text-sm text-purple-600">
-              atividade{minhasAtividades.length !== 1 ? 's' : ''}
+              atividade{atividadesData.length !== 1 ? 's' : ''}
             </div>
           </div>
         </div>
@@ -186,7 +223,7 @@ export function ActivityFeed({ usuarioId }: ActivityFeedProps) {
       )}
 
       {/* Estatísticas no rodapé */}
-      {minhasAtividades.length > 0 && (
+      {atividadesData.length > 0 && (
         <div className="mt-12 pt-8 border-t border-gray-200">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {filterOptions.slice(1).map((stat) => (

@@ -5,7 +5,8 @@ import {
   LoginResponse,
   UsuarioRegistro,
   UsuarioLogin,
-  UsuarioSeguidor, // Adicionar este import
+  UsuarioSeguidor,
+  PerfilPublico, // Adicionar este import
 } from '../types/user';
 
 export class UsuarioService extends ApiService {
@@ -42,13 +43,7 @@ export class UsuarioService extends ApiService {
     });
   }
 
-  async getUsuario(nomeUsuario: string): Promise<
-    PerfilApi & {
-      totalSeguidores: number;
-      totalSeguindo: number;
-      segueUsuarioAtual: boolean;
-    }
-  > {
+  async getUsuario(nomeUsuario: string): Promise<PerfilPublico> {
     return this.makeRequest(`/usuarios/${nomeUsuario}`);
   }
 

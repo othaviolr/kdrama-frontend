@@ -5,10 +5,15 @@ import { Activity, Star, List, Users, Settings } from 'lucide-react';
 interface ProfileTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  hideSettingsTab?: boolean;
 }
 
-export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
-  const tabs = [
+export function ProfileTabs({
+  activeTab,
+  onTabChange,
+  hideSettingsTab = false,
+}: ProfileTabsProps) {
+  const allTabs = [
     {
       id: 'atividade',
       label: 'Atividades',
@@ -35,6 +40,10 @@ export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
       icon: Settings,
     },
   ];
+
+  const tabs = hideSettingsTab
+    ? allTabs.filter((tab) => tab.id !== 'configuracoes')
+    : allTabs;
 
   return (
     <div className="mb-8">

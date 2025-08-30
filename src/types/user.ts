@@ -65,3 +65,15 @@ export interface UsuarioSeguidor {
   nome: string;
   fotoPerfilUrl: string;
 }
+
+export interface PerfilPublico {
+  usuarioId: string;
+  nome: string;
+  nomeUsuario: string;
+  email: string;
+  fotoUrl: string;
+  bio: string;
+  totalSeguidores: number;
+  totalSeguindo: number;
+  segueUsuarioAtual: boolean;
+}
