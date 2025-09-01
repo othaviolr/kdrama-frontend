@@ -92,6 +92,7 @@ export class UsuarioService extends ApiService {
   convertUsuarioSeguidor(usuario: UsuarioSeguidor): Partial<Usuario> {
     return {
       usuarioId: usuario.usuarioId,
+      nomeUsuario: usuario.nomeUsuario,
       nome: usuario.nome,
       fotoUrl: usuario.fotoPerfilUrl,
     };

@@ -62,6 +62,7 @@ export interface EstatisticasPerfil {
 
 export interface UsuarioSeguidor {
   usuarioId: string;
+  nomeUsuario: string;
   nome: string;
   fotoPerfilUrl: string;
 }

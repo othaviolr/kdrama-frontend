@@ -10,7 +10,7 @@ import { LoadingFollowers } from './FollowersSection/LoadingFollowers';
 import { UserGroupIcon } from '@heroicons/react/24/outline';
 
 interface Usuario {
-  id: string;
+  usuarioId: string;
   nome: string;
   nomeUsuario: string;
   fotoUrl?: string;
@@ -20,7 +20,7 @@ interface Usuario {
 }
 
 interface FollowersSectionProps {
-  usuarioId?: string; // Agora é opcional
+  usuarioId?: string;
 }
 
 export function FollowersSection({ usuarioId }: FollowersSectionProps) {
@@ -33,7 +33,7 @@ export function FollowersSection({ usuarioId }: FollowersSectionProps) {
 
   useEffect(() => {
     carregarTodasAsAbas();
-  }, []); // Carrega tudo uma vez só
+  }, []);
 
   const carregarTodasAsAbas = async () => {
     const isCurrentUser = !usuarioId;
@@ -41,7 +41,6 @@ export function FollowersSection({ usuarioId }: FollowersSectionProps) {
 
     setLoading(true);
     try {
-      // Carrega seguidores e seguindo em paralelo
       const [seguidoresData, seguindoData] = await Promise.all([
         isCurrentUser
           ? usuarioService.getMeusSeguidores()
@@ -65,46 +64,10 @@ export function FollowersSection({ usuarioId }: FollowersSectionProps) {
     }
   };
 
-  const carregarDados = async () => {
-    // Se não tem usuarioId, assume que é o usuário atual
-    const isCurrentUser = !usuarioId;
-
-    console.log('🚀 Carregando dados...', {
-      usuarioId,
-      activeTab,
-      isCurrentUser,
-    });
-    setLoading(true);
-    try {
-      if (activeTab === 'seguidores') {
-        console.log('📥 Buscando seguidores...');
-        const data: UsuarioSeguidor[] = isCurrentUser
-          ? await usuarioService.getMeusSeguidores()
-          : await usuarioService.getSeguidores(usuarioId!);
-
-        console.log('✅ Seguidores recebidos:', data);
-        setSeguidores(data.map(convertUsuarioSeguidor));
-      } else {
-        console.log('📥 Buscando seguindo...');
-        const data: UsuarioSeguidor[] = isCurrentUser
-          ? await usuarioService.getMeusSeguindo()
-          : await usuarioService.getSeguindo(usuarioId!);
-
-        console.log('✅ Seguindo recebidos:', data);
-        setSeguindo(data.map(convertUsuarioSeguidor));
-      }
-    } catch (error) {
-      console.error('❌ Erro ao carregar dados:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Converter UsuarioSeguidor para Usuario
   const convertUsuarioSeguidor = (usuario: UsuarioSeguidor): Usuario => ({
-    id: usuario.usuarioId,
+    usuarioId: usuario.usuarioId,
     nome: usuario.nome,
-    nomeUsuario: '', // API não retorna, pode precisar de outro endpoint
+    nomeUsuario: usuario.nomeUsuario,
     fotoUrl: usuario.fotoPerfilUrl,
     bio: '',
     segueVoce: false,
@@ -118,13 +81,17 @@ export function FollowersSection({ usuarioId }: FollowersSectionProps) {
       if (activeTab === 'seguidores') {
         setSeguidores((prev) =>
           prev.map((user) =>
-            user.id === targetUserId ? { ...user, voceSegue: true } : user
+            user.usuarioId === targetUserId
+              ? { ...user, voceSegue: true }
+              : user
           )
         );
       } else {
         setSeguindo((prev) =>
           prev.map((user) =>
-            user.id === targetUserId ? { ...user, voceSegue: true } : user
+            user.usuarioId === targetUserId
+              ? { ...user, voceSegue: true }
+              : user
           )
         );
       }
@@ -140,11 +107,15 @@ export function FollowersSection({ usuarioId }: FollowersSectionProps) {
       if (activeTab === 'seguidores') {
         setSeguidores((prev) =>
           prev.map((user) =>
-            user.id === targetUserId ? { ...user, voceSegue: false } : user
+            user.usuarioId === targetUserId
+              ? { ...user, voceSegue: false }
+              : user
           )
         );
       } else {
-        setSeguindo((prev) => prev.filter((user) => user.id !== targetUserId));
+        setSeguindo((prev) =>
+          prev.filter((user) => user.usuarioId !== targetUserId)
+        ); // Mudou 'id' para 'usuarioId'
       }
     } catch (error) {
       console.error('Erro ao deixar de seguir usuário:', error);
@@ -204,16 +175,11 @@ export function FollowersSection({ usuarioId }: FollowersSectionProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentData.map((usuario, index) => (
             <div
-              key={usuario.id}
+              key={usuario.usuarioId}
               className="animate-in slide-in-from-bottom-4 duration-500"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <FollowerCard
-                usuario={usuario}
-                onSeguir={() => handleSeguir(usuario.id)}
-                onDeixarDeSeguir={() => handleDeixarDeSeguir(usuario.id)}
-                showFollowButton={activeTab === 'seguidores'}
-              />
+              <FollowerCard usuario={usuario} />
             </div>
           ))}
         </div>
