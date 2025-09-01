@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 import { avaliacaoService } from 'src/services/avaliacaoService';
+import { useDorama } from 'src/context/DoramaContext';
+import { temporadaService } from 'src/services/temporadaService';
+import { AvaliacaoCompleta } from '@/types/avaliacao';
+import { ReviewCard } from './ReviewsList/ReviewCard';
+import { StarIcon } from '@heroicons/react/24/outline';
 
 interface AvaliacaoUsuarioApi {
   id: string;
@@ -17,12 +22,23 @@ interface PublicReviewsListProps {
 }
 
 export function PublicReviewsList({ usuarioId }: PublicReviewsListProps) {
-  const [reviews, setReviews] = useState<AvaliacaoUsuarioApi[]>([]);
+  const [avaliacoes, setAvaliacoes] = useState<AvaliacaoUsuarioApi[]>([]);
+  const [avaliacoesCompletas, setAvaliacoesCompletas] = useState<
+    AvaliacaoCompleta[]
+  >([]);
   const [loading, setLoading] = useState(true);
+  const [loadingDetalhes, setLoadingDetalhes] = useState(false);
+  const { buscarDoramaPorId, carregarDorama } = useDorama();
 
   useEffect(() => {
     carregarReviews();
   }, [usuarioId]);
+
+  useEffect(() => {
+    if (avaliacoes.length > 0) {
+      carregarDetalhesAvaliacoes();
+    }
+  }, [avaliacoes]);
 
   const carregarReviews = async () => {
     setLoading(true);
@@ -30,13 +46,70 @@ export function PublicReviewsList({ usuarioId }: PublicReviewsListProps) {
       console.log('📝 Carregando reviews públicas para:', usuarioId);
 
       const data = await avaliacaoService.getAvaliacoesUsuario(usuarioId);
-      setReviews(data);
 
-      console.log('✅ Reviews carregadas:', data.length);
+      // Converter para o formato esperado pelo resto do código
+      const avaliacoesConvertidas = data.map((avaliacao: any) => ({
+        id: avaliacao.id,
+        usuarioId: avaliacao.usuarioId,
+        temporadaId: avaliacao.temporadaId,
+        nota: avaliacao.nota,
+        comentario: avaliacao.comentario,
+        recomendadoPorUsuarioId: avaliacao.recomendadoPorUsuarioId || undefined,
+        recomendadoPorNomeLivre: avaliacao.recomendadoPorNomeLivre || '',
+        dataAvaliacao: avaliacao.dataAvaliacao, // Mantém como string aqui
+      }));
+
+      setAvaliacoes(avaliacoesConvertidas);
+      console.log('✅ Reviews carregadas:', avaliacoesConvertidas.length);
     } catch (error) {
       console.error('❌ Erro ao carregar reviews públicas:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const carregarDetalhesAvaliacoes = async () => {
+    setLoadingDetalhes(true);
+    try {
+      const avaliacoesComDetalhes = await Promise.all(
+        avaliacoes.map(async (avaliacao) => {
+          try {
+            // Buscar dados da temporada
+            const temporada = await temporadaService.getTemporada(
+              avaliacao.temporadaId
+            );
+
+            // Buscar dados do dorama
+            let dorama = buscarDoramaPorId(temporada.doramaId);
+            if (!dorama) {
+              await carregarDorama(temporada.doramaId);
+              dorama = buscarDoramaPorId(temporada.doramaId);
+            }
+
+            // Converter para AvaliacaoCompleta com dataAvaliacao como Date
+            return {
+              ...avaliacao,
+              temporada,
+              dorama,
+              dataAvaliacao: new Date(avaliacao.dataAvaliacao), // Convertendo string para Date
+            } as AvaliacaoCompleta;
+          } catch (error) {
+            console.error('Erro ao carregar detalhes da avaliação:', error);
+            return {
+              ...avaliacao,
+              temporada: undefined,
+              dorama: undefined,
+              dataAvaliacao: new Date(avaliacao.dataAvaliacao), // Convertendo mesmo em caso de erro
+            } as AvaliacaoCompleta;
+          }
+        })
+      );
+
+      setAvaliacoesCompletas(avaliacoesComDetalhes);
+    } catch (error) {
+      console.error('Erro ao carregar detalhes das avaliações:', error);
+    } finally {
+      setLoadingDetalhes(false);
     }
   };
 
@@ -48,7 +121,7 @@ export function PublicReviewsList({ usuarioId }: PublicReviewsListProps) {
     );
   }
 
-  if (reviews.length === 0) {
+  if (avaliacoes.length === 0) {
     return (
       <div className="text-center py-12">
         <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
@@ -65,40 +138,67 @@ export function PublicReviewsList({ usuarioId }: PublicReviewsListProps) {
   }
 
   return (
-    <div className="space-y-4">
-      {reviews.map((review) => (
-        <div key={review.id} className="bg-gray-50 p-6 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <span
-                    key={i}
-                    className={`text-lg ${
-                      i < review.nota ? 'text-yellow-400' : 'text-gray-300'
-                    }`}
-                  >
-                    ★
-                  </span>
-                ))}
+    <div className="space-y-8">
+      {/* Header da seção */}
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-4">
+              <StarIcon className="w-8 h-8 text-purple-500" />
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Avaliações</h2>
+                <p className="text-gray-600 text-lg">
+                  Avaliações e comentários deste usuário
+                </p>
               </div>
-              <span className="text-sm text-gray-600">
-                {new Date(review.dataAvaliacao).toLocaleDateString()}
-              </span>
             </div>
           </div>
 
-          {review.comentario && (
-            <p className="text-gray-700 leading-relaxed">{review.comentario}</p>
-          )}
-
-          {review.recomendadoPorNomeLivre && (
-            <p className="text-sm text-gray-500 mt-2">
-              Recomendado por: {review.recomendadoPorNomeLivre}
-            </p>
-          )}
+          {/* Total de reviews */}
+          <div className="text-right">
+            <div className="text-3xl font-bold text-gray-900">
+              {avaliacoes.length}
+            </div>
+            <div className="text-sm text-purple-600">
+              avaliação{avaliacoes.length !== 1 ? 'ões' : ''}
+            </div>
+          </div>
         </div>
-      ))}
+      </div>
+
+      {/* Lista de reviews */}
+      {loadingDetalhes ? (
+        <div className="space-y-5">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl shadow-sm p-6 animate-pulse border border-gray-100"
+            >
+              <div className="flex gap-4">
+                <div className="w-16 h-20 bg-gray-200 rounded-lg"></div>
+                <div className="flex-1 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+                  <div className="h-3 bg-gray-200 rounded w-full"></div>
+                  <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {avaliacoesCompletas.map((avaliacao, index) => (
+            <div
+              key={avaliacao.id}
+              className="animate-in slide-in-from-bottom-4 duration-500"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <ReviewCard avaliacao={avaliacao} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
