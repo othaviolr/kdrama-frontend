@@ -1,5 +1,5 @@
 import { UserPlusIcon, CheckIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { useFollow } from '../../hooks/useFollow'; // Caminho correto baseado na sua estrutura
 
 interface PublicProfile {
   usuarioId: string;
@@ -16,28 +16,30 @@ interface PublicProfile {
 interface PublicProfileHeaderProps {
   perfil: PublicProfile;
   isCurrentUser: boolean;
-  isFollowing: boolean;
-  onFollowToggle: () => void;
   showFollowButton: boolean;
+  onFollowSuccess?: (isFollowing: boolean) => void;
+  onFollowError?: (error: Error) => void;
 }
 
-export function PublicProfileHeader({
+function PublicProfileHeader({
   perfil,
   isCurrentUser,
-  isFollowing,
-  onFollowToggle,
   showFollowButton,
+  onFollowSuccess,
+  onFollowError,
 }: PublicProfileHeaderProps) {
-  const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const { isFollowing, isLoading, toggleFollow } = useFollow({
+    usuarioId: perfil.usuarioId,
+    isFollowingInitial: perfil.segueUsuarioAtual,
+    onSuccess: (newFollowingState) => {
+      // Chama o callback do componente pai
+      onFollowSuccess?.(newFollowingState);
+    },
+    onError: onFollowError,
+  });
 
-  const handleFollowClick = async () => {
-    setIsFollowLoading(true);
-    try {
-      await onFollowToggle();
-    } finally {
-      setIsFollowLoading(false);
-    }
-  };
+  console.log('Debug - perfil.segueUsuarioAtual:', perfil.segueUsuarioAtual);
+  console.log('Debug - isFollowing no hook:', isFollowing);
 
   return (
     <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-8">
@@ -82,8 +84,8 @@ export function PublicProfileHeader({
               {showFollowButton && (
                 <div className="flex-shrink-0">
                   <button
-                    onClick={handleFollowClick}
-                    disabled={isFollowLoading}
+                    onClick={toggleFollow}
+                    disabled={isLoading}
                     className={`
                       relative overflow-hidden group px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg
                       ${
@@ -91,11 +93,11 @@ export function PublicProfileHeader({
                           ? 'bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600 border-2 border-gray-200 hover:border-red-200'
                           : 'bg-purple-600 text-white hover:bg-purple-700 border-2 border-transparent'
                       }
-                      ${isFollowLoading ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-xl'}
+                      ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-xl'}
                     `}
                   >
                     <div className="flex items-center gap-3">
-                      {isFollowLoading ? (
+                      {isLoading ? (
                         <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <div
@@ -109,7 +111,7 @@ export function PublicProfileHeader({
                         </div>
                       )}
                       <span className="font-semibold">
-                        {isFollowLoading
+                        {isLoading
                           ? 'Carregando...'
                           : isFollowing
                             ? 'Seguindo'
@@ -138,3 +140,5 @@ export function PublicProfileHeader({
     </div>
   );
 }
+
+export default PublicProfileHeader;

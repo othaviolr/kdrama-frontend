@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from 'src/context/AuthContext';
 import { useParams, useRouter } from 'next/navigation';
-import { PublicProfileHeader } from '@/components/profile/PublicProfileHeader';
+import PublicProfileHeader from '@/components/profile/PublicProfileHeader';
 import { ProfileTabs } from '@/components/profile/ProfileTabs';
 import { ActivityFeed } from '@/components/profile/ActivityFeed';
 import { PublicReviewsList } from '@/components/profile/PublicReviewsList';
@@ -173,9 +173,26 @@ export default function PublicProfilePage() {
         <PublicProfileHeader
           perfil={perfil}
           isCurrentUser={false}
-          isFollowing={perfil.segueUsuarioAtual}
-          onFollowToggle={handleSeguir}
           showFollowButton={!!currentUser}
+          onFollowSuccess={(isFollowing) => {
+            setPerfil((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    segueUsuarioAtual: isFollowing,
+                    totalSeguidores: isFollowing
+                      ? prev.totalSeguidores + 1
+                      : prev.totalSeguidores - 1,
+                  }
+                : null
+            );
+
+            console.log('Follow success:', isFollowing);
+          }}
+          onFollowError={(error) => {
+            console.error('Erro ao seguir:', error);
+            alert('Erro ao seguir usuário. Tente novamente.');
+          }}
         />
 
         <ProfileTabs
