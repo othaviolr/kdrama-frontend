@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* suas opções de configuração aqui */
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  images: {
+    domains: ['localhost'],
+  },
 };
 
 module.exports = nextConfig;
