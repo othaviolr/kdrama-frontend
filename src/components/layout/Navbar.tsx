@@ -200,10 +200,31 @@ export function Navbar() {
                   className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-purple-50/80 transition-all duration-300 group"
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 >
-                  <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-purple-300 transition-all duration-300">
-                    <span className="text-white text-sm font-medium">
-                      {usuario?.nome?.charAt(0).toUpperCase()}
-                    </span>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-purple-300 transition-all duration-300 overflow-hidden">
+                    {usuario?.fotoUrl ? (
+                      <img
+                        src={usuario.fotoUrl}
+                        alt={usuario.nome || 'Perfil'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Se a imagem falhar, mostra o fallback
+                          const target = e.currentTarget as HTMLImageElement;
+                          target.style.display = 'none';
+                          const fallback =
+                            target.nextElementSibling as HTMLElement;
+                          if (fallback) {
+                            fallback.style.display = 'flex';
+                          }
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className={`w-full h-full bg-purple-600 flex items-center justify-center ${usuario?.fotoUrl ? 'hidden' : 'flex'}`}
+                    >
+                      <span className="text-white text-sm font-medium">
+                        {usuario?.nome?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
                   </div>
                   <span className="hidden sm:block text-sm font-medium text-gray-700 group-hover:text-purple-600 transition-colors duration-300">
                     {usuario?.nome}
@@ -216,13 +237,41 @@ export function Navbar() {
                 {isUserMenuOpen && (
                   <div className="absolute top-full right-0 mt-2 w-56 bg-white/95 backdrop-blur-lg rounded-xl shadow-xl border border-gray-200/50 z-50 overflow-hidden">
                     <div className="py-2">
-                      <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">
-                          {usuario?.nome}
-                        </p>
-                        <p className="text-xs text-purple-600 font-medium">
-                          @{usuario?.nomeUsuario}
-                        </p>
+                      <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-purple-100">
+                          {usuario?.fotoUrl ? (
+                            <img
+                              src={usuario.fotoUrl}
+                              alt={usuario.nome || 'Perfil'}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target =
+                                  e.currentTarget as HTMLImageElement;
+                                target.style.display = 'none';
+                                const fallback =
+                                  target.nextElementSibling as HTMLElement;
+                                if (fallback) {
+                                  fallback.style.display = 'flex';
+                                }
+                              }}
+                            />
+                          ) : null}
+                          <div
+                            className={`w-full h-full bg-purple-600 flex items-center justify-center ${usuario?.fotoUrl ? 'hidden' : 'flex'}`}
+                          >
+                            <span className="text-white text-sm font-medium">
+                              {usuario?.nome?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {usuario?.nome}
+                          </p>
+                          <p className="text-xs text-purple-600 font-medium">
+                            @{usuario?.nomeUsuario}
+                          </p>
+                        </div>
                       </div>
 
                       <Link
@@ -333,14 +382,34 @@ export function Navbar() {
 
             {isAuthenticated && (
               <div className="pt-4 flex items-center gap-3 px-4 py-3 bg-purple-50 rounded-xl">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
+                  {usuario?.fotoUrl ? (
+                    <img
+                      src={usuario.fotoUrl}
+                      alt={usuario.nome || 'Perfil'}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.currentTarget as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback =
+                          target.nextElementSibling as HTMLElement;
+                        if (fallback) {
+                          fallback.style.display = 'flex';
+                        }
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className={`w-full h-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center ${usuario?.fotoUrl ? 'hidden' : 'flex'}`}
+                  >
+                    <span className="text-white text-xs font-semibold">
+                      {usuario?.nome?.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                </div>
                 <span className="text-sm font-semibold text-gray-700">
                   Olá, {usuario?.nome}
                 </span>
-                <div className="w-6 h-6 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-semibold">
-                    {usuario?.nome?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
               </div>
             )}
           </div>

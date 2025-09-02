@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Save, Loader2, Trash2 } from 'lucide-react';
 import { PerfilApi } from '@/types/user';
 import { usuarioService } from 'src/services/usuarioService';
@@ -21,53 +21,41 @@ export function EditProfileModal({
   const [formData, setFormData] = useState({
     nome: usuario.nome,
     bio: usuario.bio ?? '',
+    fotoUrl: usuario.fotoUrl ?? '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
-  const [fotoPreview, setFotoPreview] = useState(usuario.fotoUrl ?? '');
-  const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setFormData({
       nome: usuario.nome,
       bio: usuario.bio ?? '',
+      fotoUrl: usuario.fotoUrl ?? '',
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
     });
-    setFotoPreview(usuario.fotoUrl ?? '');
-    setFotoFile(null);
   }, [usuario]);
 
   const handleChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleFotoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFotoFile(file);
-      setFotoPreview(URL.createObjectURL(file));
-    }
-  };
-
   const handleRemoveFoto = () => {
-    setFotoFile(null);
-    setFotoPreview('');
+    setFormData((prev) => ({ ...prev, fotoUrl: '' }));
   };
 
   const handleCancel = () => {
     setFormData({
       nome: usuario.nome,
       bio: usuario.bio ?? '',
+      fotoUrl: usuario.fotoUrl ?? '',
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
     });
-    setFotoPreview(usuario.fotoUrl ?? '');
-    setFotoFile(null);
     onClose();
   };
 
@@ -76,29 +64,12 @@ export function EditProfileModal({
     setIsLoading(true);
 
     try {
-      let fotoUrl = usuario.fotoUrl;
-
-      if (fotoFile) {
-        // Upload da nova foto
-        const form = new FormData();
-        form.append('file', fotoFile);
-        const uploadResult = await fetch('/api/upload', {
-          method: 'POST',
-          body: form,
-        });
-        const data = await uploadResult.json();
-        fotoUrl = data.url;
-      } else if (!fotoPreview) {
-        // Remove a foto
-        fotoUrl = '';
-      }
-
       // Atualiza o perfil no backend
       await usuarioService.updatePerfil({
         nome: formData.nome,
         nomeUsuario: usuario.nomeUsuario,
         bio: formData.bio,
-        fotoUrl,
+        fotoUrl: formData.fotoUrl,
       });
 
       // Atualiza o estado do usuário no componente pai
@@ -106,7 +77,7 @@ export function EditProfileModal({
         ...usuario,
         nome: formData.nome,
         bio: formData.bio,
-        fotoUrl,
+        fotoUrl: formData.fotoUrl,
       });
 
       // Fecha o modal
@@ -153,37 +124,54 @@ export function EditProfileModal({
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Foto */}
             <div className="flex items-center gap-4">
-              {fotoPreview ? (
+              {formData.fotoUrl ? (
                 <img
-                  src={fotoPreview}
+                  src={formData.fotoUrl}
                   alt="Foto do perfil"
                   className="w-20 h-20 rounded-full object-cover"
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    const nextEl = target.nextElementSibling as HTMLElement;
+                    target.style.display = 'none';
+                    if (nextEl) {
+                      nextEl.style.display = 'flex';
+                    }
+                  }}
                 />
-              ) : (
+              ) : null}
+              {!formData.fotoUrl && (
                 <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
                   Sem foto
                 </div>
               )}
               <div className="flex flex-col gap-2">
-                <label className="cursor-pointer text-purple-600 hover:underline flex items-center gap-1">
-                  Alterar foto
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFotoChange}
-                    className="hidden"
-                  />
-                </label>
-                {fotoPreview && (
+                {formData.fotoUrl && (
                   <button
                     type="button"
                     onClick={handleRemoveFoto}
                     className="flex items-center gap-1 text-red-600 hover:underline"
                   >
-                    <Trash2 className="w-4 h-4" /> Remover
+                    <Trash2 className="w-4 h-4" /> Remover foto
                   </button>
                 )}
               </div>
+            </div>
+
+            {/* URL da Foto */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                URL da Foto
+              </label>
+              <input
+                type="url"
+                value={formData.fotoUrl}
+                onChange={(e) => handleChange('fotoUrl', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 transition-all outline-none"
+                placeholder="https://exemplo.com/minha-foto.jpg"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Cole o link de uma imagem para usar como foto de perfil
+              </p>
             </div>
 
             {/* Nome */}

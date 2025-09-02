@@ -28,16 +28,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const verificarToken = async () => {
     const token = localStorage.getItem('token');
-    const savedUsuarioId = localStorage.getItem('usuarioId'); // Recuperar usuarioId salvo
+    const savedUsuarioId = localStorage.getItem('usuarioId');
 
     if (token && savedUsuarioId) {
       try {
         console.log('🔍 Verificando token existente...');
         const perfilApi: PerfilApi = await usuarioService.getPerfil();
 
-        // Converter PerfilApi para Usuario COM usuarioId salvo
         const usuarioData: Usuario = {
-          usuarioId: savedUsuarioId, // ← AQUI estava faltando!
+          usuarioId: savedUsuarioId,
           nome: perfilApi.nome,
           nomeUsuario: perfilApi.nomeUsuario,
           email: perfilApi.email,
@@ -56,7 +55,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout();
       }
     } else if (token && !savedUsuarioId) {
-      // Se tem token mas não tem usuarioId salvo, limpa tudo
       console.log('⚠️ Token sem usuarioId, limpando...');
       logout();
     }
@@ -76,17 +74,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       console.log('✅ Login realizado com sucesso');
 
-      // Salvar token E usuarioId
       localStorage.setItem('token', response.token);
-      localStorage.setItem('usuarioId', response.usuarioId); // ← IMPORTANTE!
+      localStorage.setItem('usuarioId', response.usuarioId);
 
       setUsuario({
-        usuarioId: response.usuarioId, // ← AQUI estava faltando!
+        usuarioId: response.usuarioId,
         nome: response.nome,
         nomeUsuario: response.nomeUsuario,
         email: response.email,
         fotoUrl: response.fotoUrl ?? null,
       });
+
+      console.log('🔄 Redirecionando para home...');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
     } catch (error) {
       console.error('❌ Erro no login:', error);
       throw error;
@@ -102,17 +104,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       console.log('✅ Registro realizado com sucesso');
 
-      // Salvar token E usuarioId
       localStorage.setItem('token', response.token);
-      localStorage.setItem('usuarioId', response.usuarioId); // ← IMPORTANTE!
+      localStorage.setItem('usuarioId', response.usuarioId);
 
       setUsuario({
-        usuarioId: response.usuarioId, // ← AQUI estava faltando!
+        usuarioId: response.usuarioId,
         nome: response.nome,
         nomeUsuario: response.nomeUsuario,
         email: response.email,
         fotoUrl: response.fotoUrl ?? null,
       });
+
+      console.log('🔄 Redirecionando para home...');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
     } catch (error) {
       console.error('❌ Erro no registro:', error);
       throw error;
@@ -122,8 +128,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     console.log('👋 Fazendo logout...');
     localStorage.removeItem('token');
-    localStorage.removeItem('usuarioId'); // ← Limpar usuarioId também
+    localStorage.removeItem('usuarioId');
     setUsuario(null);
+
+    window.location.href = '/login';
   };
 
   const value = {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Star, TrendingUp, MapPin, User, Play } from 'lucide-react';
 import { useDorama } from '../../context/DoramaContext';
 import { DoramaCompleto } from '../../types/dorama';
@@ -8,6 +9,7 @@ import { DoramaCompleto } from '../../types/dorama';
 export function DiscoverSection() {
   const [activeTab, setActiveTab] = useState('recommended');
   const { doramas, carregarDoramas, loading } = useDorama();
+  const router = useRouter();
 
   // Carregar doramas quando o componente monta
   useEffect(() => {
@@ -50,9 +52,9 @@ export function DiscoverSection() {
   };
 
   const handleDoramaClick = (dorama: DoramaCompleto) => {
-    console.log('Clicou no dorama:', dorama.titulo);
-    // Aqui você pode navegar para a página de detalhes
-    // router.push(`/dorama/${dorama.doramaId}`);
+    console.log('Navegando para dorama:', dorama.titulo);
+    // Navegar para a página de detalhes usando o ID do dorama
+    router.push(`/dorama/${dorama.doramaId}`);
   };
 
   return (

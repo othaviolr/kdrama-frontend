@@ -27,7 +27,7 @@ export class ListaService extends ApiService {
       nome: data.nome,
       descricao: data.descricao,
       imagemCapaUrl: data.imagemCapaUrl,
-      privacidade: data.publica ? 1 : 0,
+      privacidade: data.publica ? 1 : 2,
     };
 
     return this.makeRequest('/listas-prateleira', {
@@ -43,7 +43,7 @@ export class ListaService extends ApiService {
     if (data.descricao !== undefined) apiData.descricao = data.descricao;
     if (data.imagemCapaUrl !== undefined)
       apiData.imagemCapaUrl = data.imagemCapaUrl;
-    if (data.publica !== undefined) apiData.privacidade = data.publica ? 1 : 0;
+    if (data.publica !== undefined) apiData.privacidade = data.publica ? 1 : 2;
 
     return this.makeRequest(`/listas-prateleira/${listaId}`, {
       method: 'PUT',
