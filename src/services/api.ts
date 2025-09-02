@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:5120/api';
+const API_BASE_URL = 'http://72.60.144.4:5000/api';
+//  const API_BASE_URL = 'http://srv989711.hstgr.cloud:5000/api';
 
 export class ApiService {
   protected getHeaders(): HeadersInit {
@@ -26,7 +27,6 @@ export class ApiService {
       throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
 
-    // Aqui, se o response tiver body, parseia JSON
     const text = await response.text();
     return text ? JSON.parse(text) : ({} as T);
   }
