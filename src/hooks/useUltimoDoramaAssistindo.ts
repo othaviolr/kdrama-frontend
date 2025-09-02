@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useDorama } from 'src/context/DoramaContext';
 import { useProgresso } from 'src/context/ProgressoContext';
-import { StatusDoramaEnum } from '@/types/progresso';
+import { StatusDoramaEnum } from '../types/progresso';
 
 interface WatchingShow {
   id: string;

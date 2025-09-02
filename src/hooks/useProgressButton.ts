@@ -8,8 +8,8 @@ import {
   CheckCircle,
   LucideIcon,
 } from 'lucide-react';
-import { DoramaCompleto } from '@/types/dorama';
-import { StatusDoramaEnum, StatusDoramaLabels } from '@/types/progresso';
+import { DoramaCompleto } from '../types/dorama';
+import { StatusDoramaEnum, StatusDoramaLabels } from '../types/progresso';
 import { useProgresso } from 'src/context/ProgressoContext';
 
 type ProgressoInfoSemProgresso = {
