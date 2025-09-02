@@ -9,7 +9,7 @@ import {
   LucideIcon,
 } from 'lucide-react';
 import { DoramaCompleto } from '../types/dorama';
-import { StatusDoramaEnum, StatusDoramaLabels } from '../types/progresso';
+import { StatusDoramaEnum, StatusDoramaLabels } from '../types';
 import { useProgresso } from 'src/context/ProgressoContext';
 
 type ProgressoInfoSemProgresso = {

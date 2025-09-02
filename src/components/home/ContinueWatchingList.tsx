@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 import { ProgressBar } from '../ui/ProgressBar';
 import { useProgresso } from 'src/context/ProgressoContext';
 import { useDorama } from 'src/context/DoramaContext';
-import { StatusDoramaEnum } from '../../types/progresso';
+import { StatusDoramaEnum } from '../../types';
 
 interface WatchingShow {
   id: string;
