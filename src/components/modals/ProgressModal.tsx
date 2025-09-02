@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Play, Clock, Pause, Ban, CheckCircle } from 'lucide-react';
-import { DoramaCompleto, Temporada } from '@/types/dorama';
+import { DoramaCompleto, Temporada } from '../../types/dorama';
 import { StatusDoramaEnum, StatusDoramaLabels } from '@/types/progresso';
 import { useProgresso } from 'src/context/ProgressoContext';
 
