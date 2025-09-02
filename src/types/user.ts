@@ -1,4 +1,5 @@
 export interface PerfilApi {
+  usuarioId: string;
   nome: string;
   nomeUsuario: string;
   email: string;
