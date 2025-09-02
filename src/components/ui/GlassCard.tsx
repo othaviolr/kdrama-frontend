@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
-import { designTokens } from '@/lib/design-tokens';
+import { cn } from '../../lib/utils';
+import { designTokens } from '../../lib/design-tokens';
 
 interface GlassCardProps {
   children: React.ReactNode;

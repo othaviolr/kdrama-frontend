@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
 const gradients = {
   pink: 'bg-gradient-to-br from-pink-400 to-pink-600',
