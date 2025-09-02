@@ -15,7 +15,7 @@ import {
   AtualizarProgressoRequest,
   AtualizarStatusRequest,
   StatusDoramaEnum,
-} from '../types/progresso';
+} from '../types';
 
 const ProgressoContext = createContext<ProgressoContextType | undefined>(
   undefined
