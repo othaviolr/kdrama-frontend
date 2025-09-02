@@ -1,5 +1,3 @@
-// adminService.ts - Serviços para funcionalidades administrativas
-
 import { ApiService } from './api';
 import {
   CreateDoramaRequest,
@@ -13,7 +11,6 @@ import {
 } from '../types/admin';
 
 export class AdminService extends ApiService {
-  // CRIAR - Métodos de criação
   async createDorama(data: CreateDoramaRequest): Promise<string> {
     return this.makeRequest<string>('/doramas', {
       method: 'POST',
@@ -42,18 +39,15 @@ export class AdminService extends ApiService {
     });
   }
 
-  // BUSCAR - Métodos de busca específicos
   async buscarAtoresPorNome(nome: string): Promise<AtorBusca[]> {
     if (!nome.trim()) return [];
 
     try {
       console.log('🔍 Buscando atores para:', nome);
 
-      // Buscar todos os atores do endpoint /Ator
       const todosAtores = await this.makeRequest<AtorBusca[]>('/Ator');
       console.log('📥 Total de atores recebidos:', todosAtores.length);
 
-      // Filtrar por nome no frontend
       const atoresFiltrados = todosAtores.filter((ator) =>
         ator.nome.toLowerCase().includes(nome.toLowerCase())
       );
@@ -80,7 +74,6 @@ export class AdminService extends ApiService {
     );
   }
 
-  // LISTAR - Métodos de listagem completa
   async getAllAtores(): Promise<Ator[]> {
     return this.makeRequest<Ator[]>('/Ator');
   }
@@ -93,7 +86,6 @@ export class AdminService extends ApiService {
     return this.makeRequest<Genero[]>('/Genero');
   }
 
-  // GET INDIVIDUAL - Métodos para buscar por ID
   async getDoramaCompleto(id: string): Promise<DoramaCompleto> {
     return this.makeRequest<DoramaCompleto>(`/doramas/${id}/completo`);
   }
@@ -114,7 +106,6 @@ export class AdminService extends ApiService {
     return this.makeRequest<any>(`/Episodio/${id}`);
   }
 
-  // MÉTODO ESPECIAL - Criar dorama completo com temporadas e episódios
   async createDoramaCompleto(
     doramaData: CreateDoramaRequest,
     temporadas?: CreateTemporadaRequest[],
@@ -127,20 +118,17 @@ export class AdminService extends ApiService {
     episodioIds: string[];
   }> {
     try {
-      // 1. Criar o dorama
       const doramaId = await this.createDorama(doramaData);
 
       const temporadaIds: string[] = [];
       const episodioIds: string[] = [];
 
-      // 2. Criar temporadas se fornecidas
       if (temporadas && temporadas.length > 0) {
         for (const temporadaData of temporadas) {
           const temporadaComId = { ...temporadaData, doramaId };
           const temporadaId = await this.createTemporada(temporadaComId);
           temporadaIds.push(temporadaId);
 
-          // 3. Criar episódios para esta temporada
           const temporadaIndex = temporadas.indexOf(temporadaData);
           const episodios = episodiosPorTemporada?.[temporadaIndex];
 
@@ -166,10 +154,8 @@ export class AdminService extends ApiService {
   }
 }
 
-// Exportar instância singleton
 export const adminService = new AdminService();
 
-// VALIDAÇÕES - Helper functions para validação
 export const validateDoramaData = (data: CreateDoramaRequest): string[] => {
   const errors: string[] = [];
 
@@ -177,7 +163,6 @@ export const validateDoramaData = (data: CreateDoramaRequest): string[] => {
   if (!data.tituloOriginal.trim()) errors.push('Título original é obrigatório');
   if (!data.paisOrigem.trim()) errors.push('País de origem é obrigatório');
   if (!data.sinopse.trim()) errors.push('Sinopse é obrigatória');
-  // Removido: usuarioCriadorId validation
   if (
     data.anoLancamento < 1900 ||
     data.anoLancamento > new Date().getFullYear() + 5

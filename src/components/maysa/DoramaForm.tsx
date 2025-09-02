@@ -50,7 +50,6 @@ export default function DoramaForm() {
     'Outros',
   ];
 
-  // Buscar gêneros da API
   useEffect(() => {
     const loadGeneros = async () => {
       try {
@@ -111,7 +110,6 @@ export default function DoramaForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validação adicional para gêneros
     if (formData.generoIds.length === 0) {
       showFeedback('Selecione pelo menos um gênero.', 'error');
       return;
@@ -133,7 +131,6 @@ export default function DoramaForm() {
       await adminService.createDorama(doramaData);
       showFeedback('Dorama criado com sucesso! 🎉', 'success');
 
-      // Reset form
       setFormData({
         usuarioCriadorId: 'f02be115-c504-4981-855b-2ed176020c87',
         titulo: '',

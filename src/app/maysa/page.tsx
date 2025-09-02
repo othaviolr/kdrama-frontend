@@ -4,20 +4,16 @@ import React, { useState } from 'react';
 import { Film, User, Calendar, Play, Sparkles } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-// Define the type for Ator if you haven't already
 interface Ator {
   id: string;
   nome: string;
-  // add other properties as needed
 }
 
-// Define the props type for AtorForm
 interface AtorFormProps {
   selectedAtores: Ator[];
   onAtoresChange: (atores: Ator[]) => void;
 }
 
-// Imports dinâmicos para evitar conflito de tipos
 const DoramaForm = dynamic(() => import('@/components/maysa/DoramaForm'), {
   ssr: false,
   loading: () => (

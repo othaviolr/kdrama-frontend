@@ -24,7 +24,6 @@ export default function AtorSearch({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Debounce search
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
@@ -34,7 +33,6 @@ export default function AtorSearch({
         setIsLoading(true);
         try {
           const results = await adminService.buscarAtoresPorNome(searchTerm);
-          // Filter out already selected actors
           const filteredResults = results.filter(
             (result) =>
               !selectedAtores.some((selected) => selected.id === result.id)
@@ -60,7 +58,6 @@ export default function AtorSearch({
     };
   }, [searchTerm, selectedAtores]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
