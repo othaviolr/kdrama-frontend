@@ -121,12 +121,12 @@ export default function ProfilePage() {
         <ProfileHeader
           usuario={{
             ...usuario,
+            usuarioId: usuario.usuarioId || '',
             fotoUrl: perfil.fotoUrl,
             bio: perfil.bio,
           }}
           onEditClick={() => setIsEditModalOpen(true)}
         />
-
         <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         <div className="bg-white rounded-3xl shadow-lg">
