@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://72.60.144.4:5000/api';
+const API_BASE_URL = 'http://72.60.144.4:8080/api';
 //  const API_BASE_URL = 'http://srv989711.hstgr.cloud:5000/api';
 
 export class ApiService {
