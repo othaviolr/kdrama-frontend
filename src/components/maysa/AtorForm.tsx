@@ -117,7 +117,7 @@ export default function AtorForm() {
           {/* Nome */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nome *
+              Nome Completo *
             </label>
             <input
               type="text"
@@ -126,14 +126,14 @@ export default function AtorForm() {
               onChange={handleInputChange}
               required
               className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-              placeholder="Ex: Woo Do-hwan"
+              placeholder="Woo Do-hwan"
             />
           </div>
 
           {/* Nome Completo */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nome Completo *
+              Nome Coreano *
             </label>
             <input
               type="text"
@@ -142,7 +142,7 @@ export default function AtorForm() {
               onChange={handleInputChange}
               required
               className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-              placeholder="Ex: Woo Do-hwan (우도환)"
+              placeholder="우도환"
             />
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function AtorForm() {
             value={formData.instagram}
             onChange={handleInputChange}
             className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-            placeholder="https://www.instagram.com/username/"
+            placeholder="@username"
           />
         </div>
 

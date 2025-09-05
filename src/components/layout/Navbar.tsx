@@ -109,9 +109,7 @@ export function Navbar() {
                         className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
                         onClick={() => setIsSocialMenuOpen(false)}
                       >
-                        <span className="text-base group-hover:scale-110 transition-transform">
-                          👥
-                        </span>
+                        <span className="text-base group-hover:scale-110 transition-transform"></span>
                         <span className="font-medium">Amigos</span>
                       </Link>
                       <Link
@@ -119,9 +117,7 @@ export function Navbar() {
                         className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
                         onClick={() => setIsSocialMenuOpen(false)}
                       >
-                        <span className="text-base group-hover:scale-110 transition-transform">
-                          📱
-                        </span>
+                        <span className="text-base group-hover:scale-110 transition-transform"></span>
                         <span className="font-medium">Atividades</span>
                       </Link>
                       <Link
@@ -129,9 +125,7 @@ export function Navbar() {
                         className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
                         onClick={() => setIsSocialMenuOpen(false)}
                       >
-                        <span className="text-base group-hover:scale-110 transition-transform">
-                          ⭐
-                        </span>
+                        <span className="text-base group-hover:scale-110 transition-transform"></span>
                         <span className="font-medium">Reviews</span>
                       </Link>
                     </div>
