@@ -16,24 +16,16 @@ import { Button } from '../ui/Button';
 import { useAuth } from '@/src/context/AuthContext';
 
 export function Navbar() {
-  const [isSocialMenuOpen, setIsSocialMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const { usuario, isAuthenticated, logout, isLoading } = useAuth();
 
-  const socialMenuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        socialMenuRef.current &&
-        !socialMenuRef.current.contains(event.target as Node)
-      ) {
-        setIsSocialMenuOpen(false);
-      }
       if (
         userMenuRef.current &&
         !userMenuRef.current.contains(event.target as Node)
@@ -88,50 +80,13 @@ export function Navbar() {
                 <div className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-purple-600 group-hover:w-6 group-hover:left-1/2 group-hover:-translate-x-1/2 transition-all duration-300"></div>
               </Link>
 
-              {/* Dropdown Social compacto */}
-              <div className="relative" ref={socialMenuRef}>
-                <button
-                  className="relative text-gray-700 hover:text-purple-600 font-medium transition-all duration-300 flex items-center gap-1 px-4 py-2 rounded-xl hover:bg-purple-50/80 group"
-                  onClick={() => setIsSocialMenuOpen(!isSocialMenuOpen)}
-                >
-                  Social
-                  <ChevronDown
-                    className={`w-4 h-4 transition-all duration-300 ${isSocialMenuOpen ? 'rotate-180 text-purple-600' : 'group-hover:text-purple-600'}`}
-                  />
-                  <div className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-purple-600 group-hover:w-6 group-hover:left-1/2 group-hover:-translate-x-1/2 transition-all duration-300"></div>
-                </button>
-
-                {isSocialMenuOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-white/95 backdrop-blur-lg rounded-xl shadow-xl border border-gray-200/50 z-50 overflow-hidden">
-                    <div className="py-2">
-                      <Link
-                        href="/friends"
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
-                        onClick={() => setIsSocialMenuOpen(false)}
-                      >
-                        <span className="text-base group-hover:scale-110 transition-transform"></span>
-                        <span className="font-medium">Amigos</span>
-                      </Link>
-                      <Link
-                        href="/activities"
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
-                        onClick={() => setIsSocialMenuOpen(false)}
-                      >
-                        <span className="text-base group-hover:scale-110 transition-transform"></span>
-                        <span className="font-medium">Atividades</span>
-                      </Link>
-                      <Link
-                        href="/reviews"
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-purple-50/80 hover:text-purple-600 transition-all duration-300 group"
-                        onClick={() => setIsSocialMenuOpen(false)}
-                      >
-                        <span className="text-base group-hover:scale-110 transition-transform"></span>
-                        <span className="font-medium">Reviews</span>
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Link
+                href="/reviews"
+                className="relative text-gray-700 hover:text-purple-600 font-medium transition-all duration-300 px-4 py-2 rounded-xl hover:bg-purple-50/80 group"
+              >
+                Reviews
+                <div className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-purple-600 group-hover:w-6 group-hover:left-1/2 group-hover:-translate-x-1/2 transition-all duration-300"></div>
+              </Link>
             </nav>
           </div>
 
@@ -329,29 +284,10 @@ export function Navbar() {
             </Link>
 
             <Link
-              href="/friends"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <span className="text-lg">👥</span>
-              Amigos
-            </Link>
-
-            <Link
-              href="/activities"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <span className="text-lg">📱</span>
-              Atividades
-            </Link>
-
-            <Link
               href="/reviews"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
+              className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <span className="text-lg">⭐</span>
               Reviews
             </Link>
 
