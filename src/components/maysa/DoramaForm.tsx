@@ -322,19 +322,20 @@ export default function DoramaForm() {
           )}
         </div>
 
-        {/* URL da Capa */}
+        {/* Capa do Dorama - Aceita string */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            URL da Capa
+            Capa do Dorama
           </label>
           <input
-            type="url"
+            type="text"
             name="imagemCapaUrl"
             value={formData.imagemCapaUrl}
             onChange={handleInputChange}
             className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-            placeholder="https://exemplo.com/capa.jpg"
+            placeholder="URL, base64, caminho local ou qualquer string..."
           />
+          <p className="text-xs text-gray-500 mt-1">URL ou Texto</p>
         </div>
 
         {/* Sinopse */}

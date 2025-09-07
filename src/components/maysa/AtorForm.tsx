@@ -205,20 +205,23 @@ export default function AtorForm() {
           </div>
         </div>
 
-        {/* URL da Foto */}
+        {/* Foto da Ator - Aceita string */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            URL da Foto *
+            Foto *
           </label>
           <input
-            type="url"
+            type="text"
             name="fotoUrl"
             value={formData.fotoUrl}
             onChange={handleInputChange}
             required
             className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-            placeholder="https://exemplo.com/foto.jpg"
+            placeholder="URL, base64, caminho local ou qualquer string..."
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Aceita URLs, base64, caminhos locais ou qualquer formato de string
+          </p>
         </div>
 
         {/* Instagram */}
@@ -227,12 +230,12 @@ export default function AtorForm() {
             Instagram
           </label>
           <input
-            type="url"
+            type="text"
             name="instagram"
             value={formData.instagram}
             onChange={handleInputChange}
             className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-            placeholder="@username"
+            placeholder="@username ou URL completa"
           />
         </div>
 
