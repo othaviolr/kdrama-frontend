@@ -104,6 +104,7 @@ export enum Plataforma {
   PrimeVideo = 1,
   Disney = 2,
   Viki = 3,
+  AppleTV = 4,
 }
 
 export enum TipoEpisodio {

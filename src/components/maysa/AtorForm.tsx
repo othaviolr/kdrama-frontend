@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Save, User, AlertCircle, CheckCircle } from 'lucide-react';
 import { adminService, validateAtorData } from 'src/services/adminService';
 import { CreateAtorRequest } from 'src/types/admin';
@@ -21,6 +21,13 @@ export default function AtorForm() {
     type: 'success' | 'error' | '';
   }>({ message: '', type: '' });
 
+  // Estados para verificação de duplicatas
+  const [nomeExiste, setNomeExiste] = useState<boolean | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
   const paises = [
     'Coreia do Sul',
     'Japão',
@@ -37,6 +44,53 @@ export default function AtorForm() {
     setTimeout(() => setFeedback({ message: '', type: '' }), 5000);
   };
 
+  // Função para verificar se o nome já existe
+  const verificarNomeExiste = useCallback(async (nome: string) => {
+    if (nome.length < 2) {
+      setNomeExiste(null);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const results = await adminService.buscarAtoresPorNome(nome);
+      const existe = results.some(
+        (ator) => ator.nome.toLowerCase() === nome.toLowerCase()
+      );
+      setNomeExiste(existe);
+    } catch (error) {
+      console.error('Erro ao verificar nome:', error);
+      setNomeExiste(null);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  // Debounce da verificação
+  const debouncedCheck = useCallback(
+    (nome: string) => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+
+      const timeout = setTimeout(() => {
+        verificarNomeExiste(nome);
+      }, 500);
+
+      setSearchTimeout(timeout);
+    },
+    [verificarNomeExiste, searchTimeout]
+  );
+
+  // Limpa o timeout quando o componente desmonta
+  useEffect(() => {
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -47,10 +101,21 @@ export default function AtorForm() {
       ...prev,
       [name]: type === 'number' ? parseFloat(value) : value,
     }));
+
+    // Se estiver alterando o nome, verificar se já existe
+    if (name === 'nome') {
+      debouncedCheck(value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Verificar se o nome já existe
+    if (nomeExiste) {
+      showFeedback('Já existe um ator com este nome!', 'error');
+      return;
+    }
 
     const errors = validateAtorData(formData);
     if (errors.length > 0) {
@@ -73,6 +138,7 @@ export default function AtorForm() {
         fotoUrl: '',
         instagram: '',
       });
+      setNomeExiste(null);
     } catch (error) {
       console.error('Erro ao criar ator:', error);
       showFeedback('Erro ao criar ator. Tente novamente.', 'error');
@@ -114,20 +180,62 @@ export default function AtorForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Nome */}
+          {/* Nome com verificação */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Nome Completo *
             </label>
-            <input
-              type="text"
-              name="nome"
-              value={formData.nome}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-              placeholder="Woo Do-hwan"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                name="nome"
+                value={formData.nome}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 pr-10 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                placeholder="Woo Do-hwan"
+              />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                {isSearching ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-500 border-t-transparent"></div>
+                ) : nomeExiste === true ? (
+                  <AlertCircle className="w-4 h-4 text-red-500" />
+                ) : nomeExiste === false ? (
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                ) : null}
+              </div>
+            </div>
+
+            {/* Feedback simples do nome */}
+            {formData.nome.length >= 2 && !isSearching && (
+              <div
+                className={`mt-2 p-2 rounded-lg border ${
+                  nomeExiste === true
+                    ? 'bg-red-50 border-red-200 text-red-700'
+                    : nomeExiste === false
+                      ? 'bg-green-50 border-green-200 text-green-700'
+                      : ''
+                }`}
+              >
+                <div className="flex items-center gap-2 text-sm">
+                  {nomeExiste === true ? (
+                    <>
+                      <AlertCircle className="w-4 h-4" />
+                      <span>Este nome já existe!</span>
+                    </>
+                  ) : nomeExiste === false ? (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Nome disponível</span>
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            )}
+
+            <p className="text-xs text-gray-500 mt-1">
+              Digite o nome para verificar disponibilidade
+            </p>
           </div>
 
           {/* Nome Completo */}
@@ -217,11 +325,9 @@ export default function AtorForm() {
             onChange={handleInputChange}
             required
             className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-            placeholder="URL, base64, caminho local ou qualquer string..."
+            placeholder="URL"
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Aceita URLs, base64, caminhos locais ou qualquer formato de string
-          </p>
+          <p className="text-xs text-gray-500 mt-1">URL</p>
         </div>
 
         {/* Instagram */}
@@ -235,7 +341,7 @@ export default function AtorForm() {
             value={formData.instagram}
             onChange={handleInputChange}
             className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-            placeholder="@username ou URL completa"
+            placeholder="@user"
           />
         </div>
 
@@ -259,11 +365,11 @@ export default function AtorForm() {
         <div className="pt-6 border-t border-purple-100">
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || nomeExiste === true}
             className={`
               w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-semibold text-white transition-all duration-200 transform hover:scale-[1.02]
               ${
-                isLoading
+                isLoading || nomeExiste === true
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 shadow-lg shadow-violet-500/25'
               }

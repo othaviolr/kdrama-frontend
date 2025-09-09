@@ -38,6 +38,7 @@ export default function DoramaForm() {
     { value: Plataforma.PrimeVideo, label: 'Prime Video' },
     { value: Plataforma.Disney, label: 'Disney+' },
     { value: Plataforma.Viki, label: 'Viki' },
+    { value: Plataforma.AppleTV, label: 'Apple TV+' },
   ];
 
   const paises = [
@@ -189,7 +190,7 @@ export default function DoramaForm() {
           {/* Título */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Título *
+              Título Brasileiro *
             </label>
             <input
               type="text"
@@ -198,14 +199,14 @@ export default function DoramaForm() {
               onChange={handleInputChange}
               required
               className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-              placeholder="Ex: Bloodhounds"
+              placeholder="Ex: Cães de Caça"
             />
           </div>
 
           {/* Título Original */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Título Original *
+              Título Inglês ou Coreano *
             </label>
             <input
               type="text"
@@ -214,7 +215,7 @@ export default function DoramaForm() {
               onChange={handleInputChange}
               required
               className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-              placeholder="Ex: 사냥개들"
+              placeholder="Ex: Bloodhounds ou 블러드하운드"
             />
           </div>
         </div>
@@ -333,7 +334,7 @@ export default function DoramaForm() {
             value={formData.imagemCapaUrl}
             onChange={handleInputChange}
             className="w-full px-4 py-3 border border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-            placeholder="URL, base64, caminho local ou qualquer string..."
+            placeholder="URL"
           />
           <p className="text-xs text-gray-500 mt-1">URL ou Texto</p>
         </div>
