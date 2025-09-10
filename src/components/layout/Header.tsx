@@ -11,7 +11,9 @@ export function Header() {
             <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
               K
             </div>
-            <span className="text-xl font-bold text-gray-900">DramaSystem</span>
+            <span className="text-xl font-bold text-gray-900">
+              Hanlyu Dramas
+            </span>
           </div>
 
           {/* Navigation */}
