@@ -4,6 +4,7 @@ import { StatsSection } from '../components/home/StatsSection';
 import { DiscoverSection } from '../components/home/DiscoverSection';
 import { RecentActivitySection } from '../components/home/RecentActivitySection';
 import { QuickActionsSection } from '../components/home/QuickActionsSection';
+import { Footer } from '../components/home/Footer';
 
 export default function HomePage() {
   return (
@@ -21,6 +22,9 @@ export default function HomePage() {
         <RecentActivitySection />
         <QuickActionsSection />
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
