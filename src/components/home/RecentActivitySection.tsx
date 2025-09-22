@@ -26,6 +26,8 @@ export function RecentActivitySection() {
     carregarFeed(true);
   }, [carregarFeed]);
 
+  const atividadesLimitadas = feed.slice(0, 3);
+
   const getIconePorTipo = (tipo: TipoAtividadeFeed) => {
     switch (tipo) {
       case TipoAtividadeFeed.Progresso:
@@ -158,21 +160,21 @@ export function RecentActivitySection() {
           {/* Header */}
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Atividade Mais Recente
+              Atividades Recentes
             </h2>
             <p className="text-gray-600">
-              Veja o que a comunidade está discutindo
+              Últimas atividades da comunidade
             </p>
           </div>
 
           {/* Activities */}
           <div className="space-y-6">
-            {feed.length === 0 ? (
+            {atividadesLimitadas.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-500">Nenhuma atividade encontrada</p>
               </div>
             ) : (
-              feed.map((activity) => {
+              atividadesLimitadas.map((activity) => {
                 const IconComponent = getIconePorTipo(activity.tipoAtividade);
                 const cor = getTipoAtividadeCor(activity.tipoAtividade);
                 const textoFormatado = formatarTextoAcao(
@@ -279,28 +281,14 @@ export function RecentActivitySection() {
             )}
           </div>
 
-          {/* Load More button */}
-          {hasMore && (
+          {/* Ver todas button - apenas se houver mais de 5 atividades */}
+          {feed.length > 5 && (
             <div className="text-center mt-8">
               <Button
                 variant="outline"
-                onClick={carregarMais}
-                disabled={loadingMore}
                 className="border-purple-200 text-purple-600 hover:bg-purple-50 hover:border-purple-300"
               >
-                {loadingMore ? 'Carregando...' : 'Carregar Mais'}
-              </Button>
-            </div>
-          )}
-
-          {/* Ver todas button */}
-          {feed.length > 0 && (
-            <div className="text-center mt-4">
-              <Button
-                variant="ghost"
-                className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-              >
-                Ver Todas as Atividades
+                Ver Todas as Atividades ({feed.length})
               </Button>
             </div>
           )}
@@ -308,10 +296,10 @@ export function RecentActivitySection() {
       </div>
 
       {/* Bottom decoration */}
-      {feed.length > 0 && (
+      {atividadesLimitadas.length > 0 && (
         <div className="flex justify-center mt-8">
           <div className="flex space-x-3">
-            {[...Array(Math.min(feed.length, 3))].map((_, i) => (
+            {[...Array(Math.min(atividadesLimitadas.length, 3))].map((_, i) => (
               <div
                 key={i}
                 className="w-3 h-3 bg-purple-300 rounded-full animate-pulse"
