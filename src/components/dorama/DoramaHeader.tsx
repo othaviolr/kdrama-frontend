@@ -148,7 +148,7 @@ export default function DoramaHeader({
               <div className="flex flex-wrap gap-3 pt-4">
                 <button className="group bg-white/95 hover:bg-white text-purple-700 hover:text-purple-800 px-5 py-2.5 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-white/25 transform hover:scale-105 border border-white/50 text-sm">
                   <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-                  Minha Lista
+                  Playlist
                 </button>
 
                 <button className="group bg-white/15 backdrop-blur-md hover:bg-white/25 text-white p-2.5 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-md">
