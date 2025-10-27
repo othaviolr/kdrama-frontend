@@ -24,8 +24,9 @@ export default function PlaylistSearch({
   const [allDoramas, setAllDoramas] = useState<DoramaCompleto[]>([]);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Carrega todos os doramas inicialmente (como no catálogo)
+  // Carrega todos os doramas inicialmente
   useEffect(() => {
     const loadAllDoramas = async () => {
       try {
@@ -47,7 +48,7 @@ export default function PlaylistSearch({
     }
   }, [selectedDorama]);
 
-  // Filtra localmente como no catálogo, em vez de fazer request para cada busca
+  // Filtra localmente
   useEffect(() => {
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -59,7 +60,6 @@ export default function PlaylistSearch({
         try {
           console.log('🔍 Filtrando doramas para:', searchTerm);
           
-          // Filtra localmente como no catálogo
           const query = searchTerm.toLowerCase();
           const filtered = allDoramas.filter(
             (dorama) =>
@@ -142,12 +142,12 @@ export default function PlaylistSearch({
         </div>
       </div>
 
+      {/* Container principal SEM overflow-hidden */}
       <div className="relative" ref={dropdownRef}>
         {/* Selected Dorama Display */}
         {selectedDorama && (
           <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-violet-50 border border-purple-200 rounded-xl">
             <div className="flex items-center gap-3">
-              {/* Imagem com fallback igual ao catálogo */}
               <div className="w-12 h-16 flex-shrink-0 rounded-lg overflow-hidden shadow-md">
                 {selectedDorama.capaUrl && selectedDorama.capaUrl !== 'teste' ? (
                   <div
@@ -197,6 +197,7 @@ export default function PlaylistSearch({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 w-5 h-5" />
           <input
+            ref={inputRef}
             type="text"
             value={searchTerm}
             onChange={handleInputChange}
@@ -211,70 +212,66 @@ export default function PlaylistSearch({
           )}
         </div>
 
-        {/* Search Results Dropdown */}
-        {isOpen && searchResults.length > 0 && (
-          <div className="absolute z-10 w-full mt-2 bg-white border border-purple-200 rounded-xl shadow-lg shadow-purple-500/10 max-h-64 overflow-y-auto">
-            {searchResults.map((dorama) => (
-              <button
-                key={dorama.doramaId}
-                onClick={() => handleSelectDorama(dorama)}
-                className="w-full flex items-center gap-3 p-3 hover:bg-purple-50 transition-colors text-left border-b border-purple-100 last:border-b-0"
-              >
-                {/* Imagem com fallback igual ao catálogo */}
-                <div className="w-12 h-16 flex-shrink-0 rounded-lg overflow-hidden shadow-sm">
-                  {dorama.capaUrl && dorama.capaUrl !== 'teste' ? (
-                    <div
-                      className="w-full h-full bg-cover bg-center"
-                      style={{ backgroundImage: `url(${dorama.capaUrl})` }}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 flex items-center justify-center">
-                      <Play className="w-5 h-5 text-white opacity-90" />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 truncate">{dorama.titulo}</p>
-                  <p className="text-sm text-gray-600 truncate">
-                    {dorama.tituloOriginal}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {dorama.anoLancamento} • {dorama.paisOrigem}
-                  </p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {dorama.generos.slice(0, 2).map((genero) => (
-                      <span
-                        key={genero.id}
-                        className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded"
-                      >
-                        {genero.nome}
-                      </span>
-                    ))}
+        {/* Search Results Dropdown - POSIÇÃO FIXA para evitar corte */}
+        {isOpen && (
+          <div className="fixed z-[100] mt-2 bg-white border border-purple-200 rounded-xl shadow-2xl shadow-purple-500/20 max-h-80 overflow-y-auto"
+               style={{
+                 width: inputRef.current?.offsetWidth,
+                 left: inputRef.current?.getBoundingClientRect().left,
+                 top: (inputRef.current?.getBoundingClientRect().bottom || 0) + 8
+               }}>
+            {searchResults.length > 0 ? (
+              searchResults.map((dorama) => (
+                <button
+                  key={dorama.doramaId}
+                  onClick={() => handleSelectDorama(dorama)}
+                  className="w-full flex items-center gap-3 p-4 hover:bg-purple-50 transition-colors text-left border-b border-purple-100 last:border-b-0"
+                >
+                  <div className="w-12 h-16 flex-shrink-0 rounded-lg overflow-hidden shadow-sm">
+                    {dorama.capaUrl && dorama.capaUrl !== 'teste' ? (
+                      <div
+                        className="w-full h-full bg-cover bg-center"
+                        style={{ backgroundImage: `url(${dorama.capaUrl})` }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 flex items-center justify-center">
+                        <Play className="w-5 h-5 text-white opacity-90" />
+                      </div>
+                    )}
                   </div>
-                </div>
-                <Check className="w-5 h-5 text-purple-500 flex-shrink-0" />
-              </button>
-            ))}
-          </div>
-        )}
 
-        {/* No Results */}
-        {isOpen && !isLoading && searchTerm.length >= 2 && searchResults.length === 0 && (
-          <div className="absolute z-10 w-full mt-2 bg-white border border-purple-200 rounded-xl shadow-lg p-4 text-center text-gray-500">
-            <Film className="w-8 h-8 mx-auto mb-2 text-purple-300" />
-            <p>Nenhum dorama encontrado para "{searchTerm}"</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 truncate">{dorama.titulo}</p>
+                    <p className="text-sm text-gray-600 truncate">
+                      {dorama.tituloOriginal}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {dorama.anoLancamento} • {dorama.paisOrigem}
+                    </p>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {dorama.generos.slice(0, 2).map((genero) => (
+                        <span
+                          key={genero.id}
+                          className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded"
+                        >
+                          {genero.nome}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <Check className="w-5 h-5 text-purple-500 flex-shrink-0" />
+                </button>
+              ))
+            ) : (
+              <div className="p-6 text-center text-gray-500">
+                <Film className="w-10 h-10 mx-auto mb-3 text-purple-300" />
+                <p className="font-medium">Nenhum dorama encontrado</p>
+                <p className="text-sm mt-1">para "{searchTerm}"</p>
+              </div>
+            )}
           </div>
         )}
       </div>
-
-      {/* Debug info */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mt-4 p-3 bg-gray-100 rounded-lg text-xs text-gray-600">
-          <div>Total de doramas carregados: {allDoramas.length}</div>
-          <div>Resultados filtrados: {searchResults.length}</div>
-        </div>
-      )}
     </div>
   );
 }
