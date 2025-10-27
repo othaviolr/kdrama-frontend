@@ -41,7 +41,7 @@ export default function DoramaPlaylists({
             totalMusicas: 16,
             imagemUrl:
               'https://i.scdn.co/image/ab67616d00001e02df51a3d66223e5b01813e0c4',
-            url: 'https://open.spotify.com/playlist/37i9dQZF1DXdOEFt9ZX0dh',
+            url: 'https://open.spotify.com/album/1k7OXnGQPV4zF3seDwRroD?si=1o79mqdaRaWUNJf594j6-w',
           },
           {
             id: '2',
@@ -50,7 +50,7 @@ export default function DoramaPlaylists({
             totalMusicas: 13,
             imagemUrl:
               'https://upload.wikimedia.org/wikipedia/en/b/bb/BMTH_Sempiternal.png',
-            url: 'https://open.spotify.com/playlist/37i9dQZF1DX0mIEx62ZLjj',
+            url: 'https://open.spotify.com/album/6IYPmM3xsOPL2XPSvf1ZAz?si=t_tWn76bQ_6UYztr32QRFg',
           },
           {
             id: '3',
@@ -59,7 +59,7 @@ export default function DoramaPlaylists({
             totalMusicas: 10,
             imagemUrl:
               'https://i.scdn.co/image/ab67616d0000b273b0f86b5d3075a7f93a4c0d50',
-            url: 'https://open.spotify.com/playlist/37i9dQZF1DWXe9gFZP0gtP',
+            url: 'https://open.spotify.com/album/1prhMiPHHEEzK5ueEx2vWB?si=ypRUwswORMq7eq6iSJrfmQ',
           },
         ];
         setPlaylists(mockPlaylists);
