@@ -36,29 +36,29 @@ export default function DoramaPlaylists({
         const mockPlaylists: Playlist[] = [
           {
             id: '1',
-            nome: 'Twenty-Five Twenty-One OST',
-            dono: 'K-Drama Official',
-            totalMusicas: 18,
+            nome: 'Post Human: Nex Gen',
+            dono: 'Bring Me The Horizon',
+            totalMusicas: 16,
             imagemUrl:
-              'https://i.scdn.co/image/ab67616d0000b273e8b066f70c206551210cc546',
+              'https://i.scdn.co/image/ab67616d00001e02df51a3d66223e5b01813e0c4',
             url: 'https://open.spotify.com/playlist/37i9dQZF1DXdOEFt9ZX0dh',
           },
           {
             id: '2',
-            nome: 'Romantic K-Drama Vibes',
-            dono: 'Spotify',
-            totalMusicas: 45,
+            nome: 'Sempiternal',
+            dono: 'Bring Me The Horizon',
+            totalMusicas: 13,
             imagemUrl:
-              'https://i.scdn.co/image/ab67616d0000b273b7e976d6b35c1c4193c2783c',
+              'https://upload.wikimedia.org/wikipedia/en/b/bb/BMTH_Sempiternal.png',
             url: 'https://open.spotify.com/playlist/37i9dQZF1DX0mIEx62ZLjj',
           },
           {
             id: '3',
-            nome: 'Korean Drama Soundtracks',
-            dono: 'Drama Lovers',
-            totalMusicas: 67,
+            nome: 'Suicide Season',
+            dono: 'Bring Me The Horizon',
+            totalMusicas: 10,
             imagemUrl:
-              'https://i.scdn.co/image/ab67616d0000b273f9320a06f7ab0e0d7fb6c521',
+              'https://i.scdn.co/image/ab67616d0000b273b0f86b5d3075a7f93a4c0d50',
             url: 'https://open.spotify.com/playlist/37i9dQZF1DWXe9gFZP0gtP',
           },
         ];
