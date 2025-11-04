@@ -44,7 +44,7 @@ export default function DoramaCast({ actors }: DoramaCastProps) {
             }}
           >
             <div className="relative">
-              {/* Avatar com efeitos modernos - AGORA REDONDO */}
+              {/* Avatar com efeitos modernos */}
               <div className="w-28 h-28 mx-auto mb-3 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 shadow-lg group-hover:shadow-purple-500/30 transition-all duration-300 relative">
                 {ator.fotoUrl && ator.fotoUrl !== 'teste' ? (
                   <img
@@ -62,7 +62,7 @@ export default function DoramaCast({ actors }: DoramaCastProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
               </div>
 
-              {/* Glow effect - também redondo */}
+              {/* Glow effect*/}
               <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500 -z-10" />
             </div>
 
@@ -79,7 +79,7 @@ export default function DoramaCast({ actors }: DoramaCastProps) {
         ))}
       </div>
 
-      {/* Botão moderno para ver mais/menos */}
+      {/* Botão*/}
       {actors.length > 8 && (
         <div className="flex justify-center mt-8">
           <button
