@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import ActorHeader from '@/components/actors/ActorHeader'; // Componente individual do ator
+import ActorHeader from '@/components/actors/ActorHeader'; 
 import ActorBiography from '@/components/actors/ActorBiography';
 import ActorDoramas from '@/components/actors/ActorDoramas';
 import ActorSidebar from '@/components/actors/ActorSidebar';
@@ -74,21 +74,10 @@ export default function ActorDetailPage() {
             rating: 8.1,
           },
         ],
-        premios: [
-          'Baeksang Arts Award - Best New Actor (2016)',
-          'KBS Drama Award - Excellence Award (2016)',
-          'Asia Artist Award - Actor of the Year (2020)',
-        ],
         redes: {
           instagram: '@bogummy',
           twitter: '@bogummy_twt',
         },
-        curiosidades: [
-          'Começou a carreira como modelo',
-          'Toca piano desde criança',
-          'É conhecido por sua personalidade humilde',
-          'Tem uma base de fãs internacional muito forte',
-        ],
         popularidade: 95,
       };
 

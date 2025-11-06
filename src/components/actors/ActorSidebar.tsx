@@ -110,18 +110,12 @@ export default function ActorSidebar({ actor }: ActorSidebarProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 pt-2">
-            <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <p className="text-2xl font-bold text-purple-600">
+          <div className="flex justify-center pt-2">
+            <div className="text-center p-4 bg-purple-50 rounded-lg w-full">
+              <p className="text-3xl font-bold text-purple-600">
                 {actor.doramas.length}
               </p>
-              <p className="text-xs text-gray-600">Doramas</p>
-            </div>
-            <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <p className="text-2xl font-bold text-purple-600">
-                {actor.premios.length}
-              </p>
-              <p className="text-xs text-gray-600">Prêmios</p>
+              <p className="text-sm text-gray-600 mt-1">Doramas</p>
             </div>
           </div>
         </div>
