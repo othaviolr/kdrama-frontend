@@ -1,5 +1,3 @@
-// src/components/actors/ActorLoading.tsx
-
 import { Users } from 'lucide-react';
 
 export default function ActorLoading() {
