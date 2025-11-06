@@ -11,7 +11,6 @@ export default function ActorsPage() {
   const [selectedGenre, setSelectedGenre] = useState('');
   const [selectedNationality, setSelectedNationality] = useState('');
 
-  // Mock data dos atores
   const mockActors = [
     {
       id: '1',
@@ -107,7 +106,7 @@ export default function ActorsPage() {
     },
   ];
 
-  // Atores em destaque (os mais populares)
+  // Atores em destaque
   const featuredActors = mockActors
     .sort((a, b) => b.popularidade - a.popularidade)
     .slice(0, 4);

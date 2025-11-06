@@ -1,5 +1,3 @@
-// src/components/actors/ActorDoramas.tsx
-
 import { Tv, Star, Calendar, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 

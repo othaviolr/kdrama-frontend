@@ -1,5 +1,3 @@
-// src/components/actors/ActorHeader.tsx
-
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
