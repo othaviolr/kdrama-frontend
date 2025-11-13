@@ -1,8 +1,9 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import ActorHeader from '@/components/actors/ActorHeader'; 
+import { useEffect } from 'react';
+import { useAtor } from '../../../context/atorContext';
+import ActorHeader from '@/components/actors/ActorHeader';
 import ActorBiography from '@/components/actors/ActorBiography';
 import ActorDoramas from '@/components/actors/ActorDoramas';
 import ActorSidebar from '@/components/actors/ActorSidebar';
@@ -11,91 +12,50 @@ import ActorNotFound from '@/components/actors/ActorNotFound';
 
 export default function ActorDetailPage() {
   const { id } = useParams();
-  const [actor, setActor] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { atorAtual, loadingAtor, carregarAtor, limparAtorAtual } = useAtor();
 
   useEffect(() => {
     if (id) {
       carregarAtor(id as string);
     }
+
+    // Cleanup ao desmontar
+    return () => {
+      limparAtorAtual();
+    };
   }, [id]);
 
-  const carregarAtor = async (actorId: string) => {
-    try {
-      setLoading(true);
-      // Aqui você faria a chamada para sua API
-      // const response = await api.get(`/actors/${actorId}`);
-      // setActor(response.data);
-
-      // Mock data por enquanto
-      const mockActor = {
-        id: actorId,
-        nome: 'Park Bo-gum',
-        nomeOriginal: '박보검',
-        foto: 'https://i.pinimg.com/1200x/c3/f1/e3/c3f1e3606e6150499c879b35fa1c3933.jpg',
-        fotoBackground:
-          'https://i.pinimg.com/1200x/c3/f1/e3/c3f1e3606e6150499c879b35fa1c3933.jpg',
-        nacionalidade: 'Coreia do Sul',
-        nascimento: '1993-06-16',
-        idade: 31,
-        altura: 182,
-        peso: 70,
-        signo: 'Gêmeos',
-        tipoSanguineo: 'A',
-        agency: 'Blossom Entertainment',
-        biografia:
-          'Park Bo-gum é um ator e cantor sul-coreano que ganhou reconhecimento mundial por seus papéis em dramas como "Reply 1988", "Love in the Moonlight" e "Record of Youth". Nascido em Seoul, ele começou sua carreira como modelo antes de se tornar ator. É conhecido por sua personalidade carismática e talento versátil.',
-        doramas: [
-          {
-            id: '1',
-            titulo: 'Cães de Caça',
-            ano: 2015,
-            papel: 'Choi Taek',
-            poster:
-              'https://m.media-amazon.com/images/M/MV5BNjU2NThhZWYtN2MxMy00MzExLTlhOTYtNDk1YmUxY2I3YzdhXkEyXkFqcGc@._V1_.jpg',
-            rating: 9.2,
-          },
-          {
-            id: '2',
-            titulo: 'Vincenzo',
-            ano: 2016,
-            papel: 'Crown Prince Lee Yeong',
-            poster:
-              'https://lh7-rt.googleusercontent.com/docsz/AD_4nXeoCxVCN6bnH5ADb12pHVrkoTmyS1MmhiskrqHTV4m1wsxmOkUVmMuc-sfvQS4IxsnOicgxUWrVN_BVJbe59L2PwaILp9_IqgA41BHcEA-cm_vmYdAOiWrQZ9-ysXQLYKYkIwQd1K73_OjgoY3-tmA?key=S_TI5tpNPznjXhroGXhZf5BF',
-            rating: 8.9,
-          },
-          {
-            id: '3',
-            titulo: 'Rei de Porcelana',
-            ano: 2020,
-            papel: 'Sa Hye-jun',
-            poster:
-              'https://image.tmdb.org/t/p/w500/xiwbHmrFqC2UJejuHsKGYoYegbi.jpg',
-            rating: 8.1,
-          },
-        ],
-        redes: {
-          instagram: '@bogummy',
-          twitter: '@bogummy_twt',
-        },
-        popularidade: 95,
-      };
-
-      setActor(mockActor);
-    } catch (error) {
-      console.error('Erro ao carregar ator:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (loadingAtor) {
     return <ActorLoading />;
   }
 
-  if (!actor) {
+  if (!atorAtual) {
     return <ActorNotFound />;
   }
+
+  // Transforma os dados da API para o formato esperado pelos componentes
+  const actor = {
+    id: atorAtual.id,
+    nome: atorAtual.nome,
+    nomeOriginal: atorAtual.nomeCompleto || atorAtual.nome,
+    foto: atorAtual.fotoUrl,
+    fotoBackground: atorAtual.fotoUrl, // Se tiver uma foto de background diferente, ajustar
+    nacionalidade: atorAtual.pais,
+    nascimento: `${atorAtual.anoNascimento}-01-01`, // Você pode ter a data completa na API
+    idade: new Date().getFullYear() - atorAtual.anoNascimento,
+    altura: atorAtual.altura,
+    peso: null, // Se não tiver na API
+    signo: null, // Calcular baseado na data de nascimento se tiver
+    tipoSanguineo: null, // Se não tiver na API
+    agency: null, // Se não tiver na API
+    biografia: atorAtual.biografia,
+    doramas: [], // TODO: Buscar doramas do ator se tiver endpoint
+    redes: {
+      instagram: atorAtual.instagram,
+      twitter: null, // Se não tiver na API
+    },
+    popularidade: 0, // Calcular se tiver métrica
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -106,7 +66,9 @@ export default function ActorDetailPage() {
           <div className="lg:col-span-2 space-y-8">
             <ActorBiography actor={actor} />
 
-            <ActorDoramas doramas={actor.doramas} />
+            {actor.doramas.length > 0 && (
+              <ActorDoramas doramas={actor.doramas} />
+            )}
           </div>
 
           <ActorSidebar actor={actor} />

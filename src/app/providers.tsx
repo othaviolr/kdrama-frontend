@@ -2,6 +2,7 @@
 
 import { AuthProvider } from '../context/AuthContext';
 import { DoramaProvider } from '../context/DoramaContext';
+import { AtorProvider } from '../context/atorContext';
 import { ProgressoProvider } from '../context/ProgressoContext';
 import { AtividadeProvider } from '../context/AtividadeContext';
 import { AvaliacaoProvider } from '../context/AvaliacaoContext';
@@ -17,15 +18,17 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <AuthProvider>
       <DoramaProvider>
-        <ProgressoProvider>
-          <AtividadeProvider>
-            <AvaliacaoProvider>
-              <ListaProvider>
-                <FeedProvider> {children}</FeedProvider>
-              </ListaProvider>
-            </AvaliacaoProvider>
-          </AtividadeProvider>
-        </ProgressoProvider>
+        <AtorProvider>
+          <ProgressoProvider>
+            <AtividadeProvider>
+              <AvaliacaoProvider>
+                <ListaProvider>
+                  <FeedProvider>{children}</FeedProvider>
+                </ListaProvider>
+              </AvaliacaoProvider>
+            </AtividadeProvider>
+          </ProgressoProvider>
+        </AtorProvider>
       </DoramaProvider>
     </AuthProvider>
   );
