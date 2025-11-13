@@ -55,7 +55,12 @@ export interface AtorContextType {
   atorAtual: Ator | null;
   loading: boolean;
   loadingAtor: boolean;
-  carregarAtores: (pagina?: number, tamanhoPagina?: number, completo?: boolean) => Promise<void>;
+  paginaAtual: number;
+  totalPaginas: number;
+  totalItens: number;
+  temProximaPagina: boolean;
+  carregarAtores: (pagina?: number, tamanhoPagina?: number, completo?: boolean, acumular?: boolean) => Promise<void>;
+  carregarMaisAtores: () => Promise<void>; 
   carregarAtor: (id: string) => Promise<void>;
   carregarAtorPorNome: (nome: string) => Promise<void>;
   criarAtor: (data: CriarAtorRequest) => Promise<void>;

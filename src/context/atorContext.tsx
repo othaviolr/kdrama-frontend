@@ -11,26 +11,41 @@ export function AtorProvider({ children }: { children: ReactNode }) {
   const [atorAtual, setAtorAtual] = useState<Ator | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingAtor, setLoadingAtor] = useState(false);
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [totalItens, setTotalItens] = useState(0);
+  const [temProximaPagina, setTemProximaPagina] = useState(false);
 
   // Carregar lista de atores com paginação
   const carregarAtores = async (
     pagina: number = 1,
     tamanhoPagina: number = 20,
-    completo: boolean = true
+    completo: boolean = true,
+    acumular: boolean = false // Novo parâmetro para acumular resultados
   ) => {
     setLoading(true);
     try {
-      console.log('🎭 Carregando atores...');
+      console.log('🎭 Carregando atores (página ' + pagina + ')...');
       const response = await atorService.getAtores(pagina, tamanhoPagina, completo);
       
       console.log('📦 Response completa:', response);
       
-      // Agora a API retorna "itens" ao invés de "items"
       if (response && Array.isArray(response.itens)) {
         console.log('✅ Atores carregados:', response.itens.length);
-        setAtores(response.itens as Ator[]);
+        
+        // Se acumular=true, adiciona aos atores existentes, senão substitui
+        if (acumular) {
+          setAtores((prev) => [...prev, ...(response.itens as Ator[])]);
+        } else {
+          setAtores(response.itens as Ator[]);
+        }
+        
+        // Atualiza informações de paginação
+        setPaginaAtual(response.paginaAtual);
+        setTotalPaginas(response.totalPaginas);
+        setTotalItens(response.totalItens);
+        setTemProximaPagina(response.temProximaPagina);
       } else if (Array.isArray(response)) {
-        // Caso a API retorne array direto (sem paginação)
         console.log('✅ Atores carregados (array direto):', response.length);
         setAtores(response as Ator[]);
       } else {
@@ -45,9 +60,16 @@ export function AtorProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Carregar próxima página (para scroll infinito)
+  const carregarMaisAtores = async () => {
+    if (!temProximaPagina || loading) return;
+    
+    const proximaPagina = paginaAtual + 1;
+    await carregarAtores(proximaPagina, 20, true, true); // acumular=true
+  };
+
   // Carregar ator específico por ID
   const carregarAtor = async (id: string) => {
-    // Verifica se já está no cache
     const atorExistente = atores.find((a) => a.id === id);
     if (atorExistente) {
       console.log('📋 Ator encontrado no cache:', atorExistente.nome);
@@ -62,7 +84,6 @@ export function AtorProvider({ children }: { children: ReactNode }) {
       console.log('✅ Ator carregado:', ator.nome);
       setAtorAtual(ator);
 
-      // Adiciona ao cache se ainda não existe
       setAtores((prev) => {
         const existe = prev.find((a) => a.id === id);
         if (!existe) {
@@ -78,7 +99,6 @@ export function AtorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Carregar ator por nome
   const carregarAtorPorNome = async (nome: string) => {
     setLoadingAtor(true);
     try {
@@ -87,7 +107,6 @@ export function AtorProvider({ children }: { children: ReactNode }) {
       console.log('✅ Ator encontrado:', ator.nome);
       setAtorAtual(ator);
 
-      // Adiciona ao cache
       setAtores((prev) => {
         const existe = prev.find((a) => a.id === ator.id);
         if (!existe) {
@@ -103,14 +122,11 @@ export function AtorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Criar novo ator
   const criarAtor = async (data: CriarAtorRequest) => {
     try {
       console.log('➕ Criando ator:', data.nome);
       await atorService.criarAtor(data);
       console.log('✅ Ator criado com sucesso');
-      
-      // Recarrega a lista
       await carregarAtores();
     } catch (error) {
       console.error('❌ Erro ao criar ator:', error);
@@ -118,19 +134,16 @@ export function AtorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Editar ator
   const editarAtor = async (id: string, data: EditarAtorRequest) => {
     try {
       console.log('✏️ Editando ator:', id);
       await atorService.editarAtor(id, data);
       console.log('✅ Ator editado com sucesso');
 
-      // Atualiza no cache
       setAtores((prev) =>
         prev.map((a) => (a.id === id ? { ...a, ...data } : a))
       );
 
-      // Se é o ator atual, atualiza também
       if (atorAtual?.id === id) {
         setAtorAtual({ ...atorAtual, ...data });
       }
@@ -140,17 +153,14 @@ export function AtorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Excluir ator
   const excluirAtor = async (id: string) => {
     try {
       console.log('🗑️ Excluindo ator:', id);
       await atorService.excluirAtor(id);
       console.log('✅ Ator excluído com sucesso');
 
-      // Remove do cache
       setAtores((prev) => prev.filter((a) => a.id !== id));
 
-      // Se era o ator atual, limpa
       if (atorAtual?.id === id) {
         setAtorAtual(null);
       }
@@ -173,7 +183,12 @@ export function AtorProvider({ children }: { children: ReactNode }) {
     atorAtual,
     loading,
     loadingAtor,
+    paginaAtual,
+    totalPaginas,
+    totalItens,
+    temProximaPagina,
     carregarAtores,
+    carregarMaisAtores, // Nova função
     carregarAtor,
     carregarAtorPorNome,
     criarAtor,
