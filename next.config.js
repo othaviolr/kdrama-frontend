@@ -10,8 +10,14 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://72.60.144.4:8080/api/:path*',
-           //destination: 'http://localhost:5120/api/:path*',
+        //vps
+        //destination: 'http://72.60.144.4:8080/api/:path*',
+
+        //aws
+        destination: 'http://18.217.46.7:8080/api/:path*',
+
+
+        //destination: 'http://localhost:5120/api/:path*',
       },
     ];
   },
