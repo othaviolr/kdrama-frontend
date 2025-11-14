@@ -1,13 +1,14 @@
+// app/actors/page.tsx
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAtor } from '../../context/atorContext';
 import ActorsHeader from '@/components/actors/ActorsHeader';
 import ActorsGrid from '@/components/actors/ActorsGrid';
 import ActorsOfTheMoment from '@/components/actors/ActorsOfTheMoment';
 import ActorsFilters from '@/components/actors/ActorsFilters';
 
-// Função helper para normalizar texto (remove acentos e converte para minúsculas)
+// Função helper para normalizar texto
 const normalizeText = (text: string) => {
   return text
     .normalize('NFD')
@@ -28,17 +29,16 @@ export default function ActorsPage() {
   } = useAtor();
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('');
   const [selectedNationality, setSelectedNationality] = useState('');
   const observerTarget = useRef(null);
   const [filtrosAtivos, setFiltrosAtivos] = useState(false);
   const [buscandoPorNome, setBuscandoPorNome] = useState(false);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  // Carrega a primeira página ao montar
   useEffect(() => {
-    // Carrega a primeira página ao montar
     carregarAtores(1, 20, true, false);
-  }, []);
+  }, [carregarAtores]);
 
   // Debounce na busca por nome
   useEffect(() => {
@@ -47,7 +47,6 @@ export default function ActorsPage() {
     }
 
     if (searchTerm.length >= 3) {
-      // Se digitou 3+ caracteres, busca por nome na API
       setBuscandoPorNome(true);
       searchTimeout.current = setTimeout(async () => {
         try {
@@ -56,7 +55,7 @@ export default function ActorsPage() {
           console.log('Ator não encontrado por nome, buscando localmente...');
         }
         setBuscandoPorNome(false);
-      }, 500); // Aguarda 500ms após parar de digitar
+      }, 500);
     } else {
       setBuscandoPorNome(false);
     }
@@ -66,33 +65,28 @@ export default function ActorsPage() {
         clearTimeout(searchTimeout.current);
       }
     };
-  }, [searchTerm]);
+  }, [searchTerm, carregarAtorPorNome]);
 
-  // Quando houver filtros, carrega TODOS os atores
-  useEffect(() => {
-    if (searchTerm || selectedNationality) {
-      setFiltrosAtivos(true);
-      // Só carrega todos se não estiver buscando por nome específico
-      if (searchTerm.length < 3) {
-        carregarTodosAtores();
-      }
-    } else {
-      setFiltrosAtivos(false);
-    }
-  }, [searchTerm, selectedNationality]);
+useEffect(() => {
+  const hasFilters = !!(searchTerm || selectedNationality); // Converte para boolean
+  setFiltrosAtivos(hasFilters);
+  
+  if (hasFilters && searchTerm.length < 3) {
+    carregarTodosAtores();
+  }
+}, [searchTerm, selectedNationality, carregarAtores]);
 
-  const carregarTodosAtores = async () => {
-    // Carrega com um número grande para pegar todos
+  const carregarTodosAtores = useCallback(async () => {
     await carregarAtores(1, 1000, true, false);
-  };
+  }, [carregarAtores]);
 
-  // Intersection Observer para scroll infinito (só funciona quando não há filtros)
+  // Scroll infinito
   useEffect(() => {
-    if (filtrosAtivos) return; // Não usa scroll infinito quando há filtros
+    if (filtrosAtivos || !temProximaPagina || loading) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && temProximaPagina && !loading) {
+        if (entries[0].isIntersecting) {
           console.log('📜 Carregando mais atores...');
           carregarMaisAtores();
         }
@@ -100,18 +94,19 @@ export default function ActorsPage() {
       { threshold: 0.1 }
     );
 
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
     }
 
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
       }
     };
-  }, [temProximaPagina, loading, filtrosAtivos]);
+  }, [temProximaPagina, loading, filtrosAtivos, carregarMaisAtores]);
 
-  // Atores em destaque (top 4)
+  // Dados processados
   const featuredActors = atores
     .slice()
     .sort((a, b) => b.anoNascimento - a.anoNascimento)
@@ -127,23 +122,21 @@ export default function ActorsPage() {
       popularidade: 0,
     }));
 
-  // Filtros com normalização de texto
   const filteredActors = atores
     .filter((ator) => {
-      // Normaliza os textos para comparação (remove acentos, converte para minúsculas)
+      if (!ator) return false;
+      
       const normalizedSearchTerm = normalizeText(searchTerm);
       const normalizedNome = normalizeText(ator.nome);
       const normalizedNomeCompleto = normalizeText(ator.nomeCompleto || '');
       const normalizedPais = normalizeText(ator.pais);
       const normalizedSelectedNationality = normalizeText(selectedNationality);
 
-      const matchesSearch =
-        !searchTerm ||
+      const matchesSearch = !searchTerm ||
         normalizedNome.includes(normalizedSearchTerm) ||
         normalizedNomeCompleto.includes(normalizedSearchTerm);
       
-      const matchesNationality =
-        !selectedNationality || 
+      const matchesNationality = !selectedNationality || 
         normalizedPais.includes(normalizedSelectedNationality) ||
         normalizedSelectedNationality.includes(normalizedPais);
 
@@ -162,12 +155,19 @@ export default function ActorsPage() {
 
   const isLoading = loading || buscandoPorNome;
 
+  const limparFiltros = useCallback(() => {
+    setSearchTerm('');
+    setSelectedNationality('');
+    carregarAtores(1, 20, true, false);
+  }, [carregarAtores]);
+
+  // Loading state
   if (isLoading && atores.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">
+          <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-rose-500 mx-auto mb-3 md:mb-4"></div>
+          <p className="text-gray-600 text-sm md:text-base">
             {buscandoPorNome ? 'Buscando ator...' : 'Carregando atores...'}
           </p>
         </div>
@@ -175,37 +175,32 @@ export default function ActorsPage() {
     );
   }
 
-  const limparFiltros = () => {
-    setSearchTerm('');
-    setSelectedNationality('');
-    // Recarrega apenas a primeira página
-    carregarAtores(1, 20, true, false);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <ActorsHeader />
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-4 md:py-6 lg:py-8 space-y-6 md:space-y-8 lg:space-y-12">
         {/* Estatísticas */}
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <p className="text-gray-600">
+        <div className="bg-white rounded-lg shadow-sm p-3 md:p-4">
+          <p className="text-gray-600 text-sm md:text-base">
             <span className="font-semibold text-purple-600">{filteredActors.length}</span> atores{' '}
             {filtrosAtivos ? 'encontrados' : 'carregados'} de{' '}
             <span className="font-semibold text-gray-900">{totalItens}</span> no total
           </p>
           {searchTerm.length > 0 && searchTerm.length < 3 && (
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-xs md:text-sm text-gray-500 mt-1">
               Digite pelo menos 3 caracteres para buscar
             </p>
           )}
         </div>
 
+        {/* Atores do Momento */}
         {!filtrosAtivos && featuredActors.length > 0 && (
           <ActorsOfTheMoment actors={featuredActors} />
         )}
 
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
+          {/* Filtros */}
           <ActorsFilters
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -213,26 +208,31 @@ export default function ActorsPage() {
             onNationalityChange={setSelectedNationality}
           />
 
+          {/* Filtros ativos */}
           {filtrosAtivos && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm text-gray-600">Filtros ativos:</span>
+            <div className="flex items-center gap-2 flex-wrap bg-white rounded-lg p-3 md:p-4 shadow-sm">
+              <span className="text-xs md:text-sm text-gray-600 whitespace-nowrap">
+                Filtros ativos:
+              </span>
               {searchTerm && (
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm">
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-100 text-purple-700 text-xs md:text-sm">
                   Busca: "{searchTerm}"
                   <button
                     onClick={() => setSearchTerm('')}
-                    className="hover:text-rose-900 ml-1"
+                    className="hover:text-purple-900 ml-0.5 text-xs"
+                    aria-label="Remover busca"
                   >
                     ×
                   </button>
                 </span>
               )}
               {selectedNationality && (
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-rose-100 text-rose-700 text-sm">
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-100 text-purple-700 text-xs md:text-sm">
                   País: {selectedNationality}
                   <button
                     onClick={() => setSelectedNationality('')}
-                    className="hover:text-rose-900 ml-1"
+                    className="hover:text-purple-900 ml-0.5 text-xs"
+                    aria-label="Remover país"
                   >
                     ×
                   </button>
@@ -240,23 +240,31 @@ export default function ActorsPage() {
               )}
               <button
                 onClick={limparFiltros}
-                className="text-sm text-gray-500 hover:text-gray-700 underline"
+                className="text-xs md:text-sm text-gray-500 hover:text-gray-700 underline whitespace-nowrap"
               >
                 Limpar todos
               </button>
             </div>
           )}
 
+          {/* Loading da busca */}
           {buscandoPorNome && (
-            <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-rose-500 mx-auto"></div>
+            <div className="text-center py-3 md:py-4">
+              <div className="animate-spin rounded-full h-5 w-5 md:h-6 md:w-6 border-b-2 border-rose-500 mx-auto"></div>
+              <p className="text-xs md:text-sm text-gray-500 mt-2">Buscando atores...</p>
             </div>
           )}
 
+          {/* Grid de atores ou estado vazio */}
           {filteredActors.length === 0 && !isLoading ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">Nenhum ator encontrado</p>
-              <p className="text-gray-500 mt-2">
+            <div className="text-center py-8 md:py-12 px-4">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🎭</span>
+              </div>
+              <p className="text-gray-600 text-lg md:text-xl font-medium mb-2">
+                Nenhum ator encontrado
+              </p>
+              <p className="text-gray-500 text-sm md:text-base max-w-md mx-auto">
                 Tente ajustar os filtros para encontrar o que você está procurando.
               </p>
             </div>
@@ -264,16 +272,17 @@ export default function ActorsPage() {
             <>
               <ActorsGrid actors={filteredActors} />
               
-              {/* Elemento observador para scroll infinito (só aparece sem filtros) */}
+              {/* Scroll infinito */}
               {!filtrosAtivos && (
-                <div ref={observerTarget} className="py-8">
+                <div ref={observerTarget} className="py-6 md:py-8">
                   {loading && (
-                    <div className="flex justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500"></div>
+                    <div className="flex justify-center items-center gap-3">
+                      <div className="animate-spin rounded-full h-6 w-6 md:h-8 md:w-8 border-b-2 border-rose-500"></div>
+                      <span className="text-sm text-gray-500">Carregando mais atores...</span>
                     </div>
                   )}
                   {!temProximaPagina && atores.length > 0 && (
-                    <p className="text-center text-gray-500">
+                    <p className="text-center text-gray-500 text-sm md:text-base">
                       Todos os atores foram carregados 🎭
                     </p>
                   )}
