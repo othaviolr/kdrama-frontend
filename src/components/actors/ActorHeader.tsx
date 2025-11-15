@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -20,118 +22,118 @@ export default function ActorHeader({ actor }: ActorHeaderProps) {
 
   if (!actor) return null;
 
+  const stats = [
+    { icon: Calendar, label: `${actor.idade} anos` },
+    { icon: MapPin, label: actor.nacionalidade },
+    { icon: Users, label: actor.agency },
+    { icon: Award, label: `${actor.premios?.length || 0} prêmios` },
+  ].filter(stat => stat.label && stat.label !== 'undefined');
+
   return (
-    <div className="relative min-h-[50vh] overflow-hidden">
-      {/* Background com foto do ator desfocada */}
+    <div className="relative min-h-[50vh] md:min-h-[60vh] overflow-hidden">
+      {/* Background com foto do ator */}
       <div className="absolute inset-0">
         {actor.fotoBackground && (
           <img
             src={actor.fotoBackground}
             alt=""
-            className="w-full h-full object-cover opacity-20 blur-[3px] scale-105"
+            className="w-full h-full object-cover opacity-20 blur-[2px] md:blur-[3px] scale-105"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/75 via-purple-900/70 to-indigo-900/75" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/30 to-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/5 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-purple-900/75 to-indigo-900/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/10 to-black/30" />
       </div>
 
-      {/* Efeitos visuais modernos - mais escuros */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-900 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-800 rounded-full blur-3xl animate-pulse delay-1000" />
+      {/* Efeitos visuais */}
+      <div className="absolute inset-0 opacity-25">
+        <div className="absolute top-8 left-8 w-56 h-56 md:top-16 md:left-16 md:w-80 md:h-80 bg-purple-900 rounded-full blur-2xl md:blur-3xl animate-pulse" />
+        <div className="absolute bottom-8 right-8 w-72 h-72 md:bottom-16 md:right-16 md:w-96 md:h-96 bg-indigo-800 rounded-full blur-2xl md:blur-3xl animate-pulse delay-1000" />
       </div>
 
-      {/* Botão de voltar moderno */}
-      <div className="absolute top-0 left-0 right-0 z-30 p-6">
+      {/* Botão de voltar */}
+      <div className="absolute top-4 left-4 right-4 md:top-6 md:left-6 md:right-6 z-30">
         <button
           onClick={() => router.back()}
-          className="group flex items-center gap-3 text-white/90 hover:text-white transition-all duration-300 bg-black/20 backdrop-blur-md rounded-full px-4 py-2 hover:bg-black/30 border border-white/10 hover:border-white/20"
+          className="group flex items-center gap-2 text-white/90 hover:text-white transition-all duration-300 bg-black/30 backdrop-blur-md rounded-full px-3 py-1.5 md:px-4 md:py-2 hover:bg-black/40 border border-white/20 hover:border-white/30 text-sm md:text-base"
         >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
+          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 group-hover:-translate-x-1 transition-transform duration-300" />
           <span className="font-medium">Voltar</span>
         </button>
       </div>
 
       {/* Conteúdo principal */}
-      <div className="relative z-20 flex items-center justify-center min-h-[50vh] p-6">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="flex flex-col lg:flex-row gap-8 items-center">
-            {/* Foto do ator */}
-            <div className="relative group flex-shrink-0">
-              <div className="w-48 h-64 rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-500 group-hover:scale-105">
+      <div className="relative z-20 flex items-center justify-center min-h-[50vh] md:min-h-[60vh] p-4 md:p-6 lg:p-8">
+        <div className="max-w-4xl mx-auto w-full">
+          <div className="flex flex-col items-center space-y-4 md:space-y-6">
+            {/* Foto do ator - 5% MENOR */}
+            <div className="relative group">
+              <div className="w-52 h-64 md:w-60 md:h-72 lg:w-68 lg:h-80 xl:w-76 xl:h-88 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl md:shadow-3xl transform transition-all duration-500 group-hover:scale-105 border-4 border-white/20">
                 <img
                   src={actor.foto}
                   alt={actor.nome}
                   className="w-full h-full object-cover"
+                  loading="eager"
                 />
               </div>
               {/* Badge de popularidade */}
-              <div className="absolute top-4 right-4">
-                <div className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
-                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                  {actor.popularidade}%
+              {actor.popularidade > 0 && (
+                <div className="absolute top-3 right-3 md:top-4 md:right-4">
+                  <div className="bg-purple-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-sm md:text-base font-bold flex items-center gap-1.5 shadow-lg">
+                    <Star className="w-3.5 h-3.5 md:w-4 md:h-4 fill-yellow-400 text-yellow-400" />
+                    {actor.popularidade}%
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* Informações do ator */}
-            <div className="flex-1 text-center lg:text-left space-y-4">
+            {/* Nome e Informações */}
+            <div className="text-center space-y-3 md:space-y-4 w-full">
               {/* Nome */}
-              <div className="space-y-2">
-                <h1 className="text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
+              <div className="space-y-1 md:space-y-2">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight">
                   {actor.nome}
                 </h1>
                 {actor.nomeOriginal && actor.nomeOriginal !== actor.nome && (
-                  <p className="text-lg text-purple-200/90 font-medium">
+                  <p className="text-sm md:text-base lg:text-lg text-purple-200/90 font-medium">
                     {actor.nomeOriginal}
                   </p>
                 )}
               </div>
 
-              {/* Informações básicas */}
-              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-4 text-white/90">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-purple-300" />
-                  <span className="font-medium text-sm">
-                    {actor.idade} anos
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-purple-300" />
-                  <span className="font-medium text-sm">
-                    {actor.nacionalidade}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-purple-300" />
-                  <span className="font-medium text-sm">{actor.agency}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-purple-300" />
-                  <span className="font-medium text-sm">
-                    {actor.premios?.length || 0} prêmios
-                  </span>
-                </div>
+              {/* Informações básicas - 10% MENOR */}
+              <div className="flex flex-wrap justify-center items-center gap-1.5 md:gap-2 text-white/90">
+                {stats.map((stat, index) => (
+                  <div key={index} className="flex items-center gap-1 md:gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20">
+                    <stat.icon className="w-3 h-3 md:w-3.5 md:h-3.5 text-purple-300 flex-shrink-0" />
+                    <span className="font-medium text-xs md:text-sm whitespace-nowrap">
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
               </div>
 
-              {/* Biografia resumida */}
-              <div className="text-purple-100/90 text-base leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                {actor.biografia?.substring(0, 180)}...
-              </div>
-
-              {/* Botões de ação */}
-              <div className="flex flex-wrap justify-center lg:justify-start gap-3 pt-2">
-                <button className="group bg-white/95 hover:bg-white text-purple-700 hover:text-purple-800 px-4 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-white/25 transform hover:scale-105 border border-white/50 text-sm">
-                  <Heart className="w-4 h-4 group-hover:fill-red-400 group-hover:text-red-400 transition-all duration-300" />
+              {/* Botões de ação - RETÂNGULO COM BORDER RADIUS */}
+              <div className="flex justify-center gap-2 md:gap-3 pt-1 md:pt-2">
+                <button 
+                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl font-medium transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:scale-105 border border-white/30 hover:border-white/40"
+                  aria-label="Favoritar ator"
+                >
+                  <Heart className="w-4 h-4 md:w-4.5 md:h-4.5 group-hover:fill-red-400 group-hover:text-red-400 transition-all duration-300" />
                 </button>
 
-                <button className="group bg-white/15 backdrop-blur-md hover:bg-white/25 text-white p-2 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-md">
-                  <Bookmark className="w-4 h-4 group-hover:fill-current transition-all duration-300" />
+                <button 
+                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-lg"
+                  aria-label="Salvar ator"
+                >
+                  <Bookmark className="w-4 h-4 md:w-4.5 md:h-4.5 group-hover:fill-current transition-all duration-300" />
                 </button>
 
-                <button className="group bg-white/15 backdrop-blur-md hover:bg-white/25 text-white p-2 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-md">
-                  <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
+                <button 
+                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-lg"
+                  aria-label="Compartilhar ator"
+                >
+                  <Share2 className="w-4 h-4 md:w-4.5 md:h-4.5 group-hover:scale-110 transition-transform duration-300" />
                 </button>
               </div>
             </div>
@@ -140,20 +142,7 @@ export default function ActorHeader({ actor }: ActorHeaderProps) {
       </div>
 
       {/* Gradiente inferior */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent z-10" />
-
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+      <div className="absolute bottom-0 left-0 right-0 h-24 md:h-32 bg-gradient-to-t from-gray-50 to-transparent z-10" />
     </div>
   );
 }
