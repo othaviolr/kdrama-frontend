@@ -62,12 +62,13 @@ export default function ActorHeader({ actor }: ActorHeaderProps) {
         </button>
       </div>
 
-      {/* Conteúdo principal */}
+      {/* Conteúdo principal - LAYOUT LADO A LADO */}
       <div className="relative z-20 flex items-center justify-center min-h-[50vh] md:min-h-[60vh] p-4 md:p-6 lg:p-8">
-        <div className="max-w-4xl mx-auto w-full">
-          <div className="flex flex-col items-center space-y-4 md:space-y-6">
-            {/* Foto do ator - 5% MENOR */}
-            <div className="relative group">
+        <div className="max-w-6xl mx-auto w-full">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 md:gap-8 lg:gap-12">
+            
+            {/* Foto do ator - LADO ESQUERDO */}
+            <div className="relative group flex-shrink-0">
               <div className="w-52 h-64 md:w-60 md:h-72 lg:w-68 lg:h-80 xl:w-76 xl:h-88 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl md:shadow-3xl transform transition-all duration-500 group-hover:scale-105 border-4 border-white/20">
                 <img
                   src={actor.foto}
@@ -87,11 +88,11 @@ export default function ActorHeader({ actor }: ActorHeaderProps) {
               )}
             </div>
 
-            {/* Nome e Informações */}
-            <div className="text-center space-y-3 md:space-y-4 w-full">
+            {/* Informações - LADO DIREITO */}
+            <div className="flex-1 text-center lg:text-left space-y-4 md:space-y-6 max-w-2xl">
               {/* Nome */}
-              <div className="space-y-1 md:space-y-2">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight">
+              <div className="space-y-2 md:space-y-3">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight tracking-tight">
                   {actor.nome}
                 </h1>
                 {actor.nomeOriginal && actor.nomeOriginal !== actor.nome && (
@@ -101,8 +102,8 @@ export default function ActorHeader({ actor }: ActorHeaderProps) {
                 )}
               </div>
 
-              {/* Informações básicas - 10% MENOR */}
-              <div className="flex flex-wrap justify-center items-center gap-1.5 md:gap-2 text-white/90">
+              {/* Informações básicas */}
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-1.5 md:gap-2 text-white/90">
                 {stats.map((stat, index) => (
                   <div key={index} className="flex items-center gap-1 md:gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20">
                     <stat.icon className="w-3 h-3 md:w-3.5 md:h-3.5 text-purple-300 flex-shrink-0" />
@@ -113,27 +114,27 @@ export default function ActorHeader({ actor }: ActorHeaderProps) {
                 ))}
               </div>
 
-              {/* Botões de ação - RETÂNGULO COM BORDER RADIUS */}
-              <div className="flex justify-center gap-2 md:gap-3 pt-1 md:pt-2">
+              {/* Botões de ação - PEQUENOS E COMPACTOS */}
+              <div className="flex justify-center lg:justify-start gap-2 pt-2 md:pt-4">
                 <button 
-                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl font-medium transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:scale-105 border border-white/30 hover:border-white/40"
+                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white p-2 rounded-lg transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:scale-110 border border-white/30 hover:border-white/40"
                   aria-label="Favoritar ator"
                 >
-                  <Heart className="w-4 h-4 md:w-4.5 md:h-4.5 group-hover:fill-red-400 group-hover:text-red-400 transition-all duration-300" />
+                  <Heart className="w-4 h-4 group-hover:fill-red-400 group-hover:text-red-400 transition-all duration-300" />
                 </button>
 
                 <button 
-                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-lg"
+                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white p-2 rounded-lg transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-110 shadow-lg"
                   aria-label="Salvar ator"
                 >
-                  <Bookmark className="w-4 h-4 md:w-4.5 md:h-4.5 group-hover:fill-current transition-all duration-300" />
+                  <Bookmark className="w-4 h-4 group-hover:fill-current transition-all duration-300" />
                 </button>
 
                 <button 
-                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-105 shadow-lg"
+                  className="group bg-white/20 backdrop-blur-md hover:bg-white/30 text-white p-2 rounded-lg transition-all duration-300 border border-white/30 hover:border-white/40 transform hover:scale-110 shadow-lg"
                   aria-label="Compartilhar ator"
                 >
-                  <Share2 className="w-4 h-4 md:w-4.5 md:h-4.5 group-hover:scale-110 transition-transform duration-300" />
+                  <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
                 </button>
               </div>
             </div>

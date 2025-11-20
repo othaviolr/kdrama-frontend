@@ -39,39 +39,59 @@ export default function ActorDetailPage() {
     nome: atorAtual.nome,
     nomeOriginal: atorAtual.nomeCompleto || atorAtual.nome,
     foto: atorAtual.fotoUrl,
-    fotoBackground: atorAtual.fotoUrl, // Se tiver uma foto de background diferente, ajustar
+    fotoBackground: atorAtual.fotoUrl,
     nacionalidade: atorAtual.pais,
-    nascimento: `${atorAtual.anoNascimento}-01-01`, // Você pode ter a data completa na API
+    nascimento: `${atorAtual.anoNascimento}-01-01`,
     idade: new Date().getFullYear() - atorAtual.anoNascimento,
     altura: atorAtual.altura,
-    peso: null, // Se não tiver na API
-    signo: null, // Calcular baseado na data de nascimento se tiver
-    tipoSanguineo: null, // Se não tiver na API
-    agency: null, // Se não tiver na API
+    peso: null,
+    signo: null,
+    tipoSanguineo: null,
+    agency: null,
     biografia: atorAtual.biografia,
     doramas: [], // TODO: Buscar doramas do ator se tiver endpoint
     redes: {
       instagram: atorAtual.instagram,
-      twitter: null, // Se não tiver na API
+      twitter: null,
     },
-    popularidade: 0, // Calcular se tiver métrica
+    popularidade: 0,
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50/30">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-100/20 via-transparent to-transparent pointer-events-none" />
+      
       <ActorHeader actor={actor} />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <ActorBiography actor={actor} />
-
-            {actor.doramas.length > 0 && (
-              <ActorDoramas doramas={actor.doramas} />
-            )}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {/* Layout modernizado */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
+          {/* Sidebar - coluna esquerda */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8 space-y-8">
+              <ActorSidebar actor={actor} />
+            </div>
           </div>
 
-          <ActorSidebar actor={actor} />
+          {/* Conteúdo principal - coluna direita */}
+          <div className="lg:col-span-3 space-y-8 lg:space-y-12">
+            {/* Biografia com card moderno */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-white/60 overflow-hidden">
+              <div className="p-1 bg-gradient-to-r from-purple-500/10 to-purple-500/5">
+                <ActorBiography actor={actor} />
+              </div>
+            </div>
+
+            {/* Doramas com card moderno */}
+            {actor.doramas.length > 0 && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-white/60 overflow-hidden">
+                <div className="p-1 bg-gradient-to-r from-purple-500/10 to-purple-500/5">
+                  <ActorDoramas doramas={actor.doramas} />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
