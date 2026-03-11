@@ -56,10 +56,10 @@ export function Footer(): JSX.Element {
         <div className="border-t border-white/10 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © 2025 Hanlyu Drama. Todos os direitos reservados.
+              © 2026 Hanlyu Drama. Todos os direitos reservados.
             </p>
             <p className="text-purple-400 text-xs font-medium">
-              Desenvolvido por Othávio e Maysa 💜
+              Desenvolvido por Othávio 💜
             </p>
           </div>
         </div>
