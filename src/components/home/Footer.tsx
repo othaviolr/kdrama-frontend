@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export function Footer(): JSX.Element {
   return (
@@ -32,20 +33,20 @@ export function Footer(): JSX.Element {
             </h4>
             <ul className="space-y-3 md:ml-auto">
               {[
-                { label: 'Central de Ajuda', href: '#' },
-                { label: 'Contato', href: '#' },
-                { label: 'Privacidade', href: '#' },
-                { label: 'Termos de Uso', href: '#' }
+                { label: 'Central de Ajuda', href: '/ajuda' },
+                { label: 'Contato', href: '/contato' },
+                { label: 'Privacidade', href: '/privacidade' },
+                { label: 'Termos de Uso', href: '/termos' }
               ].map((item, index) => (
                 <li key={index}>
-                  <a 
-                    href={item.href} 
+                  <Link
+                    href={item.href}
                     className="text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300 text-sm flex items-center group relative justify-start md:justify-end"
                   >
                     <span className="absolute left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 group-hover:w-4 transition-all duration-300 md:left-auto md:right-0 md:group-hover:w-[1rem]"></span>
                     <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-3 group-hover:bg-white group-hover:scale-110 transition-all duration-300 flex-shrink-0"></span>
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
