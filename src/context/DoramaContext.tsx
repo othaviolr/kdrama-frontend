@@ -1,6 +1,13 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { doramaService } from '../services';
 import { DoramaCompleto, DoramaContextType } from '../types/dorama';
 
@@ -12,25 +19,41 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [loadingDorama, setLoadingDorama] = useState(false);
 
-  // Carregar lista de doramas
+  // Flags de cache — evitam refetch desnecessário entre navegações
+  const carregado = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Auto-carrega ao montar o provider (uma única vez por sessão)
+  useEffect(() => {
+    carregarDoramas();
+  }, []);
+
   const carregarDoramas = async () => {
-    //if (doramas.length > 0) return; // Já carregou, não carrega de novo
+    // Já carregou com sucesso — não busca de novo
+    if (carregado.current) return;
+
+    // Cancela request anterior se ainda estiver pendente
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     setLoading(true);
     try {
       console.log('🎬 Carregando doramas...');
-      const lista = await doramaService.getDoramas();
+      const lista = await doramaService.getDoramas(controller.signal);
       console.log('✅ Doramas carregados:', lista.length);
       setDoramas(lista);
-    } catch (error) {
+      carregado.current = true;
+    } catch (error: any) {
+      if (error?.name === 'AbortError') return; // requisição cancelada — ignora
       console.error('❌ Erro ao carregar doramas:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Carregar dorama específico
   const carregarDorama = async (id: string) => {
+    // Tenta servir do cache da lista já carregada
     const doramaExistente = doramas.find((d) => d.doramaId === id);
     if (doramaExistente) {
       console.log('📋 Dorama encontrado no cache:', doramaExistente.titulo);
@@ -45,12 +68,10 @@ export function DoramaProvider({ children }: { children: ReactNode }) {
       console.log('✅ Dorama carregado:', dorama.titulo);
       setDoramaAtual(dorama);
 
+      // Adiciona ao cache local para navegações futuras
       setDoramas((prev) => {
         const existe = prev.find((d) => d.doramaId === id);
-        if (!existe) {
-          return [...prev, dorama];
-        }
-        return prev;
+        return existe ? prev : [...prev, dorama];
       });
     } catch (error) {
       console.error('❌ Erro ao carregar dorama:', error);

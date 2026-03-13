@@ -3,9 +3,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDorama } from 'src/context/DoramaContext';
+import { useDebounce } from 'src/hooks/useDebounce';
 import { DoramaCompleto } from '@/types/dorama';
 
-// Componentes separados
 import CatalogHeader from '@/components/catalog/CatalogHeader';
 import CatalogFilters from '@/components/catalog/CatalogFilters';
 import DoramaGridItem from '@/components/catalog/DoramaGridItem';
@@ -13,66 +13,74 @@ import DoramaListItem from '@/components/catalog/DoramaListItem';
 import CatalogLoading from '@/components/catalog/CatalogLoading';
 import CatalogEmptyState from '@/components/catalog/CatalogEmptyState';
 
+const ITEMS_PER_PAGE = 24;
+
 export default function CatalogPage() {
   const router = useRouter();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
-  const { doramas, carregarDoramas, loading } = useDorama();
+  // Debounce do texto de busca — filtragem só recalcula após 300 ms de pausa
+  const debouncedSearch = useDebounce(searchQuery, 300);
 
+  const { doramas, loading } = useDorama();
+
+  // Reseta paginação sempre que os filtros mudam
   useEffect(() => {
-    carregarDoramas();
-  }, []);
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [debouncedSearch, selectedGenre, selectedCountry]);
 
   const availableGenres = useMemo(() => {
     const genres = new Set<string>();
-    doramas.forEach((dorama) => {
-      dorama.generos.forEach((genero) => genres.add(genero.nome));
-    });
+    doramas.forEach((d) => d.generos.forEach((g) => genres.add(g.nome)));
     return Array.from(genres).sort();
   }, [doramas]);
 
   const availableCountries = useMemo(() => {
     const countries = new Set<string>();
-    doramas.forEach((dorama) => {
-      if (dorama.paisOrigem) countries.add(dorama.paisOrigem);
-    });
+    doramas.forEach((d) => { if (d.paisOrigem) countries.add(d.paisOrigem); });
     return Array.from(countries).sort();
   }, [doramas]);
 
+  // Filtragem usa o valor debounced — não re-executa a cada tecla
   const filteredDoramas = useMemo(() => {
-    let filtered = doramas;
+    let result = doramas;
 
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (dorama) =>
-          dorama.titulo.toLowerCase().includes(query) ||
-          dorama.tituloOriginal.toLowerCase().includes(query) ||
-          dorama.sinopse.toLowerCase().includes(query) ||
-          dorama.generos.some((genero) =>
-            genero.nome.toLowerCase().includes(query)
-          ) ||
-          dorama.atores.some((ator) => ator.nome.toLowerCase().includes(query))
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
+      result = result.filter(
+        (d) =>
+          d.titulo.toLowerCase().includes(q) ||
+          d.tituloOriginal.toLowerCase().includes(q) ||
+          d.sinopse.toLowerCase().includes(q) ||
+          d.generos.some((g) => g.nome.toLowerCase().includes(q)) ||
+          d.atores.some((a) => a.nome.toLowerCase().includes(q))
       );
     }
 
     if (selectedGenre !== 'all') {
-      filtered = filtered.filter((dorama) =>
-        dorama.generos.some((genero) => genero.nome === selectedGenre)
+      result = result.filter((d) =>
+        d.generos.some((g) => g.nome === selectedGenre)
       );
     }
 
     if (selectedCountry !== 'all') {
-      filtered = filtered.filter(
-        (dorama) => dorama.paisOrigem === selectedCountry
-      );
+      result = result.filter((d) => d.paisOrigem === selectedCountry);
     }
 
-    return filtered;
-  }, [doramas, searchQuery, selectedGenre, selectedCountry]);
+    return result;
+  }, [doramas, debouncedSearch, selectedGenre, selectedCountry]);
+
+  // Slice paginado — evita renderizar todos os itens de uma vez
+  const visibleDoramas = useMemo(
+    () => filteredDoramas.slice(0, visibleCount),
+    [filteredDoramas, visibleCount]
+  );
+
+  const hasMore = visibleCount < filteredDoramas.length;
 
   const getRating = (dorama: DoramaCompleto) => {
     const hash = dorama.doramaId.split('').reduce((a, b) => {
@@ -125,35 +133,53 @@ export default function CatalogPage() {
             </div>
 
             {filteredDoramas.length === 0 ? (
-              <CatalogEmptyState filteredCount={filteredDoramas.length} />
+              <CatalogEmptyState filteredCount={0} />
             ) : (
-              <div
-                className={
-                  viewMode === 'grid'
-                    ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6'
-                    : 'space-y-6'
-                }
-              >
-                {filteredDoramas.map((dorama) => {
-                  const rating = getRating(dorama);
+              <>
+                <div
+                  className={
+                    viewMode === 'grid'
+                      ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6'
+                      : 'space-y-6'
+                  }
+                >
+                  {visibleDoramas.map((dorama) => {
+                    const rating = getRating(dorama);
+                    return viewMode === 'grid' ? (
+                      <DoramaGridItem
+                        key={dorama.doramaId}
+                        dorama={dorama}
+                        rating={rating}
+                        onClick={handleDoramaClick}
+                      />
+                    ) : (
+                      <DoramaListItem
+                        key={dorama.doramaId}
+                        dorama={dorama}
+                        rating={rating}
+                        onClick={handleDoramaClick}
+                      />
+                    );
+                  })}
+                </div>
 
-                  return viewMode === 'grid' ? (
-                    <DoramaGridItem
-                      key={dorama.doramaId}
-                      dorama={dorama}
-                      rating={rating}
-                      onClick={handleDoramaClick}
-                    />
-                  ) : (
-                    <DoramaListItem
-                      key={dorama.doramaId}
-                      dorama={dorama}
-                      rating={rating}
-                      onClick={handleDoramaClick}
-                    />
-                  );
-                })}
-              </div>
+                {/* Botão carregar mais */}
+                {hasMore && (
+                  <div className="flex flex-col items-center gap-2 mt-10">
+                    <button
+                      onClick={() =>
+                        setVisibleCount((c) => c + ITEMS_PER_PAGE)
+                      }
+                      className="px-8 py-3 bg-white border-2 border-purple-200 text-purple-700 font-semibold rounded-2xl hover:border-purple-400 hover:bg-purple-50 hover:shadow-lg transition-all duration-300"
+                    >
+                      Carregar mais
+                    </button>
+                    <p className="text-xs text-gray-400">
+                      Exibindo {visibleDoramas.length} de {filteredDoramas.length}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}

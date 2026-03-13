@@ -2,8 +2,8 @@ import { ApiService } from './api';
 import { DoramaCompleto } from '../types/dorama';
 
 export class DoramaService extends ApiService {
-  async getDoramas(): Promise<DoramaCompleto[]> {
-    return this.makeRequest('/doramas/completo');
+  async getDoramas(signal?: AbortSignal): Promise<DoramaCompleto[]> {
+    return this.makeRequest('/doramas/completo', { signal });
   }
 
   async getDoramaCompleto(id: string): Promise<DoramaCompleto> {
