@@ -6,19 +6,17 @@ import {
   Search,
   Menu,
   ChevronDown,
-  Tv2,
   X,
   User,
   Settings,
   LogOut,
 } from 'lucide-react';
-import { Button } from '../ui/Button';
 import { useAuth } from '@/src/context/AuthContext';
+import { SearchBar } from './SearchBar';
 
 export function Navbar() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const { usuario, isAuthenticated, logout, isLoading } = useAuth();
 
@@ -88,21 +86,20 @@ export function Navbar() {
                 Reviews
                 <div className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-purple-600 group-hover:w-6 group-hover:left-1/2 group-hover:-translate-x-1/2 transition-all duration-300"></div>
               </Link>
+
+              <Link
+                href="/actors"
+                className="relative text-gray-700 hover:text-purple-600 font-medium transition-all duration-300 px-4 py-2 rounded-xl hover:bg-purple-50/80 group"
+              >
+                Atores
+                <div className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-purple-600 group-hover:w-6 group-hover:left-1/2 group-hover:-translate-x-1/2 transition-all duration-300"></div>
+              </Link>
             </nav>
           </div>
 
           {/* Search compacta */}
           <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
-            <div className="relative w-full group">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-purple-500 transition-colors duration-300" />
-              <input
-                type="text"
-                placeholder="Buscar doramas, atores, listas..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200/60 rounded-xl bg-gray-50/50 focus:bg-white focus:border-purple-400 focus:ring-2 focus:ring-purple-500/10 transition-all duration-300 text-sm outline-none font-medium placeholder:text-gray-500"
-              />
-            </div>
+            <SearchBar />
           </div>
 
           {/* User Actions */}
@@ -265,14 +262,10 @@ export function Navbar() {
         <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-purple-100">
           <div className="px-4 py-4 space-y-2">
             {/* Search mobile */}
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Buscar doramas..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-purple-500 transition-all text-sm outline-none"
+            <div className="mb-4">
+              <SearchBar
+                onNavigate={() => setIsMobileMenuOpen(false)}
+                inputClassName="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-purple-500 transition-all text-sm outline-none"
               />
             </div>
 
@@ -290,6 +283,14 @@ export function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Reviews
+            </Link>
+
+            <Link
+              href="/actors"
+              className="block px-4 py-3 rounded-xl text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Atores
             </Link>
 
             {!isAuthenticated && (
