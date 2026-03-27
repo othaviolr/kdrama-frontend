@@ -10,7 +10,7 @@ const mockReviews = [
   {
     id: 1,
     usuario: {
-      nome: 'Otávio Lima',
+      nome: 'Othávio Nogueira',
       nomeUsuario: 'othaviolr',
       fotoUrl:
         'https://i.pinimg.com/1200x/ca/1d/a5/ca1da54d42116eb09f27812af4d38b38.jpg',
@@ -29,8 +29,8 @@ const mockReviews = [
   {
     id: 2,
     usuario: {
-      nome: 'May',
-      nomeUsuario: 'May',
+      nome: 'Célia',
+      nomeUsuario: 'Celia',
       fotoUrl:
         'https://i.pinimg.com/736x/ef/bc/70/efbc70c0a64fd3e41ddfb17e97414fbc.jpg',
     },
